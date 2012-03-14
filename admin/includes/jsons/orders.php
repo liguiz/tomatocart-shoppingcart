@@ -152,7 +152,9 @@
     }          
     
     function deleteOrder() {
-      global $toC_Json, $osC_Language;
+      global $toC_Json, $osC_Language, $osC_Currencies;
+      
+      $osC_Currencies = new osC_Currencies();
       
       if (osC_Order::delete($_REQUEST['orders_id'], (isset($_REQUEST['restock']) && ($_REQUEST['restock'] == 'on') ? true : false))) {
         $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
