@@ -42,7 +42,7 @@
     </div>
   
     <div class="listingPageLinks">
-      <span style="float: right;"><?php echo $Qspecials->getBatchPageLinks('specials&page'); ?></span>
+      <span style="float: right;"><?php echo $Qspecials->getBatchPageLinks('specials', 'page'); ?></span>
     
       <?php echo $Qspecials->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?>
     </div>
