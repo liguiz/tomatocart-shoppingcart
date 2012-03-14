@@ -95,7 +95,7 @@
           }
 
           $this->addStyleSheet('ext/mojozoom/mojozoom.css');
-          
+          $this->addStyleSheet('templates/' . $this->getCode() . '/javascript/milkbox/milkbox.css');
         } else {
           $this->_page_title = $osC_Language->get('product_not_found_heading');
           $this->_page_contents = 'info_not_found.php';
