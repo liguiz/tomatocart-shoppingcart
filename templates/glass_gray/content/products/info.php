@@ -25,7 +25,6 @@
 
   <div class="content">
     <div style="float: left;">
-      <link href="templates/<?php echo $osC_Template->getCode(); ?>/javascript/milkbox/milkbox.css" rel="stylesheet" type="text/css" />
       <script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/javascript/milkbox/milkbox.js"></script>
     
       <div id="productImages">
@@ -526,6 +525,7 @@ window.addEvent('domready', function(){
              property: 'opacity'
           }).start(0).chain(function() {
             $('product_image').src = this.get("product-info-img");
+            $$('.mojozoom_imgctr').getElement('img').setProperty('src', this.get('large-img'));
             $('product_image').fade('in');
           }.bind(this));
         }
