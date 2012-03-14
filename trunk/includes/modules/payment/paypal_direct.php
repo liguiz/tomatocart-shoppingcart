@@ -140,7 +140,7 @@
                         'VERSION' => '3.2',
                         'SIGNATURE' => MODULE_PAYMENT_PAYPAL_DIRECT_API_SIGNATURE,
                         'METHOD' => 'DoDirectPayment',
-                        'PAYMENTACTION' => ((MODULE_PAYMENT_PAYPAL_DIRECT_TRANSACTION_METHOD == 'Sale') ? 'Sale' : 'Authorization'),
+                        'PAYMENTACTION' => ((MODULE_PAYMENT_PAYPAL_DIRECT_METHOD == 'Sale') ? 'Sale' : 'Authorization'),
                         'IPADDRESS' => osc_get_ip_address(),
                         'AMT' => $osC_Currencies->formatRaw($osC_ShoppingCart->getTotal() - $osC_ShoppingCart->getShippingMethod('cost'), $currency),
                         'CREDITCARDTYPE' => $_POST['cc_type'],
