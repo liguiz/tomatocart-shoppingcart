@@ -49,7 +49,7 @@
         <?php echo '<b>' . $osC_Language->get('please_select') . '</b><br />' . osc_image(DIR_WS_IMAGES . 'arrow_east_south.gif'); ?>
       </div>
   
-      <p style="margin-top: 0px;"><?php echo $osC_Language->get('choose_billing_address'); ?></p>
+      <p style="margin-top: 0px;"><?php echo $osC_Language->get('choose_shipping_address'); ?></p>
     </li>    
     <li style="margin-bottom: 10px">
     <?php
