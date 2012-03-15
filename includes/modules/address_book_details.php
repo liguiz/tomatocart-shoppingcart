@@ -73,7 +73,7 @@
     $countries_array[] = array('id' => $country['id'],
                                'text' => $country['name']);
   }
-
+  
   echo osc_draw_pull_down_menu('country', $countries_array, (isset($Qentry) ? $Qentry->valueInt('entry_country_id') : STORE_COUNTRY));
 ?>
 
@@ -111,9 +111,25 @@
         if ($Qentry->valueInt('entry_zone_id') > 0) {
           $zone = osC_Address::getZoneName($Qentry->valueInt('entry_zone_id'));
         }
+      }else {
+        $Qzones = $osC_Database->query('select zone_name from :table_zones where zone_country_id = :zone_country_id order by zone_name');
+        $Qzones->bindTable(':table_zones', TABLE_ZONES);
+        $Qzones->bindInt(':zone_country_id', STORE_COUNTRY);
+        $Qzones->execute();
+  
+        $zones_array = array();
+        while ($Qzones->next()) {
+          $zones_array[] = array('id' => $Qzones->value('zone_name'), 'text' => $Qzones->value('zone_name'));
+        }
+        
+        $Qzones->freeResult();
       }
-
-      echo osc_draw_input_field('state', (isset($Qentry) ? $zone : null));
+      
+      if (isset($zones_array) && !empty($zones_array)) {
+        echo osc_draw_pull_down_menu('state', $zones_array);
+      }else {
+        echo osc_draw_input_field('state', (isset($Qentry) ? $zone : null));
+      }
     }
 ?>
 
@@ -150,3 +166,13 @@
 ?>
 
 </ol>
+
+<script type="text/javascript">
+  window.addEvent('domready', function() {
+    var addressBook = new AddressBook({
+      remoteUrl: '<?php echo osc_href_link('json.php', null, 'SSL', false, false, true); ?>',
+      sessionName: '<?php echo $osC_Session->getName(); ?>',
+      sessionId: '<?php echo $osC_Session->getID(); ?>'
+    });
+  });
+</script>

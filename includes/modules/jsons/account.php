@@ -29,5 +29,37 @@
       
       echo $content;
     }
+    
+    /**
+     * handle the country change event
+     *
+     * @access  public
+     * @return json
+     */
+    function countryChange() {
+      global $toC_Json, $osC_Database, $osC_Language;
+      
+      $Qzones = $osC_Database->query('select zone_name from :table_zones where zone_country_id = :zone_country_id order by zone_name');
+      $Qzones->bindTable(':table_zones', TABLE_ZONES);
+      $Qzones->bindInt(':zone_country_id', $_REQUEST['country_id']);
+      $Qzones->execute();
+  
+      $zones_array = array();
+      while ($Qzones->next()) {
+        $zones_array[] = array('id' => $Qzones->value('zone_name'), 'text' => $Qzones->value('zone_name'));
+      }
+      
+      if (sizeof($zones_array) > 0) {
+        $response = array(
+          'success' => true, 
+          'html' => osc_draw_label($osC_Language->get('field_customer_state'), null, 'state', (ACCOUNT_STATE > 0)) . osc_draw_pull_down_menu('state', $zones_array));
+      } else {
+        $response = array(
+          'success' => true, 
+          'html' => osc_draw_label($osC_Language->get('field_customer_state'), null, 'state', (ACCOUNT_STATE > 0)) . osc_draw_input_field('state'));
+      }
+      
+      echo $toC_Json->encode($response);
+    }
   }
   
