@@ -46,7 +46,8 @@
 
         $this->_page_title = $osC_Language->get('address_book_add_entry_heading');
         $this->_page_contents = 'address_book_process.php';
-
+        
+        $this->addJavascriptFilename('includes/javascript/address_book.js');
         $this->addJavascriptPhpFilename('includes/form_check.js.php');
       } elseif (isset($_GET['edit']) && is_numeric($_GET[$this->_module])) {
         if (!osC_AddressBook::checkEntry($_GET['address_book'])) {
