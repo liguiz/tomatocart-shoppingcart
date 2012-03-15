@@ -42,9 +42,30 @@ var AjaxShoppingCart = new Class({
 
       this.expand();
     }.bind(this));
-
-
+    
+    this.checkCartState();
     this.loadCart();
+  },
+  
+  /**
+   * Responsible for checking the shopping cart state: expanded or collapsed
+   *
+   * @access  private
+   * @return void
+   */
+  checkCartState: function() {
+    var cartState = Cookie.read('cartstate');
+     
+    switch(cartState) {
+      case 'collapsed':
+        this.collapse();
+        break;
+      case 'expanded':
+        this.expand();
+        break;
+      default:
+        this.expand();
+    }
   },
   
   clearCustomizationForm: function() {
@@ -209,6 +230,8 @@ var AjaxShoppingCart = new Class({
 
   collapse: function() {
     if ($('ajaxCartContentLong').hasClass('expanded')) {
+    	Cookie.write('cartstate', 'collapsed');
+    	
       $('ajaxCartContentLong').set('tween', {
         duration: 500,
         property: 'height',
@@ -243,6 +266,8 @@ var AjaxShoppingCart = new Class({
 
   expand: function() {
     if ($('ajaxCartContentLong').hasClass('collapsed')) {
+    	Cookie.write('cartstate', 'expanded');
+    	
       $('ajaxCartContentShort').set('slide', {
         duration: 600,
         onComplete: function() {
