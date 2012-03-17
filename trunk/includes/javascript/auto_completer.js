@@ -11,6 +11,21 @@
 */
 
 Autocompleter.implement({
+   /**
+   * override addChoiceEvents
+   *
+   * Appends the needed event handlers for a choice-entry to the given element.
+   *
+   * @param   {Element} Choice entry
+   * @return    {Element} Choice entry
+   */
+  addChoiceEvents: function(el) {
+    return el.addEvents({
+      'mouseover': this.choiceOver.bind(this, el),
+      'click': this.choiceSelect.bind(this, el)
+    });
+  },
+  
   showChoices: function() {
     var match = this.options.choicesMatch, first = this.choices.getFirst(match);
     this.selected = this.selectedValue = null;
