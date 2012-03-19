@@ -68,10 +68,19 @@
         $this->_invoice_number = $Qorder->value('invoice_number');
         $this->_invoice_date = $Qorder->value('invoice_date');
         $this->_is_gift_wrapping = $Qorder->valueInt('gift_wrapping');
-
+        
         $customers_name = explode(' ', $Qorder->valueProtected('customers_name'));
-        $first_name = (isset($customers_name[0]) ? $customers_name[0] : '');
-        $last_name = (isset($customers_name[1]) ? $customers_name[1] : '');
+        $first_name = '';
+        $last_name = '';
+        if (!empty($customers_name)) {
+          foreach($customers_name as $key => $name) {
+            if ($key === 0) {
+              $first_name .= $name;
+            }else {
+              $last_name .= ' ' . $name;
+            }
+          }
+        }
 
         $this->_customer = array('firstname' => $first_name,
                                  'lastname' => $last_name,
@@ -92,7 +101,7 @@
                                  'wrapping_message' => $Qorder->value('wrapping_message'),
                                  'telephone' => $Qorder->valueProtected('customers_telephone'),
                                  'email_address' => $Qorder->valueProtected('customers_email_address'));
-
+        
         $delivery_name = explode(' ', $Qorder->valueProtected('delivery_name'));
         $first_name = ( isset($delivery_name[0]) ? $delivery_name[0] : '');
         $last_name = ( isset($delivery_name[1]) ? $delivery_name[1] : '');
