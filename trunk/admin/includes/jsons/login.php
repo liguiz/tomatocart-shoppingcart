@@ -13,9 +13,22 @@
   require('includes/classes/administrators.php');
   
   class toC_Json_Login {
-    
     function login() {
       global $toC_Json, $osC_Language, $osC_Database;
+      
+      $Qcheck_session = $osC_Database->query('select count(*) from :table_sessions');
+      $Qcheck_session->bindTable(':table_sessions', TABLE_SESSIONS);
+      $Qcheck_session->execute();
+      
+      if ($osC_Database->isError() || $Qcheck_session->numberOfRows() < 1) {
+        $Qrepaire = $osC_Database->query('repair table :table_sessions');
+        $Qrepaire->bindTable(':table_sessions', TABLE_SESSIONS);
+        $Qrepaire->execute();
+        
+        $Qrepaire->freeResult();
+      }
+      
+      $Qcheck_session->freeResult();
       
       $response = array();
       if ( !empty($_REQUEST['user_name']) && !empty($_REQUEST['user_password']) ) {
@@ -29,7 +42,7 @@
             $_SESSION['admin'] = array('id' => $Qadmin->valueInt('id'),
                                        'username' => $Qadmin->value('user_name'),
                                        'access' => osC_Access::getUserLevels($Qadmin->valueInt('id')));
-
+            
             $response['success'] = true;
             echo $toC_Json->encode($response);
             exit;
