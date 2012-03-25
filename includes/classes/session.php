@@ -181,7 +181,7 @@
       global $osC_Database;
 
       $Qsession = $osC_Database->query('select value from :table_sessions where sesskey = :sesskey and expiry > :expiry');
-      $Qsession->bindRaw(':table_sessions', TABLE_SESSIONS);
+      $Qsession->bindTable(':table_sessions', TABLE_SESSIONS);
       $Qsession->bindValue(':sesskey', $key);
       $Qsession->bindRaw(':expiry', time());
       $Qsession->execute();
@@ -207,7 +207,7 @@
       $expiry = time() + $SESS_LIFE;
 
       $Qsession = $osC_Database->query('select count(*) as total from :table_sessions where sesskey = :sesskey');
-      $Qsession->bindRaw(':table_sessions', TABLE_SESSIONS);
+      $Qsession->bindTable(':table_sessions', TABLE_SESSIONS);
       $Qsession->bindValue(':sesskey', $key);
       $Qsession->execute();
 
@@ -216,7 +216,7 @@
       } else {
         $Qsession = $osC_Database->query('insert into :table_sessions values (:sesskey, :expiry, :value)');
       }
-      $Qsession->bindRaw(':table_sessions', TABLE_SESSIONS);
+      $Qsession->bindTable(':table_sessions', TABLE_SESSIONS);
       $Qsession->bindValue(':sesskey', $key);
       $Qsession->bindValue(':expiry', $expiry);
       $Qsession->bindValue(':value', $value);
@@ -236,7 +236,7 @@
       global $osC_Database;
 
       $Qsession = $osC_Database->query('delete from :table_sessions where sesskey = :sesskey');
-      $Qsession->bindRaw(':table_sessions', TABLE_SESSIONS);
+      $Qsession->bindTable(':table_sessions', TABLE_SESSIONS);
       $Qsession->bindValue(':sesskey', $key);
       $Qsession->execute();
 
@@ -247,7 +247,7 @@
       global $osC_Database;
 
       $Qsession = $osC_Database->query('delete from :table_sessions where expiry < :expiry');
-      $Qsession->bindRaw(':table_sessions', TABLE_SESSIONS);
+      $Qsession->bindTable(':table_sessions', TABLE_SESSIONS);
       $Qsession->bindValue(':expiry', time());
       $Qsession->execute();
 
