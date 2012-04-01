@@ -14,22 +14,21 @@
   class osC_Actions_compare_products_remove {
     function execute() {
       global $osC_Session, $toC_Compare_Products;
-
-      $id = false;
-
-      foreach ($_GET as $key => $value) {
-        if ( (ereg('^[0-9]+(#?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)*$', $key) || ereg('^[a-zA-Z0-9 -_]*$', $key)) && ($key != $osC_Session->getName()) ) {
-          if(ereg('^[0-9]', $key)) {
-            $id = $key;
-          }
-        } 
-      }
-
-      if (isset($id) && is_numeric($id)) {
-        $toC_Compare_Products->deleteProduct($id);
-      }
       
-      osc_redirect(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array($id, 'action'))));
+      //the cid must be a numeric or the string as 1#1:1;2:2
+      if (isset($_GET['cid'])) {
+        if (preg_match('/^[0-9]+(_?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)*$/', $_GET['cid']) || preg_match('^[a-zA-Z0-9 -_]*$', $_GET['cid'])) {
+          $cid = $_GET['cid'];
+          
+          if (strpos($cid, '_') !== false) {
+            $cid = str_replace('_', '#', $cid);
+          }
+        }
+        
+        $toC_Compare_Products->deleteProduct($cid);
+        
+        osc_redirect(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('cid', 'action'))));
+      }
     }
   }
 ?>

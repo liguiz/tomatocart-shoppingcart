@@ -36,8 +36,36 @@
         
         foreach ($toC_Compare_Products->getProducts() as $products_id) {
           $osC_Product = new osC_Product($products_id);
+          
+          $cid = $products_id;
+          $str_variants = '';
+          //if the product have any variants, it means that the $products_id should be a product string such as 1#1:1;2:2
+          if ($osC_Product->hasVariants()) {
+            $variants = $osC_Product->getVariants();
+            if (preg_match('/^[0-9]+(#?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)+$/', $products_id)) {
+              $products_variant = $variants[$products_id];
+            }else {
+              $products_variant = $osC_Product->getDefaultVariant();
+            }
             
-          $this->_content .= '<li>' . osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $products_id . '&' . osc_get_all_get_params(array('action')) . '&action=compare_products_remove'), osc_draw_image_button('button_delete_icon.png', $osC_Language->get('button_delete')), 'style="float: right; margin: 0 3px 1px 3px"') . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $products_id), $osC_Product->getTitle()) . '</li>';
+            //if the product have any variants, get the group_name:value_name string
+            $str_variants .= ' -- ';
+            foreach($products_variant['groups_name'] as $groups_name => $value_name) {
+              $str_variants .= '<strong>' . $groups_name . ': ' . $value_name . '</strong>;';
+            }
+            
+            //clean the last ';'
+            if (($pos = strrpos($str_variants, ';')) !== false) {
+              $str_variants = substr($str_variants, 0, -1);
+            }
+            
+            //build the product string that could be used
+            if (strpos($products_id, '#') !== false) {
+              $cid = str_replace('#', '_', $products_id);
+            }
+          }
+            
+          $this->_content .= '<li>' . osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), 'cid=' . $cid . '&' . osc_get_all_get_params(array('cid', 'action')) . '&action=compare_products_remove'), osc_draw_image_button('button_delete_icon.png', $osC_Language->get('button_delete')), 'style="float: right; margin: 0 3px 1px 3px"') . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $products_id), $osC_Product->getTitle() . $str_variants) . '</li>';
         }
         
         $this->_content .= '</ul>';

@@ -14,26 +14,22 @@
   class osC_Actions_compare_products_add {
     function execute() {
       global $osC_Session, $toC_Compare_Products;
-
-      $id = false;
-	
-      foreach ($_GET as $key => $value) {
-        if ( (ereg('^[0-9]+(#?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)*$', $key) || ereg('^[a-zA-Z0-9 -_]*$', $key)) && ($key != $osC_Session->getName()) ) {
-          if(ereg('^[0-9]', $key)) {
-	          $id = $key;
-          }
-        } 
-      }
-	
-		  if (isset($id) && is_numeric($id)) {
-		    $toC_Compare_Products->addProduct($id);
-		  }
       
-		  if (basename($_SERVER['SCRIPT_FILENAME']) == FILENAME_PRODUCTS ) {
-	        osc_redirect(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('action'))));
-		  } else {
-		    osc_redirect(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array($id, 'action'))));
-		  }
+      //Get the compare products id string
+      if (isset($_GET['cid'])) {
+        $cid = $_GET['cid'];
+        
+        if (strpos($cid, '_') !== false) {
+          $cid = str_replace('_', '#', $cid);
+        }
+        
+        //if the products have any variants, the string should be formated as 1#1:1;2:1
+        if (preg_match('/^[0-9]+(#?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)*$/', $cid) || preg_match('^[a-zA-Z0-9 -_]*$', $cid)) {
+          $toC_Compare_Products->addProduct($cid);
+        }
+      }
+      
+      osc_redirect(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('cid', 'action'))));
     }
   }
 ?>
