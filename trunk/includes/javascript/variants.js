@@ -14,6 +14,7 @@ var TocVariants = new Class({
   Implements: [Options],
   options: {
     hasSpecial: 0,
+    linkCompareProductsCls: '.compare-products',
     lang: {
       txtInStock: 'In Stock',
       txtOutOfStock: 'Out Of Stock',
@@ -24,6 +25,7 @@ var TocVariants = new Class({
   
   initialize: function(options) {
     this.setOptions(options);
+    this.checkCompareProducts();
     this.initializeComboBox();
     this.updateView();
   },
@@ -34,6 +36,20 @@ var TocVariants = new Class({
         this.updateView();
       }.bind(this));
     }.bind(this));
+  },
+  
+  //Check whether the compare products feature is enabled
+  checkCompareProducts: function() {
+  	var linkCp = $$(this.options.linkCompareProductsCls);
+  	
+    if ($chk(linkCp)) {
+      this.linkCp = linkCp[0];
+      this.linkCpHref = this.linkCp.getProperty('href');
+      
+      if (this.linkCpHref.search(/cid=/) !== -1) {
+        this.linkCpHref = this.linkCpHref.replace(/&cid=\d+/, '');
+      }
+    }
   },
   
   getProductsIdString: function() {
@@ -49,7 +65,16 @@ var TocVariants = new Class({
   },
     
   updateView: function(choice) {
-    var product = this.options.variants[this.getProductsIdString()];
+  	var productsIdString = this.getProductsIdString();
+  	
+  	//if it is in the product info page and the product have any variants, add the variants into the compare products link
+  	if ($chk(this.linkCp)) {
+    	var href = this.linkCpHref + '&cid=' + productsIdString.replace(/#/, '_');
+    	
+    	this.linkCp.setProperty('href', href);
+	  }
+	  
+    var product = this.options.variants[productsIdString];
     
     if (product == undefined || (product['status'] == 0)) {
       $('productInfoAvailable').innerHTML = '<font color="red">' + this.options.lang.txtNotAvailable + '</font>';

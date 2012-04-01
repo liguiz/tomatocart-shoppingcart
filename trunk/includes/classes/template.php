@@ -484,6 +484,18 @@
 
       return $tag_string . "\n";
     }
+    
+/**
+ * Check whether the module is installed
+ *
+ * @param string $code The code of the module
+ * @param string $group The group name of moudle such as boxes, content, payment etc
+ * @return bool
+ */
+
+    function isInstalled($code = '', $group = '') {
+      return osC_Modules::isInstalled($code, $group);
+    }
 
 /**
  * Return the box modules assigned to the page

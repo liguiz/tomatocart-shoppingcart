@@ -925,7 +925,7 @@ SPAN.markProductError {
 }
 
 /* compareProducts */
-#compareProducts {border: 1px solid #CCCCCC;}
+#compareProducts {width: 100%; border: 1px solid #CCCCCC;}
 #compareProducts td.label {font-weight: bold;}
 #compareProducts td {padding: 5px;}
 #compareProducts tr.odd {background: #F8F7F5 none repeat scroll 0 0;}

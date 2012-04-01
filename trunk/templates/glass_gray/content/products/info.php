@@ -202,7 +202,7 @@
    ?>
       
       <tr>
-        <td colspan="2" align="center" valign="top" style="padding-top: 15px" id="shoppingCart">
+        <td colspan="2" align="left" valign="top" style="padding-top: 15px" id="shoppingCart">
           <?php
             echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Product->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;" class="ajaxAddToCart" id="ac_productsinfo_' . osc_get_product_id($osC_Product->getID()) . '"');
           ?>
@@ -212,7 +212,11 @@
       <tr>
         <td colspan="2" align="center" id = "shoppingAction">
           <?php
-            echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $osC_Product->getID() . '&' . '&action=compare_products_add'), $osC_Language->get('add_to_compare')) . '&nbsp;<span>|</span>&nbsp;' . osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $osC_Product->getID() . '&action=wishlist_add'), $osC_Language->get('add_to_wishlist'));
+            if ($osC_Template->isInstalled('compare_products', 'boxes')) {
+              echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params() . '&cid=' . $osC_Product->getID() . '&' . '&action=compare_products_add'), $osC_Language->get('add_to_compare'), 'class="compare-products"') . '&nbsp;<span>|</span>&nbsp;';
+            }
+            
+            echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $osC_Product->getID() . '&action=wishlist_add'), $osC_Language->get('add_to_wishlist'));
           ?>
         </td>
       </tr>
@@ -256,8 +260,10 @@
       if ($osC_Product->getDescription()) {
         echo '<a tab="tabDescription" href="javascript:void(0);">' . $osC_Language->get('section_heading_products_description') . '</a>'; 
       }
-            
-      echo '<a tab="tabReviews" href="javascript:void(0);">' . $osC_Language->get('section_heading_reviews') . '(' . $osC_Reviews->getReviewsCount($osC_Product->getID()) . ')</a>';
+      
+      if ($osC_Services->isStarted('reviews')) {
+        echo '<a tab="tabReviews" href="javascript:void(0);">' . $osC_Language->get('section_heading_reviews') . '(' . $osC_Reviews->getReviewsCount($osC_Product->getID()) . ')</a>';
+      }
       
       if ($osC_Product->hasQuantityDiscount()) {
         echo '<a tab="tabQuantityDiscount" href="javascript:void(0);">' . $osC_Language->get('section_heading_quantity_discount') . '</a>';         
@@ -282,113 +288,118 @@
       </div>
     <?php  } ?>
     
-    <div id="tabReviews">
-      <div class="moduleBox">
-        <div class="content">
-          <?php
-            if ($osC_Reviews->getReviewsCount($osC_Product->getID())==0) {
-              echo '<p>' . $osC_Language->get('no_review') . '</p>';
-            } else {
-              $Qreviews = osC_Reviews::getListing($osC_Product->getID());
-              
-              while ($Qreviews->next()) {
-          ?>
-              <dl class="review">
-                <?php
-                  echo '<dt>' . osc_image(DIR_WS_IMAGES . 'stars_' . $Qreviews->valueInt('reviews_rating') . '.png', sprintf($osC_Language->get('rating_of_5_stars'), $Qreviews->valueInt('reviews_rating'))).'&nbsp;&nbsp;&nbsp;&nbsp;'.sprintf($osC_Language->get('reviewed_by'), '&nbsp; <b>' . $Qreviews->valueProtected('customers_name')) . '</b>' . '&nbsp;&nbsp;(' . $osC_Language->get('field_posted_on').'&nbsp;' . osC_DateTime::getLong($Qreviews->value('date_added')) . ')' . '</dt>';
-                   
-                  echo '<dd>';
-                  $ratings = osC_Reviews::getCustomersRatings($Qreviews->valueInt('reviews_id'));
-                  
-                  if (sizeof($ratings) > 0) {
-                    echo '<table class="ratingsResult">';
-                    foreach ($ratings as $rating) {
-                      echo '<tr>
-                             <td class="name">' . $rating['name'] . '</td><td>' . osc_image(DIR_WS_IMAGES . 'stars_' . $rating['value'] . '.png', sprintf($osC_Language->get('rating_of_5_stars'), $rating['value'])) . '</td>
-                            </tr>';
-                    }
-                    echo '</table>';
-                  }
-                  
-                  echo '<p>' . $Qreviews->valueProtected('reviews_text') . '</p>';
-                  echo '</dd>'; 
-                ?>
-              </dl>
-          <?php
-              }
-            }
-          ?>
-          
-          <hr />
-          
-          <h3><?php echo $osC_Language->get('heading_write_review'); ?></h3>
-          
-          <?php if (!$osC_Customer->isLoggedOn()) { ?>
-            <p><?php echo sprintf($osC_Language->get('login_to_write_review'), osc_href_link(FILENAME_ACCOUNT, 'login', 'SSL')); ?></p>
-          <?php } else { ?>
-
-            <p><?php echo $osC_Language->get('introduction_rating'); ?></p>
-              
-            <form id="frmReviews" name="newReview" action="<?php echo osc_href_link(FILENAME_PRODUCTS, 'reviews=new&' . $osC_Product->getID() . '&action=process'); ?>" method="post">
-            
+    <?php if ($osC_Services->isStarted('reviews')) { ?>
+    
+      <div id="tabReviews">
+        <div class="moduleBox">
+          <div class="content">
             <?php
-              $ratings = osC_Reviews::getCategoryRatings($osC_Product->getCategoryID());
-              if (sizeof($ratings) == 0) {
+              if ($osC_Reviews->getReviewsCount($osC_Product->getID())==0) {
+                echo '<p>' . $osC_Language->get('no_review') . '</p>';
+              } else {
+                $Qreviews = osC_Reviews::getListing($osC_Product->getID());
+                
+                while ($Qreviews->next()) {
             ?>
-              <p><?php echo '<b>' . $osC_Language->get('field_review_rating') . '</b>&nbsp;&nbsp;&nbsp;' . $osC_Language->get('review_lowest_rating_title') . ' ' . osc_draw_radio_field('rating', array('1', '2', '3', '4', '5')) . ' ' . $osC_Language->get('review_highest_rating_title'); ?></p>
-              <input type="hidden" id="rat_flag" name="rat_flag" value="0" />
-            <?php 
-            } else {
-            ?>
-                <table class="ratings" border="1" cellspacing="0" cellpadding="0">
-                  <thead>
-                    <tr>
-                      <td width="45%">&nbsp;</td>
-                      <td><?php echo $osC_Language->get('1_star'); ?></td>
-                      <td><?php echo $osC_Language->get('2_stars'); ?></td>
-                      <td><?php echo $osC_Language->get('3_stars'); ?></td>
-                      <td><?php echo $osC_Language->get('4_stars'); ?></td>
-                      <td><?php echo $osC_Language->get('5_stars'); ?></td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <?php 
-                    $i = 0;
-                    foreach ( $ratings as $key => $value ) {
-                    ?>
-                      <tr>
-                        <td><?php echo $value;?></td>
-                        <td><?php echo osc_draw_radio_field('rating_' . $key, 1, null, ' title="radio' . $i . '" ');?></td>
-                        <td><?php echo osc_draw_radio_field('rating_' . $key, 2, null, ' title="radio' . $i . '" ');?></td>
-                        <td><?php echo osc_draw_radio_field('rating_' . $key, 3, null, ' title="radio' . $i . '" ');?></td>
-                        <td><?php echo osc_draw_radio_field('rating_' . $key, 4, null, ' title="radio' . $i . '" ');?></td>
-                        <td><?php echo osc_draw_radio_field('rating_' . $key, 5, null, ' title="radio' . $i . '" ');?></td>
-                      </tr>
-                    <?php 
-                      $i++;
+                <dl class="review">
+                  <?php
+                    echo '<dt>' . osc_image(DIR_WS_IMAGES . 'stars_' . $Qreviews->valueInt('reviews_rating') . '.png', sprintf($osC_Language->get('rating_of_5_stars'), $Qreviews->valueInt('reviews_rating'))).'&nbsp;&nbsp;&nbsp;&nbsp;'.sprintf($osC_Language->get('reviewed_by'), '&nbsp; <b>' . $Qreviews->valueProtected('customers_name')) . '</b>' . '&nbsp;&nbsp;(' . $osC_Language->get('field_posted_on').'&nbsp;' . osC_DateTime::getLong($Qreviews->value('date_added')) . ')' . '</dt>';
+                     
+                    echo '<dd>';
+                    $ratings = osC_Reviews::getCustomersRatings($Qreviews->valueInt('reviews_id'));
+                    
+                    if (sizeof($ratings) > 0) {
+                      echo '<table class="ratingsResult">';
+                      foreach ($ratings as $rating) {
+                        echo '<tr>
+                               <td class="name">' . $rating['name'] . '</td><td>' . osc_image(DIR_WS_IMAGES . 'stars_' . $rating['value'] . '.png', sprintf($osC_Language->get('rating_of_5_stars'), $rating['value'])) . '</td>
+                              </tr>';
+                      }
+                      echo '</table>';
                     }
-                    ?>
-                  </tbody>
-                </table>
-              <?php
+                    
+                    echo '<p>' . $Qreviews->valueProtected('reviews_text') . '</p>';
+                    echo '</dd>'; 
+                  ?>
+                </dl>
+            <?php
                 }
+              }
+            ?>
+            
+            <hr />
+            
+            <h3><?php echo $osC_Language->get('heading_write_review'); ?></h3>
+            
+            <?php if (!$osC_Customer->isLoggedOn()) { ?>
+              <p><?php echo sprintf($osC_Language->get('login_to_write_review'), osc_href_link(FILENAME_ACCOUNT, 'login', 'SSL')); ?></p>
+            <?php } else { ?>
+  
+              <p><?php echo $osC_Language->get('introduction_rating'); ?></p>
+                
+              <form id="frmReviews" name="newReview" action="<?php echo osc_href_link(FILENAME_PRODUCTS, 'reviews=new&' . $osC_Product->getID() . '&action=process'); ?>" method="post">
+              
+              <?php
+                $ratings = osC_Reviews::getCategoryRatings($osC_Product->getCategoryID());
+                if (sizeof($ratings) == 0) {
               ?>
+                <p><?php echo '<b>' . $osC_Language->get('field_review_rating') . '</b>&nbsp;&nbsp;&nbsp;' . $osC_Language->get('review_lowest_rating_title') . ' ' . osc_draw_radio_field('rating', array('1', '2', '3', '4', '5')) . ' ' . $osC_Language->get('review_highest_rating_title'); ?></p>
+                <input type="hidden" id="rat_flag" name="rat_flag" value="0" />
+              <?php 
+              } else {
+              ?>
+                  <table class="ratings" border="1" cellspacing="0" cellpadding="0">
+                    <thead>
+                      <tr>
+                        <td width="45%">&nbsp;</td>
+                        <td><?php echo $osC_Language->get('1_star'); ?></td>
+                        <td><?php echo $osC_Language->get('2_stars'); ?></td>
+                        <td><?php echo $osC_Language->get('3_stars'); ?></td>
+                        <td><?php echo $osC_Language->get('4_stars'); ?></td>
+                        <td><?php echo $osC_Language->get('5_stars'); ?></td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php 
+                      $i = 0;
+                      foreach ( $ratings as $key => $value ) {
+                      ?>
+                        <tr>
+                          <td><?php echo $value;?></td>
+                          <td><?php echo osc_draw_radio_field('rating_' . $key, 1, null, ' title="radio' . $i . '" ');?></td>
+                          <td><?php echo osc_draw_radio_field('rating_' . $key, 2, null, ' title="radio' . $i . '" ');?></td>
+                          <td><?php echo osc_draw_radio_field('rating_' . $key, 3, null, ' title="radio' . $i . '" ');?></td>
+                          <td><?php echo osc_draw_radio_field('rating_' . $key, 4, null, ' title="radio' . $i . '" ');?></td>
+                          <td><?php echo osc_draw_radio_field('rating_' . $key, 5, null, ' title="radio' . $i . '" ');?></td>
+                        </tr>
+                      <?php 
+                        $i++;
+                      }
+                      ?>
+                    </tbody>
+                  </table>
+                <?php
+                  }
+                ?>
+                
+                <h6><?php echo $osC_Language->get('field_review'); ?></h6>
+                
+                <?php echo osc_draw_textarea_field('review', null, 45, 5); ?>
               
-              <h6><?php echo $osC_Language->get('field_review'); ?></h6>
+                <div class="submitFormButtons">
+                  <input type="hidden" id="radio_lines" name="radio_lines" value="<?php echo $i; ?>"/>
+                  <?php echo osc_draw_image_submit_button('submit_reviews.gif', $osC_Language->get('submit_reviews')); ?>
+                </div>
               
-              <?php echo osc_draw_textarea_field('review', null, 45, 5); ?>
-            
-              <div class="submitFormButtons">
-                <input type="hidden" id="radio_lines" name="radio_lines" value="<?php echo $i; ?>"/>
-                <?php echo osc_draw_image_submit_button('submit_reviews.gif', $osC_Language->get('submit_reviews')); ?>
-              </div>
-            
-            </form>
-          <?php } ?>
-        </div>  
+              </form>
+            <?php } ?>
+          </div>  
+        </div>
       </div>
-    </div>
-      
+    <?php
+      }
+    ?>
+    
     <?php  if ($osC_Product->hasQuantityDiscount()) { ?>
       <div id="tabQuantityDiscount">
         <div class="moduleBox">
