@@ -159,6 +159,19 @@ A:hover {
   height: 15px;
 }
 
+.clearfix:after{
+ content: ".";
+ display: block;
+ height: 0;
+ clear: both;
+ visibility: hidden;
+}
+.clearfix{display: inline-table;}
+/* Hides from IE-mac \*/
+* html .clearfix{height: 1%;}
+.clearfix{display: block;}
+/* End hide from IE-mac */
+
 /* LAYOUT */
 #pageHeader {
   width: 100%;
@@ -1029,6 +1042,10 @@ span.error {
 #guestbook dt span{font-size: 11px; float: right;font-weight:normal}
 #guestbook dd{padding: 8px 10px; border-bottom: 1px dashed #ccc;}
 #guestbook dd.last{border-bottom: none;}
+
+.captcha span {display: block;}
+.captcha-image, .captcha-field {float: left;}
+.captcha-image {margin-right: 10px;border: 1px solid #DDDDDD;}
 
 #boxGuestbook dt{padding: 3px; font-size: 11px; font-weight:bold; color: #666}
 #boxGuestbook dd{padding: 4px; font-size: 11px; font-weight:normal; color: #666;}

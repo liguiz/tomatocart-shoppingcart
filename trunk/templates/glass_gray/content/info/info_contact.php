@@ -75,8 +75,14 @@
       <li><?php echo osc_draw_label($osC_Language->get('contact_enquiry_title'), 'enquiry') . osc_draw_textarea_field('enquiry', null, 38, 5); ?></li>
 
     <?php if( ACTIVATE_CAPTCHA == '1') {?>
-      <li><?php echo osc_draw_label($osC_Language->get('contact_code_title'), 'concat_code') . osc_draw_input_field('concat_code', '', 'size="30"'); ?> </li>
-      <li><img style = "padding-left: 170px;" src="<?php echo osc_href_link(FILENAME_INFO, 'contact=showImage', 'AUTO', true, false); ?>" alt="Captcha" /></li>
+      <li class="clearfix captcha">
+        <span class="captcha-image"><?php echo osc_image(osc_href_link(FILENAME_INFO, 'contact=show_captcha', 'AUTO', true, false), $osC_Language->get('captcha_image_title'), 215, 80, 'id="captcha-code"'); ?></span>
+        <span class="captcha-field">
+          <span><?php echo osc_link_object(osc_href_link('#'), osc_image('ext/securimage/images/refresh.png', $osC_Language->get('refresh_captcha_image_title')), 'id="refresh-captcha-code"'); ?></span>
+          <span><?php echo osc_draw_label($osC_Language->get('enter_captcha_code'), 'captcha_code', null, true); ?></span>
+          <span><?php echo osc_draw_input_field('captcha_code', '', 'size="22"'); ?></span>
+        </span>
+      </li>
     <?php } ?>
     
     </ol>
@@ -92,6 +98,17 @@
 </div>
 
 </form>
+  <script type="text/javascript">
+    $('refresh-captcha-code').addEvent('click', function(e) {
+      e.stop();
+      
+      var contactController = '<?php echo osc_href_link(FILENAME_INFO, 'contact=show_captcha', 'AUTO', true, false); ?>';
+      var captchaImgSrc = contactController + '&' + Math.random();
+            
+      $('captcha-code').setProperty('src', captchaImgSrc);
+    });
+  </script>
+  
   <?php if (!empty($departments_description)) { ?>
     <script type="text/javascript">
       window.addEvent("domready", function() {

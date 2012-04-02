@@ -11,7 +11,7 @@
   as published by the Free Software Foundation.
 */
   require_once("includes/classes/departments.php");
-  require_once("includes/classes/captcha.php");
+  require_once("ext/securimage/securimage.php");
   
   class osC_Info_Contact extends osC_Template {
 
@@ -27,7 +27,7 @@
 
     function osC_Info_Contact() {
       global $osC_Services, $osC_Language, $breadcrumb;
-
+      
       $this->_page_title = $osC_Language->get('info_contact_heading');
 
       if ($osC_Services->isStarted('breadcrumb')) {
@@ -38,12 +38,17 @@
         $this->_process();
       }
       
-      if($_GET[$this->_module] == 'showImage') {
-        $this->_generateImage();
+      if ($_GET[$this->_module] == 'show_captcha') {
+        $this->_show_captcha();
       }
     }
 
 /* Private methods */
+    function _show_captcha() {
+      $img = new securimage();
+      
+      $img->show();
+    }
 
     function _process() {
       global $osC_Language, $messageStack;
@@ -85,10 +90,10 @@
       }
       
       if ( ACTIVATE_CAPTCHA == '1' ) {
-        if (isset($_POST['concat_code']) && !empty($_POST['concat_code'])) {
-          $concat_code = osc_sanitize_string($_POST['concat_code']);
+        if (isset($_POST['captcha_code']) && !empty($_POST['captcha_code'])) {
+          $securimage = new Securimage();
           
-          if ( !strcasecmp($concat_code, $_SESSION['verify_code']) == 0 ) {
+          if ($securimage->check($_POST['captcha_code']) == false) {
             $messageStack->add('contact', $osC_Language->get('field_concat_captcha_check_error'));
           }
         } else {
@@ -101,13 +106,6 @@
 
         osc_redirect(osc_href_link(FILENAME_INFO, 'contact=success', 'AUTO', true, false));    
       } 
-    }
-    
-    function _generateImage() {
-      $captcha = new toC_Captcha();
-      $_SESSION['verify_code'] = $captcha->getCode(); 
-      
-      $captcha->genCaptcha();
     }
   }
 ?>
