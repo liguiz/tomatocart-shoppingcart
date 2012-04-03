@@ -45,13 +45,18 @@
         <?php 
              $i++;
            }
+           
            $Qlisting->freeResult();
         ?>
         </dl>          
-      <?php } ?>
+      <?php 
+        }else {
+          echo $osC_Language->get('field_guestbook_no_records');
+        }
+      ?>
     </div>
 
     <p align="right">
-        <?php echo osc_link_object(osc_href_link(FILENAME_INFO, 'guestbook&new'), osc_draw_image_button('write_message.png', $osC_Language->get('button_write_message'))); ?>
+        <?php echo osc_link_object(osc_href_link(FILENAME_INFO, 'guestbook=new'), osc_draw_image_button('write_message.png', $osC_Language->get('button_write_message'))); ?>
     </p>
   </div>

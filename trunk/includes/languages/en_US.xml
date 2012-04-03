@@ -145,9 +145,14 @@
       <value><![CDATA[ERROR: Please specify the content.]]></value>
       <group>general</group>
     </definition>
-     <definition>
+    <definition>
       <key>field_guestbook_verify_code_error</key>
       <value><![CDATA[ERROR: Please specify the correct verify code.]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>field_guestbook_no_records</key>
+      <value><![CDATA[There isn't any guestbook yet.]]></value>
       <group>general</group>
     </definition>
      <definition>
