@@ -12,7 +12,7 @@
 */
 
   require_once('includes/classes/guestbook.php');
-  require_once('includes/classes/captcha.php');
+  require_once("ext/securimage/securimage.php");
   
   class osC_Info_Guestbook extends osC_Template {
 
@@ -33,21 +33,30 @@
     
       if ($osC_Services->isStarted('breadcrumb')) {
         $breadcrumb->add($osC_Language->get('breadcrumb_guestbook'), osc_href_link(FILENAME_INFO, $this->_module));
-      }      
-      
-      if (isset($_REQUEST['new'])) {
-        $this->_page_contents = 'guestbook_new.php';
-      } else if (isset($_REQUEST['save'])) {
-        $this->_page_contents = 'guestbook_new.php';
-        
-        $this->_process();
       }
       
-      if (isset($_REQUEST['captcha'])) {
-        $this->_generateImage();
+      if (isset($_GET[$this->_module])) {
+        if ($_GET[$this->_module] == 'new') {
+          $this->_page_contents = 'guestbook_new.php';
+        }else if ($_GET[$this->_module] == 'save') {
+          $this->_page_contents = 'guestbook_new.php';
+        
+          $this->_process();
+        }
+      }
+
+      if ($_GET[$this->_module] == 'show_captcha') {
+        $this->_show_captcha();
       }
     }
-    
+
+/* Private methods */
+    function _show_captcha() {
+      $img = new securimage();
+      
+      $img->show();
+    }
+        
     function _process() {
       global $osC_Database, $messageStack, $osC_Language;
       
@@ -71,11 +80,19 @@
       } else {
         $messageStack->add('guestbook', $osC_Language->get('field_guestbook_content_error'));
       }
-              
-      if( $_POST['verify_code'] != $_SESSION['verify_code'] ) {
-        $messageStack->add('guestbook', $osC_Language->get('field_guestbook_verify_code_error'));
-      }
       
+      if ( ACTIVATE_CAPTCHA == '1' ) {
+        if (isset($_POST['captcha_code']) && !empty($_POST['captcha_code'])) {
+          $securimage = new Securimage();
+          
+          if ($securimage->check($_POST['captcha_code']) == false) {
+            $messageStack->add('guestbook', $osC_Language->get('field_guestbook_verify_code_error'));
+          }
+        } else {
+          $messageStack->add('guestbook', $osC_Language->get('field_guestbook_verify_code_error'));
+        }  
+      }
+              
       if($messageStack->size('guestbook') === 0) {
         if ( toC_Guestbook::saveEntry($data) ) {
           $messageStack->add_session('guestbook', $osC_Language->get('success_guestbook_saved'), 'success');
@@ -84,13 +101,5 @@
         osc_redirect(osc_href_link(FILENAME_INFO, 'guestbook'));
       }
     }
-
-    function _generateImage() {
-      $captcha = new toC_Captcha();
-      
-      $_SESSION['verify_code'] = $captcha->getCode(); 
-      
-      $captcha->genCaptcha();
-    }      
   }
 ?>
