@@ -14,6 +14,7 @@ var TocVariants = new Class({
   Implements: [Options],
   options: {
     hasSpecial: 0,
+    remoteUrl: 'json.php',
     linkCompareProductsCls: '.compare-products',
     lang: {
       txtInStock: 'In Stock',
@@ -21,6 +22,16 @@ var TocVariants = new Class({
       txtNotAvailable: 'Not Available',
       txtTaxText: 'incl. tax'
     }
+  },
+  
+  sendRequest: function(data, fnSuccess) {
+    data.module = 'products';
+    
+    var loadRequest = new Request({
+      url: this.options.remoteUrl,
+      data: data,
+      onSuccess: fnSuccess.bind(this)
+    }).send();
   },
   
   initialize: function(options) {
@@ -82,8 +93,18 @@ var TocVariants = new Class({
     } else {
       if (product['quantity'] > 0) {
         if (this.options.hasSpecial == 0) {
-          $('productInfoPrice').set('text', product['display_price'] + ' ' + this.options.lang.txtTaxText);
+        	// get the formatted price of the variants product by ajax requst
+        	this.sendRequest({action: 'get_variants_formatted_price', products_id_string: productsIdString}, function(response) {
+            var result = JSON.decode(response);
+            
+            if (result.success == true) {
+              $('productInfoPrice').set('text', result.formatted_price + ' ' + this.options.lang.txtTaxText);
+            }else {
+              alert(result.feedback);
+            }
+        	}.bind(this));
         }
+        
         $('productInfoSku').set('text', product['sku']);
         if (this.options.displayQty == true) {
           $('productInfoQty').set('text', product['quantity'] + ' ' + this.options.unitClass);
@@ -95,13 +116,13 @@ var TocVariants = new Class({
         
         this.changeImage(product['image']);
       } else {
-          $('productInfoAvailable').set('text', this.options.lang.txtOutOfStock);
-          $('productInfoQty').set('text', product['quantity'] + ' ' + this.options.unitClass);
-          
-          //if not allow checkout then disable the info box
-          if (!this.options.allowCheckout) {
-            this.disableInfoBox();
-          }
+        $('productInfoAvailable').set('text', this.options.lang.txtOutOfStock);
+        $('productInfoQty').set('text', product['quantity'] + ' ' + this.options.unitClass);
+        
+        //if not allow checkout then disable the info box
+        if (!this.options.allowCheckout) {
+          this.disableInfoBox();
+        }
       }
     }
   },

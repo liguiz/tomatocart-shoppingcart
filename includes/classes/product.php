@@ -596,7 +596,7 @@
       return $product_price;
     }
 
-    function getPriceFormated($with_special = false) {
+    function getPriceFormated($with_special = false, $variants = array()) {
       global $osC_Services, $osC_Specials, $osC_Currencies;
 
       $price = '';
@@ -606,7 +606,7 @@
         if (($with_special === true) && is_object($osC_Services) && $osC_Services->isStarted('specials') && ($new_price = $osC_Specials->getPrice($this->_data['id']))) {
           $price = '<s>' . $osC_Currencies->displayPrice($this->_data['price'], $this->_data['tax_class_id']) . '</s> <span class="productSpecialPrice">' . $osC_Currencies->displayPrice($new_price, $this->_data['tax_class_id']) . '</span>';
         } else {
-          $price = $osC_Currencies->displayPrice($this->getPrice(), $this->_data['tax_class_id']);
+          $price = $osC_Currencies->displayPrice($this->getPrice($variants), $this->_data['tax_class_id']);
         }
       }
 

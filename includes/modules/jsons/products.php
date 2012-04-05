@@ -25,5 +25,26 @@
       
       echo $content;
     }
+    
+    function getVariantsFormattedPrice() {
+      global $toC_Json;
+      
+      $response = array();
+      
+      if (isset($_POST['products_id_string']) && preg_match('/^[0-9]+(#([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)$/', $_POST['products_id_string'])) {
+        $response['success'] = true;
+        
+        $variants = osc_parse_variants_from_id_string($_POST['products_id_string']);
+        $osC_Product = new osC_Product($_POST['products_id_string']);
+        $formatted_price = $osC_Product->getPriceFormated(true, $variants);
+        
+        $response['formatted_price'] = $formatted_price;
+      }else {
+        $response['success'] = false;
+        $response['feedback'] = 'The products id string is not valid';
+      }
+      
+      echo $toC_Json->encode($response);
+    }
   }
   
