@@ -502,6 +502,7 @@ window.addEvent('domready', function(){
   if ($osC_Product->hasVariants()) {   
     ?>
   new TocVariants({
+    remoteUrl: '<?php echo osc_href_link('json.php', null, 'SSL', false, false, true); ?>',
     combVariants: $$('tr.variantCombobox select'),
     variants: <?php echo $toC_Json->encode($osC_Product->getVariants()); ?>,
     productsId: <?php echo $osC_Product->getID(); ?>,
