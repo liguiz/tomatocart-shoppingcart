@@ -813,6 +813,9 @@
  */
 
     function addPageTags($key, $value) {
+      $key = preg_replace('/[^\w\d_ -]/si', '', $key);
+      $value = preg_replace('/[^\w\d_ -]/si', '', $value);
+      
       $this->_page_tags[$key][] = $value;
     }
 
