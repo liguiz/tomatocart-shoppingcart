@@ -203,9 +203,9 @@ var AjaxShoppingCart = new Class({
                 duration: 700,
                 onComplete: function() {
                   floatImage.fade('out');
-
+                  
                   this.updateCart(result.content);
-
+                  
                   (function() {floatImage.destroy()}).delay(1000);
 
                   addToCartButton.erase('disabled');
@@ -317,11 +317,11 @@ var AjaxShoppingCart = new Class({
     //shopping cart short view
     $('ajaxCartContentShort').getElement('.quantity').set('html', json.numberOfItems);
     $('ajaxCartContentShort').getElement('.cartTotal').set('html', json.total);
-
+    
     //shopping cart long view
     this.updateProductsContent(json);
     this.updateOrderTotals(json);
-
+    
     this.cartHeight = $('ajaxCartContentLong').getSize().y;
   },
 
@@ -397,10 +397,11 @@ var AjaxShoppingCart = new Class({
               var variantsEl = new Element('p', {'class': 'variants', 'html': variants.join('<br />')});
               rowEl.grab(variantsEl);
             }
-
+            
             //customization fields
             if ( $defined(product.customizations) ) {
-              var customizationsEl = new Element('p', {'class': 'customizations', 'html': this.getCustomizations(product.customizations)});
+              var customizationsEl = new Element('div', {'class': 'customizations', 'html': this.getCustomizations(product.customizations)});
+              
               rowEl.grab(customizationsEl);
             }
             
