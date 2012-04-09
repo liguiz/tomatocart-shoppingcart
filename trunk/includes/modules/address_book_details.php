@@ -100,9 +100,9 @@
           $zones_array[] = array('id' => $Qzones->value('zone_name'), 'text' => $Qzones->value('zone_name'));
         }
 
-        echo osc_draw_pull_down_menu('state', $zones_array);
+        echo '<span id="state-container">' . osc_draw_pull_down_menu('state', $zones_array) . '</span>';
       } else {
-        echo osc_draw_input_field('state');
+        echo '<span id="state-container">' . osc_draw_input_field('state') . '</span>';
       }
     } else {
       if (isset($Qentry)) {
@@ -126,9 +126,9 @@
       }
       
       if (isset($zones_array) && !empty($zones_array)) {
-        echo osc_draw_pull_down_menu('state', $zones_array);
+        echo '<span id="state-container">' . osc_draw_pull_down_menu('state', $zones_array) . '</span>';
       }else {
-        echo osc_draw_input_field('state', (isset($Qentry) ? $zone : null));
+        echo '<span id="state-container">' . osc_draw_input_field('state', (isset($Qentry) ? $zone : null)) . '</span>';
       }
     }
 ?>

@@ -20,7 +20,7 @@ var AddressBook = new Class({
     //the id of the country combox
     countryId: 'country',
     //the id of th state combox
-    stateId: 'state'
+    stateId: 'state-container'
   },
   
   /**
@@ -84,8 +84,9 @@ var AddressBook = new Class({
     
       this.sendRequest(params, function(response) {
         var result = JSON.decode(response);
-
+        
         if (result.success == true) {
+        	$(this.options.stateId).empty();
           $(this.options.stateId).set('html', result.html);
         }
       }.bind(this));
