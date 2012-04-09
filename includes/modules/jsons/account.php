@@ -52,11 +52,11 @@
       if (sizeof($zones_array) > 0) {
         $response = array(
           'success' => true, 
-          'html' => osc_draw_label($osC_Language->get('field_customer_state'), null, 'state', (ACCOUNT_STATE > 0)) . osc_draw_pull_down_menu('state', $zones_array));
+          'html' => osc_draw_pull_down_menu('state', $zones_array));
       } else {
         $response = array(
           'success' => true, 
-          'html' => osc_draw_label($osC_Language->get('field_customer_state'), null, 'state', (ACCOUNT_STATE > 0)) . osc_draw_input_field('state'));
+          'html' => osc_draw_input_field('state'));
       }
       
       echo $toC_Json->encode($response);
