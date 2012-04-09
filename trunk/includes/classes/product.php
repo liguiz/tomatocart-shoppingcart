@@ -919,7 +919,7 @@
         if ($field['type'] == 0) {
           $output .= '<li>' . osc_draw_label($field['name'], 'customizations_' . $field['customization_fields_id'], $value, ($field['is_required'] == '1' ? true : false)) . osc_draw_file_field('customizations_' . $field['customization_fields_id'], true) . '<br /><span>' . $value . '</span></li>';
         } else {
-          $output .= '<li>' . osc_draw_label($field['name'], 'customizations[' . $field['customization_fields_id'] . ']', null, ($field['is_required'] == '1' ? true : false)) . osc_draw_input_field('customizations[' . $field['customization_fields_id'] . ']', $value) . '</li>';
+          $output .= '<li>' . osc_draw_label($field['name'], 'customizations[' . $field['customization_fields_id'] . ']', null, ($field['is_required'] == '1' ? true : false)) . osc_draw_input_field('customizations[' . $field['customization_fields_id'] . ']', $value, 'size="30"') . '</li>';
         }
       }
       $output .= '</ul>';
