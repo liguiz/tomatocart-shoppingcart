@@ -59,15 +59,15 @@ var MojoZoom = (function() {
 
 	function makeZoomable(img, zoomSrc, zoomImgCtr, zoomWidth, zoomHeight, alwaysShow, onImgClick) {
 		// make sure the image is loaded, if not then add an onload event and return
-		if (!img.complete && !img.__mojoZoomQueued) {
-			addEvent(img, "load", function() {
-				img.__mojoZoomQueued = true;
-				setTimeout(function() {
-				makeZoomable(img, zoomSrc, zoomImgCtr, zoomWidth, zoomHeight, alwaysShow);
-				}, 1);
-			});
-			return;
-		}
+//		if (!img.complete && !img.__mojoZoomQueued) {
+//			addEvent(img, "load", function() {
+//				img.__mojoZoomQueued = true;
+//				setTimeout(function() {
+//				makeZoomable(img, zoomSrc, zoomImgCtr, zoomWidth, zoomHeight, alwaysShow);
+//				}, 1);
+//			});
+//			return;
+//		}
 
 		img.__mojoZoomQueued = false;
 

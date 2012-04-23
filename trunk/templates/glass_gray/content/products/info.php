@@ -10,7 +10,6 @@
   it under the terms of the GNU General Public License v2 (1991)
   as published by the Free Software Foundation.
 */
-
 ?>
 
 <h1><?php echo $osC_Template->getPageTitle(); ?></h1>
@@ -538,15 +537,21 @@ window.addEvent('domready', function(){
           if ($defined(e)) {e.preventDefault();}
   
           var oldImg = imgElem.get('src');
-          if (oldImg != this.get("large-img")) {
-            img.set('src', this.get("large-img"));
+          var largeImg = this.get("large-img");
+          
+          if (oldImg != largeImg) {
+            img.set('src', largeImg);
             
             new Fx.Tween($('product_image'), {
                duration: 10,
                property: 'opacity'
             }).start(0).chain(function() {
               $('product_image').src = this.get("product-info-img");
-              $$('.mojozoom_imgctr').getElement('img').setProperty('src', this.get('large-img'));
+              
+              $$('.mojozoom_imgctr img').each(function(imgCtr) {
+                imgCtr.setProperty('src', largeImg);
+              });                          
+              
               $('product_image').fade('in');
             }.bind(this));
           }
