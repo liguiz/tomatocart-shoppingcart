@@ -94,7 +94,7 @@
       $count = $Qpolls->valueInt('votes_count');
       while ($Qanswers->next()) {
         $votes_count = $Qanswers->valueInt('votes_count');
-        $answers_title = $Qanswers->value('answers_title');\
+        $answers_title = $Qanswers->value('answers_title');
         
         if ($count != 0 ) {
           $status = (float) $votes_count / (float) $count;
