@@ -8,7 +8,7 @@
     </definition>
     <definition>
       <key>payment_authorizenet_cc_sim_method_title</key>
-      <value><![CDATA[Credit Card (Processed by Authorize.net)]]></value>
+      <value><![CDATA[Credit Card (Processed by Authorize.net SIM)]]></value>
       <group>modules-payment</group>
     </definition>
     <definition>

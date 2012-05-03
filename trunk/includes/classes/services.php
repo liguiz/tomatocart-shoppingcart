@@ -18,7 +18,19 @@
         $call_after_page_content = array();
 
     function osC_Services() {
-      $this->services = explode(';', MODULE_SERVICES_INSTALLED);
+      $services = explode(';', MODULE_SERVICES_INSTALLED);
+      
+      //ensure that the session serice will be started firstly
+      $need_start_services = array();
+      foreach($services as $service) {
+        if ($service == 'session') {
+          $this->startService($service);
+        }else {
+          $need_start_services[] = $service;
+        }
+      }
+      
+      $this->services = $need_start_services;
     }
 
     function startServices() {

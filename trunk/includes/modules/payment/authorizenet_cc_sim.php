@@ -81,7 +81,7 @@
       $error = false;
       
       if (isset($_POST['x_response_code']) && $_POST['x_response_code'] == '1') {
-        if ((MODULE_PAYMENT_AUTHORIZENET_CC_SIM_MD5_HASH != NULL) && (isset($_POST['x_MD5_Hash']) && $POST['x_MD5_Hash'] != strtoupper(md5(MODULE_PAYMENT_AUTHORIZENET_CC_SIM_MD5_HASH . MODULE_PAYMENT_AUTHORIZENET_CC_SIM_API_LOGIN_ID . $_POST['x_trans_id'] . $osC_Currencies->formatRaw($osC_ShoppingCart->getTotal()))))) {
+        if ((MODULE_PAYMENT_AUTHORIZENET_CC_SIM_MD5_HASH != NULL) && (isset($_POST['x_MD5_Hash']) && $_POST['x_MD5_Hash'] != strtoupper(md5(MODULE_PAYMENT_AUTHORIZENET_CC_SIM_MD5_HASH . MODULE_PAYMENT_AUTHORIZENET_CC_SIM_API_LOGIN_ID . $_POST['x_trans_id'] . $osC_Currencies->formatRaw($osC_ShoppingCart->getTotal()))))) {
           $error = 'verification';
         }else if (isset($_POST['x_amount']) && ($_POST['x_amount'] != $osC_Currencies->formatRaw($osC_ShoppingCart->getTotal()))) {
           $error = 'verification';
@@ -99,7 +99,7 @@
           $messageStack->add_session('checkout', stripslashes($error['title'] . ': ' . $error['error']), 'error');
         }
         
-        osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'checkout&view=orderConfirmationForm', 'SSL'));
+        osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'fail&sid=' . $_POST['sid'], 'SSL'));
       }else {
         $orders_id = osC_Order::insert();
         
@@ -115,7 +115,9 @@
       
       $params = array('x_login' => substr(MODULE_PAYMENT_AUTHORIZENET_CC_SIM_API_LOGIN_ID, 0, 20), 
                       'x_version' => '3.1', 
-                      'x_show_form' => 'PAYMENT_FORM', 
+                      'x_show_form' => 'PAYMENT_FORM',
+                      'x_receipt_link_met' => 'POST',
+                      'x_receipt_link_url' =>  osc_href_link(FILENAME_CHECKOUT, 'process', 'SSL', false, false, true), 
                       'x_relay_response' => 'TRUE', 
                       'x_relay_url' => osc_href_link(FILENAME_CHECKOUT, 'process', 'SSL', false, false, true), 
                       'x_first_name' => substr($osC_ShoppingCart->getBillingAddress('firstname'), 0, 50), 
