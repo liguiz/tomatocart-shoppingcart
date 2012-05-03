@@ -238,7 +238,9 @@ var AjaxShoppingCart = new Class({
         onComplete: function() {
           $('ajaxCartContentLong').addClass('collapsed').removeClass('expanded');
           $('ajaxCartContentProducts').fade('out');
-          $('ajaxCartOrderTotals').fade('out');
+          if ($defined($('ajaxCartOrderTotals'))) {
+            $('ajaxCartOrderTotals').fade('out');
+          }
           $('ajaxCartButtons').fade('out');
 
            $('ajaxCartContentShort').set('slide', {
