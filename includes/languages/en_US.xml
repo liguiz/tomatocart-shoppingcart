@@ -1744,6 +1744,11 @@ Note: If you did not request this action via our password forgotten page, please
       <group>checkout</group>
     </definition>
     <definition>
+      <key>breadcrumb_checkout_fail</key>
+      <value><![CDATA[Fail!]]></value>
+      <group>checkout</group>
+    </definition>
+    <definition>
       <key>error_minimum_order_quantity</key>
       <value><![CDATA[The minimum order quantity of %s is %s.]]></value>
       <group>general</group>
@@ -1876,6 +1881,11 @@ Note: If you did not request this action via our password forgotten page, please
     <definition>
       <key>success_heading</key>
       <value><![CDATA[Your Order Has Been Processed!]]></value>
+      <group>checkout</group>
+    </definition>
+    <definition>
+      <key>fail_heading</key>
+      <value><![CDATA[Your Order Has Been Failed!]]></value>
       <group>checkout</group>
     </definition>
     <definition>
@@ -2279,8 +2289,18 @@ Note: If you did not request this action via our password forgotten page, please
       <group>checkout</group>
     </definition>
     <definition>
+      <key>order_processed_unsuccessfully</key>
+      <value><![CDATA[Your order has been failed!.]]></value>
+      <group>checkout</group>
+    </definition>
+    <definition>
       <key>add_selection_to_product_notifications</key>
       <value><![CDATA[Please notify me of updates to the products I have selected below:]]></value>
+      <group>checkout</group>
+    </definition>
+     <definition>
+      <key>order_products</key>
+      <value><![CDATA[The products in the unsuccessful order:]]></value>
       <group>checkout</group>
     </definition>
     <definition>
