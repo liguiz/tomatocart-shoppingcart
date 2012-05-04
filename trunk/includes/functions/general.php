@@ -578,4 +578,26 @@
 
     return false;
   }
+  
+/**
+ * Confirm a value whether is null
+ *
+ * @param string
+ */
+  
+  function osc_not_null($value) {
+    if (is_array($value)) {
+      if (sizeof($value) > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (($value != '') && (strtolower($value) != 'null') && (strlen(trim($value)) > 0)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
 ?>
