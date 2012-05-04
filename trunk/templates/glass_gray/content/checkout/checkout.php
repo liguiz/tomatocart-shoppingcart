@@ -16,10 +16,17 @@ $step = 1;
 <h1><?php echo $osC_Language->get('checkout')?></h1>
 
 <?php
+  if ($messageStack->size('payment_error_msg') > 0) {
+    echo $messageStack->output('payment_error_msg');
+  }
+?>
+
+<?php
   if ($messageStack->size('checkout') > 0) {
     echo $messageStack->output('checkout');
   }
 ?>
+
 
 <ul id="checkoutForm"> 
   <?php if ($osC_Customer->isLoggedOn() === false) { ?>
@@ -155,8 +162,12 @@ $step = 1;
 ?>      
       view: '<?php echo $_GET['view']; ?>',
 <?php 
-  }
+  }else if ($messageStack->size('payment_error_msg') > 0) {
 ?>
+      view: 'paymentInformationForm',
+<?php
+  }
+?>      
       isVirtualCart: <?php echo ($osC_ShoppingCart->isVirtualCart() ? 'true' : 'false'); ?>,
       isTotalZero: <?php echo ($osC_ShoppingCart->isTotalZero() ? 'true' : 'false'); ?>
     });
