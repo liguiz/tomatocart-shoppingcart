@@ -38,7 +38,7 @@
 <?php
   $selection = $osC_Payment->selection();
 
-  if (sizeof($selection) > 0) {
+  if (sizeof($selection) > 1) {
 ?>
 
     <div style="float: right; padding: 0px 0px 10px 20px; text-align: center;">
