@@ -125,12 +125,12 @@ Ext.extend(Toc.orders.OrdersChooseCustomerDialog, Ext.Window, {
   },
 
   onRefresh: function() {
-    this.ds.reload();
+    this.dsCustomers.reload();
   },
   
   onSearch: function() {
-    this.ds.baseParams['filter'] = this.search.getValue() || null;
-    this.ds.load();
+    this.dsCustomers.baseParams['filter'] = this.search.getValue() || null;
+    this.dsCustomers.load();
   },
   
   onSaveOrders: function(record) {
