@@ -46,7 +46,7 @@
         $payment_error = $osC_Payment->get_error();
         
         if (is_array($payment_error) && !empty($payment_error)) {
-          $messageStack->add('payment_error_msg', $payment_error['title'] . $payment_error['error']);
+          $messageStack->add('payment_error_msg', '<strong>' . $payment_error['title'] . '</strong> ' . $payment_error['error']);
         }
       }
       
