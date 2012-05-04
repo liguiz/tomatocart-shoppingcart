@@ -26,8 +26,14 @@
 /* Class constructor */
 
     function osC_Checkout_Checkout() {
-      global $osC_ShoppingCart;
+      global $osC_ShoppingCart, $osC_Customer, $osC_NavigationHistory;
+      
+      if ($osC_Customer->isLoggedOn() === false) {
+        $osC_NavigationHistory->setSnapshot();
 
+        osc_redirect(osc_href_link(FILENAME_ACCOUNT, 'login', 'SSL'));
+      }
+      
       if ($osC_ShoppingCart->hasContents() === false) {
         osc_redirect(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'));
       }                
