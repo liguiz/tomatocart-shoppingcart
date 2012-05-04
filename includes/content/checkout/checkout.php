@@ -26,7 +26,7 @@
 /* Class constructor */
 
     function osC_Checkout_Checkout() {
-      global $osC_ShoppingCart, $osC_Customer, $osC_NavigationHistory;
+      global $osC_ShoppingCart, $osC_Customer, $osC_NavigationHistory, $messageStack;
       
       if ($osC_Customer->isLoggedOn() === false) {
         $osC_NavigationHistory->setSnapshot();
@@ -36,7 +36,19 @@
       
       if ($osC_ShoppingCart->hasContents() === false) {
         osc_redirect(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'));
-      }                
+      }
+
+      if ($osC_ShoppingCart->hasBillingMethod()) {
+          // load selected payment module
+        include('includes/classes/payment.php');
+        $osC_Payment = new osC_Payment($osC_ShoppingCart->getBillingMethod('id'));
+        
+        $payment_error = $osC_Payment->get_error();
+        
+        if (is_array($payment_error) && !empty($payment_error)) {
+          $messageStack->add('payment_error_msg', $payment_error['title'] . $payment_error['error']);
+        }
+      }
       
       $this->addJavascriptFilename('includes/javascript/checkout.js');
     } 
