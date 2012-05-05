@@ -15,8 +15,7 @@
     var $_title,
         $_code = 'authorizenet_cc_sim',
         $_status = false,
-        $_sort_order,
-        $_order_id;
+        $_sort_order;
         
     // class constructor
     function osC_Payment_authorizenet_cc_sim() {
@@ -76,7 +75,9 @@
     }
     
     function process() {
-      global $osC_Currencies, $osC_ShoppingCart, $messageStack;
+      global $osC_Currencies, $osC_ShoppingCart, $messageStack, $osC_Session;
+      
+      header('Processing, please wait..');
       
       $error = false;
       
@@ -93,17 +94,18 @@
       }
       
       if ($error != false) {
-        $error = $this->get_error($error);
-        
-        if (!empty($error)) {
-          $messageStack->add_session('checkout', stripslashes($error['title'] . ': ' . $error['error']), 'error');
-        }
-        
-        osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'fail&sid=' . $_POST['sid'], 'SSL'));
+        osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'checkout&sid=' . $_POST['sid'] . '&error=' . $error, '', false ,false, true));
       }else {
         $orders_id = osC_Order::insert();
         
         osC_Order::process($orders_id, $this->order_status);
+        
+        $osC_ShoppingCart->reset(true);
+        
+        // unregister session variables used during checkout
+        unset($_SESSION['comments']);
+        
+        osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'success&sid=' . $osC_Session->getID(), 'SSL'));
       }
     }
     
@@ -211,27 +213,30 @@
       return array('x_fp_sequence' => $sequence, 'x_fp_timestamp' => $tstamp, 'x_fp_hash' => $fingerprint);
     }
     
-    function get_error($error) {
+    function get_error() {
       global $osC_Language;
       
       $error_message = $osC_Language->get('payment_authorizenet_cc_sim_error_general');
+      $ajax_valid_message = '<p><em>' . $osC_Language->get('payment_authorizenet_cc_sim_error_ajax_valid') . '</em></p>';
 
-      switch ($error) {
-        case 'verification':
-          $error_message = $osC_Language->get('payment_authorizenet_cc_sim_error_verification');
-          break;
-
-        case 'declined':
-          $error_message = $osC_Language->get('payment_authorizenet_cc_sim_error_declined');
-          break;
-
-        default:
-          $error_message = $osC_Language->get('payment_authorizenet_cc_sim_error_general');
-          break;
+      if (isset($_GET['error'])) {
+        switch ($_GET['error']) {
+          case 'verification':
+            $error_message = $osC_Language->get('payment_authorizenet_cc_sim_error_verification');
+            break;
+  
+          case 'declined':
+            $error_message = $osC_Language->get('payment_authorizenet_cc_sim_error_declined');
+            break;
+  
+          default:
+            $error_message = $osC_Language->get('payment_authorizenet_cc_sim_error_general');
+            break;
+        }
       }
 
       $error = array('title' => $osC_Language->get('payment_authorizenet_cc_sim_error_title'),
-                     'error' => $error_message);
+                     'error' => $error_message . $ajax_valid_message);
 
       return $error;
     }
