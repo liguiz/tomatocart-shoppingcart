@@ -16,8 +16,7 @@
         $_code = 'authorizenet_cc_aim',
         $_status = false,
         $_sort_order,
-        $_order_status,
-        $_order_id;
+        $_order_status;
         
     // class constructor
     function osC_Payment_authorizenet_cc_aim() {
@@ -140,7 +139,7 @@
       $total_tax = $osC_ShoppingCart->getTax() - $shipping_tax;
       
       if ($total_tax > 0) {
-        $params['x_tax'] = $this->format_raw($tax_value);
+        $params['x_tax'] = $osC_Currencies->formatRaw($tax_value);
       }
       
       $params['x_freight'] = $osC_Currencies->formatRaw($osC_ShoppingCart->getShippingMethod('cost'));
@@ -152,8 +151,11 @@
       $post_string = substr($post_string, 0, -1);
       
       if ($osC_ShoppingCart->hasContents()) {
-        foreach($osC_ShoppingCart->getProducts() as $key => $product) {
-          $post_string .= '&x_line_item=' . urlencode($key+1) . '<|>' . urlencode(substr($product['name'], 0, 31)) . '<|>' . urlencode(substr($product['name'], 0, 255)) . '<|>' . urlencode($product['quantity']) . '<|>' . urlencode($osC_Currencies->formatRaw($product['final_price'])) . '<|>' . urlencode($product['tax_class_id'] > 0 ? 'YES' : 'NO');
+        $i = 1;
+        foreach($osC_ShoppingCart->getProducts() as $product) {
+          $post_string .= '&x_line_item=' . urlencode($i) . '<|>' . urlencode(substr($product['name'], 0, 31)) . '<|>' . urlencode(substr($product['name'], 0, 255)) . '<|>' . urlencode($product['quantity']) . '<|>' . urlencode($osC_Currencies->formatRaw($product['final_price'])) . '<|>' . urlencode($product['tax_class_id'] > 0 ? 'YES' : 'NO');
+          
+          $i++;
         }
       }
       
@@ -214,13 +216,7 @@
       }
       
       if ($error != false) {
-        $error = $this->get_error($error);
-        
-        if (!empty($error)) {
-          $messageStack->add_session('checkout', stripslashes($error['title'] . ': ' . $error['error']), 'error');
-        }
-        
-        osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'checkout&view=orderConfirmationForm', 'SSL'));
+        osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'checkout&error=' . $error, 'SSL'));
       }else {
         $orders_id = osC_Order::insert();
         
@@ -228,36 +224,37 @@
       }
     }
     
-    
     function process_button() {
       return false;
     }
     
-    function get_error($error) {
+    function get_error() {
       global $osC_Language;
       
       $error_message = $osC_Language->get('payment_authorizenet_cc_aim_error_general');
 
-      switch ($error) {
-        case 'invalid_expiration_date':
-          $error_message = $osC_Language->get('payment_authorizenet_cc_aim_error_invalid_exp_date');
-          break;
-
-        case 'expired':
-          $error_message = $osC_Language->get('payment_authorizenet_cc_aim_error_expired');
-          break;
-          
-        case 'declined':
-          $error_message = $osC_Language->get('payment_authorizenet_cc_aim_error_declined');
-          break;
-          
-        case 'cvc':
-          $error_message = $osC_Language->get('payment_authorizenet_cc_aim_error_cvc');
-          break;
-
-        default:
-          $error_message = $osC_Language->get('payment_authorizenet_cc_aim_error_general');
-          break;
+      if (isset($_GET['error'])) {
+        switch ($_GET['error']) {
+          case 'invalid_expiration_date':
+            $error_message = $osC_Language->get('payment_authorizenet_cc_aim_error_invalid_exp_date');
+            break;
+  
+          case 'expired':
+            $error_message = $osC_Language->get('payment_authorizenet_cc_aim_error_expired');
+            break;
+            
+          case 'declined':
+            $error_message = $osC_Language->get('payment_authorizenet_cc_aim_error_declined');
+            break;
+            
+          case 'cvc':
+            $error_message = $osC_Language->get('payment_authorizenet_cc_aim_error_cvc');
+            break;
+  
+          default:
+            $error_message = $osC_Language->get('payment_authorizenet_cc_aim_error_general');
+            break;
+        }
       }
 
       $error = array('title' => $osC_Language->get('payment_authorizenet_cc_aim_error_title'),
