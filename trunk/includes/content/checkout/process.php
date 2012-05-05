@@ -22,10 +22,6 @@
     function osC_Checkout_Process() {
       global $osC_Session, $osC_ShoppingCart, $osC_Customer, $osC_NavigationHistory, $osC_Payment;
       
-      if ($osC_ShoppingCart->getBillingMethod('id') == 'authorizenet_cc_sim') {
-        header('Processing, please wait..');
-      }
-      
       if ($osC_ShoppingCart->hasContents() === false) {
         osc_redirect(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'));
       }
@@ -55,11 +51,7 @@
       // unregister session variables used during checkout
       unset($_SESSION['comments']);
 
-      if ($osC_ShoppingCart->getBillingMethod('id') == 'authorizenet_cc_sim') {
-        osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'success&sid=' . $osC_Session->getID(), 'SSL'));
-      }else {
-        osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'success', 'SSL'));
-      }
+      osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'success', 'SSL'));
     }
   }
 ?>
