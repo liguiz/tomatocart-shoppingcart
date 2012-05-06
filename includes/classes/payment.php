@@ -281,41 +281,61 @@
     function pre_confirmation_check() {
       if (is_array($this->_modules)) {
         if (isset($GLOBALS[$this->selected_module]) && is_object($GLOBALS[$this->selected_module]) && $GLOBALS[$this->selected_module]->isEnabled()) {
-          $GLOBALS[$this->selected_module]->pre_confirmation_check();
+          if (method_exists( $GLOBALS[$this->selected_module], 'pre_confirmation_check')) {
+            $GLOBALS[$this->selected_module]->pre_confirmation_check();
+          }
         }
       }
+      
+      return false;
     }
 
     function confirmation() {
       if (is_array($this->_modules)) {
         if (isset($GLOBALS[$this->selected_module]) && is_object($GLOBALS[$this->selected_module]) && $GLOBALS[$this->selected_module]->isEnabled()) {
-          return $GLOBALS[$this->selected_module]->confirmation();
+          if (method_exists($GLOBALS[$this->selected_module], 'confirmation')) {
+            return $GLOBALS[$this->selected_module]->confirmation();
+          }
         }
       }
+      
+      return false;
     }
 
     function process_button() {
       if (is_array($this->_modules)) {
         if (isset($GLOBALS[$this->selected_module]) && is_object($GLOBALS[$this->selected_module]) && $GLOBALS[$this->selected_module]->isEnabled()) {
-          return $GLOBALS[$this->selected_module]->process_button();
+          if (method_exists($GLOBALS[$this->selected_module], 'process_button')) {
+            return $GLOBALS[$this->selected_module]->process_button();
+          }
         }
       }
+      
+      return false;
     }
 
     function process() {
       if (is_array($this->_modules)) {
         if (isset($GLOBALS[$this->selected_module]) && is_object($GLOBALS[$this->selected_module]) && $GLOBALS[$this->selected_module]->isEnabled()) {
-          return $GLOBALS[$this->selected_module]->process();
+          if (method_exists($GLOBALS[$this->selected_module], 'process')) {
+            return $GLOBALS[$this->selected_module]->process();
+          }
         }
       }
+      
+      return false;
     }
 
     function get_error() {
       if (is_array($this->_modules)) {
         if (isset($GLOBALS[$this->selected_module]) && is_object($GLOBALS[$this->selected_module]) && $GLOBALS[$this->selected_module]->isEnabled()) {
-          return $GLOBALS[$this->selected_module]->get_error();
+          if (method_exists($GLOBALS[$this->selected_module], 'get_error')) {
+            return $GLOBALS[$this->selected_module]->get_error();
+          }
         }
       }
+      
+      return false;
     }
 
     function hasActionURL() {
