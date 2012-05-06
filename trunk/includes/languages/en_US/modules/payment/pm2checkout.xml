@@ -2,63 +2,33 @@
 <language>
   <definitions>
     <definition>
-      <key>payment_2checkout_title</key>
+      <key>payment_pm2checkout_title</key>
       <value><![CDATA[2CheckOut]]></value>
       <group>modules-payment</group>
     </definition>
     <definition>
-      <key>payment_2checkout_description</key>
-      <value><![CDATA[Credit Card Test Info:<br /><br />CC#: 4111111111111111<br />Expiry: Any]]></value>
+      <key>payment_pm2checkout_description</key>
+      <value><![CDATA[Credit Cards and Alternatives]]></value>
       <group>modules-payment</group>
     </definition>
     <definition>
-      <key>payment_2checkout_credit_cart_type</key>
-      <value><![CDATA[Type:]]></value>
+      <key>payment_pm2checkout_method_title</key>
+      <value><![CDATA[2Checkout]]></value>
       <group>modules-payment</group>
     </definition>
     <definition>
-      <key>payment_2checkout_credit_card_owner</key>
-      <value><![CDATA[Credit Card Owner:]]></value>
-      <group>modules-payment</group>
-    </definition>
-    <definition>
-      <key>payment_2checkout_credit_card_owner_first_name</key>
-      <value><![CDATA[Credit Card Owner First Name:]]></value>
-      <group>modules-payment</group>
-    </definition>
-    <definition>
-      <key>payment_2checkout_credit_card_owner_last_name</key>
-      <value><![CDATA[Credit Card Owner Last Name:]]></value>
-      <group>modules-payment</group>
-    </definition>
-    <definition>
-      <key>payment_2checkout_credit_card_number</key>
-      <value><![CDATA[Credit Card Number:]]></value>
-      <group>modules-payment</group>
-    </definition>
-    <definition>
-      <key>payment_2checkout_credit_card_expiry_date</key>
-      <value><![CDATA[Credit Card Expiry Date:]]></value>
-      <group>modules-payment</group>
-    </definition>
-    <definition>
-      <key>payment_2checkout_credit_card_checknumber</key>
-      <value><![CDATA[Credit Card Checknumber:]]></value>
-      <group>modules-payment</group>
-    </definition>
-    <definition>
-      <key>payment_2checkout_credit_card_checknumber_location</key>
-      <value><![CDATA[(located at the back of the credit card)]]></value>
-      <group>modules-payment</group>
-    </definition>
-    <definition>
-      <key>payment_2checkout_js_credit_card_number</key>
-      <value><![CDATA[* The credit card number must be at least %s characters.]]></value>
-      <group>modules-payment</group>
-    </definition>
-    <definition>
-      <key>payment_2checkout_error_message</key>
+      <key>payment_pm2checkout_text_error_message</key>
       <value><![CDATA[There has been an error processing your credit card. Please try again.]]></value>
+      <group>modules-payment</group>
+    </definition>
+    <definition>
+      <key>payment_pm2checkout_text_warning_demo_mode</key>
+      <value><![CDATA[In Review: Transaction performed in demo mode.]]></value>
+      <group>modules-payment</group>
+    </definition>
+    <definition>
+      <key>payment_pm2checkout_text_warning_transaction_order</key>
+      <value><![CDATA[In Review: Transaction total did not match order total.]]></value>
       <group>modules-payment</group>
     </definition>
   </definitions>
