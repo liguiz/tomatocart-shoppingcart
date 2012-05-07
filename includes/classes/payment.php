@@ -269,7 +269,7 @@
         foreach($this->_modules as $module) {
           $module_class = 'osC_Payment_' . $module;
           
-          if ($GLOBALS[$module_class]->isEnabled() && method_exists($GLOBALS[$module_class], 'checkout_initialization_method')) {
+          if ($GLOBALS[$module_class]->isEnabled()) {
             if ($GLOBALS[$module_class]->checkout_initialization_method() != false) {
               $initialize_array[] = $GLOBALS[$module_class]->checkout_initialization_method();
             }
@@ -283,21 +283,15 @@
     function pre_confirmation_check() {
       if (is_array($this->_modules)) {
         if (isset($GLOBALS[$this->selected_module]) && is_object($GLOBALS[$this->selected_module]) && $GLOBALS[$this->selected_module]->isEnabled()) {
-          if (method_exists( $GLOBALS[$this->selected_module], 'pre_confirmation_check')) {
-            $GLOBALS[$this->selected_module]->pre_confirmation_check();
-          }
+          $GLOBALS[$this->selected_module]->pre_confirmation_check();
         }
       }
-      
-      return false;
     }
 
     function confirmation() {
       if (is_array($this->_modules)) {
         if (isset($GLOBALS[$this->selected_module]) && is_object($GLOBALS[$this->selected_module]) && $GLOBALS[$this->selected_module]->isEnabled()) {
-          if (method_exists($GLOBALS[$this->selected_module], 'confirmation')) {
-            return $GLOBALS[$this->selected_module]->confirmation();
-          }
+          return $GLOBALS[$this->selected_module]->confirmation();
         }
       }
       
@@ -307,9 +301,7 @@
     function process_button() {
       if (is_array($this->_modules)) {
         if (isset($GLOBALS[$this->selected_module]) && is_object($GLOBALS[$this->selected_module]) && $GLOBALS[$this->selected_module]->isEnabled()) {
-          if (method_exists($GLOBALS[$this->selected_module], 'process_button')) {
-            return $GLOBALS[$this->selected_module]->process_button();
-          }
+          return $GLOBALS[$this->selected_module]->process_button();
         }
       }
       
@@ -319,9 +311,7 @@
     function process() {
       if (is_array($this->_modules)) {
         if (isset($GLOBALS[$this->selected_module]) && is_object($GLOBALS[$this->selected_module]) && $GLOBALS[$this->selected_module]->isEnabled()) {
-          if (method_exists($GLOBALS[$this->selected_module], 'process')) {
-            return $GLOBALS[$this->selected_module]->process();
-          }
+          return $GLOBALS[$this->selected_module]->process();
         }
       }
       
@@ -331,9 +321,7 @@
     function get_error() {
       if (is_array($this->_modules)) {
         if (isset($GLOBALS[$this->selected_module]) && is_object($GLOBALS[$this->selected_module]) && $GLOBALS[$this->selected_module]->isEnabled()) {
-          if (method_exists($GLOBALS[$this->selected_module], 'get_error')) {
-            return $GLOBALS[$this->selected_module]->get_error();
-          }
+          return $GLOBALS[$this->selected_module]->get_error();
         }
       }
       
