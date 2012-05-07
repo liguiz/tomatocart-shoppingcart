@@ -270,7 +270,9 @@
           $module_class = 'osC_Payment_' . $module;
           
           if ($GLOBALS[$module_class]->isEnabled() && method_exists($GLOBALS[$module_class], 'checkout_initialization_method')) {
-            $initialize_array[] = $GLOBALS[$module_class]->checkout_initialization_method();
+            if ($GLOBALS[$module_class]->checkout_initialization_method() != false) {
+              $initialize_array[] = $GLOBALS[$module_class]->checkout_initialization_method();
+            }
           }
         }
       }
