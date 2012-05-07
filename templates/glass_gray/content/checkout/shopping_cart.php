@@ -191,30 +191,20 @@
     
     if ( !empty($initialize_checkout_methods) && is_array($initialize_checkout_methods) ) {
       reset($initialize_checkout_methods);
-      
-      $alternative = false;
-      foreach($initialize_checkout_methods as $value) {
-        if (!empty($value)) {
-          $alternative = true;
-          
-          break;
-        }
-      }
-      
-      if ($alternative == true) { 
-  ?>
-        <div align="right">
-          <p align="right"><?php echo $osC_Language->get('alternative_checkout_methods'); ?></p>
     
-          <?php 
-            foreach($initialize_checkout_methods as $value) {
-              echo $value;
-            }        
-          ?>
-        </div>
+  ?>
+  
+    <div align="right">
+      <p align="right"><?php echo $osC_Language->get('alternative_checkout_methods'); ?></p>
+
+      <?php 
+        foreach($initialize_checkout_methods as $value) {
+          echo $value;
+        }        
+      ?>
+    </div>
     
   <?php 
-      }
     } 
   } else {
 ?>
