@@ -27,9 +27,11 @@
       $this->_method_title = $osC_Language->get('payment_paypal_express_method_title');
       $this->_status = (MODULE_PAYMENT_PAYPAL_EXPRESS_STATUS == '1') ? true : false;
       $this->_sort_order = MODULE_PAYMENT_PAYPAL_EXPRESS_SORT_ORDER;
+      
+      $this->api_version = '60.0';
 
-      switch (MODULE_PAYMENT_PAYPAL_EXPRESS_SERVER) {
-        case 'Production':
+      switch (MODULE_PAYMENT_PAYPAL_EXPRESS_TRANSACTION_SERVER) {
+        case 'Live':
           $this->api_url = 'https://api-3t.paypal.com/nvp';
           $this->paypal_url = 'https://www.paypal.com/cgi-bin/webscr?cmd=_express-checkout';
           break;
@@ -72,120 +74,167 @@
     }
       
     function checkout_initialization_method() {
-      global $osC_Language;
+//      global $osC_Language;
+//      
+//      if (file_exists(DIR_FS_CATALOG . DIR_WS_IMAGES . 'modules/payment/paypal/btn_express_' . basename($osC_Language->getCode()) . '.gif')) {
+//        $image = DIR_WS_IMAGES . 'modules/payment/paypal/btn_express_' . basename($osC_Language->getCode()) . '.gif';
+//      } else {
+//        $image = DIR_WS_IMAGES . 'modules/payment/paypal/btn_express.gif';
+//      }
+//      
+//      $string = osc_link_object(osc_href_link(FILENAME_CHECKOUT, 'callback&module=paypal_express'), osc_image($image, $osC_Language->get('payment_paypal_express_button_title')));
+//
+//      return $string;
       
-      if (file_exists(DIR_FS_CATALOG . DIR_WS_IMAGES . 'modules/payment/paypal/btn_express_' . basename($osC_Language->getCode()) . '.gif')) {
-        $image = DIR_WS_IMAGES . 'modules/payment/paypal/btn_express_' . basename($osC_Language->getCode()) . '.gif';
-      } else {
-        $image = DIR_WS_IMAGES . 'modules/payment/paypal/btn_express.gif';
-      }
-      
-      $string = osc_link_object(osc_href_link(FILENAME_CHECKOUT, 'callback&module=paypal_express'), osc_image($image, $osC_Language->get('payment_paypal_express_button_title')));
-
-      return $string;
+      return false;
     }
     
     function selection() {
-      if (isset($_SESSION['ppe_token'])) {
-        return array('id' => $this->_code,
-                 'module' => $this->_method_title);
-      }else {
-        return false;
-      }
+      return array('id' => $this->_code,
+                   'module' => $this->_method_title);
     }
-    
-    function pre_confirmation_check() {
-       return osc_href_link(FILENAME_CHECKOUT,'callback&module=paypal_express');
-    } 
-    
-    function confirmation() {
-      return false;
-    }
-    
-    function process_button() {
-      return false;
-    }
-
     
     function process() {
-      global $osC_ShoppingCart, $osC_Currencies, $messageStack;
-
-      $orders_id = osC_Order::insert();
+      global $osC_ShoppingCart, $osC_Currencies, $messageStack, $osC_Language, $osC_Database;
       
-      $params = array('USER' => MODULE_PAYMENT_PAYPAL_EXPRESS_API_USERNAME,
-                      'PWD' => MODULE_PAYMENT_PAYPAL_EXPRESS_API_PASSWORD,
-                      'VERSION' => '3.2',
-                      'SIGNATURE' => MODULE_PAYMENT_PAYPAL_EXPRESS_API_SIGNATURE,
-                      'METHOD' => 'DoExpressCheckoutPayment',
-                      'TOKEN' => $_SESSION['ppe_token'],
-                      'PAYMENTACTION' => ((MODULE_PAYMENT_PAYPAL_EXPRESS_METHOD == 'Sale') ? 'Sale' : 'Authorization'),
+      if (!isset($_SESSION['ppe_token'])) {
+        osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'callback&module=paypal_express', 'SSL', false, false, true));
+      }
+      
+      $params = array('TOKEN' => $_SESSION['ppe_token'],
                       'PAYERID' => $_SESSION['ppe_payerid'],
-                      'AMT' => $osC_Currencies->formatRaw($osC_ShoppingCart->getTotal() - $osC_ShoppingCart->getShippingMethod('cost'), $osC_Currencies->getCode()),
-                      'CURRENCYCODE' => $osC_Currencies->getCode(),
-                      'BUTTONSOURCE' => PROJECT_VERSION);
+                      'AMT' => $osC_Currencies->formatRaw($osC_ShoppingCart->getTotal()),
+                      'CURRENCYCODE' => $osC_Currencies->getCode());
       
       if ($osC_ShoppingCart->hasShippingAddress()) {
         $params['SHIPTONAME'] = $osC_ShoppingCart->getShippingAddress('firstname') . ' ' . $osC_ShoppingCart->getShippingAddress('lastname');
         $params['SHIPTOSTREET'] = $osC_ShoppingCart->getShippingAddress('street_address');
         $params['SHIPTOCITY'] = $osC_ShoppingCart->getShippingAddress('city');
         $params['SHIPTOSTATE'] = $osC_ShoppingCart->getShippingAddress('zone_code');
-        $params['SHIPTOCOUNTRYCODE'] = $osC_ShoppingCart->getShippingAddress('country_iso_code_2');
         $params['SHIPTOZIP'] = $osC_ShoppingCart->getShippingAddress('postcode');
+        $params['SHIPTOCOUNTRYCODE'] = $osC_ShoppingCart->getShippingAddress('country_iso_code_2');
       }
       
-      $post_string = '';
-      foreach ($params as $key => $value) {
-        $post_string .= $key . '=' . urlencode(trim($value)) . '&';
+      $response_array = $this->doExpressCheckoutPayment($params);
+      
+      if (($response_array['ACK'] != 'Success') && ($response_array['ACK'] != 'SuccessWithWarning')) {
+        $messageStack->add_session('shopping_cart', $osC_Language->get('payment_paypal_express_error_title') . ' <strong>' . stripslashes($response_array['L_LONGMESSAGE0']) . '</strong>');
+        
+        osc_redirect(osc_href_link(FILENAME_CHECKOUT, '', 'SSL'));
+      }else {
+        $orders_id = osC_Order::insert();
+        
+        osC_Order::process($orders_id, $this->order_status);
+        
+        $pp_result = 'Payer Status: ' . osc_output_string_protected($ppe_payerstatus) . "\n" .
+                     'Address Status: ' . osc_output_string_protected($ppe_addressstatus) . "\n\n" .
+                     'Payment Status: ' . osc_output_string_protected($response_array['PAYMENTSTATUS']) . "\n" .
+                     'Payment Type: ' . osc_output_string_protected($response_array['PAYMENTTYPE']) . "\n" .
+                     'Pending Reason: ' . osc_output_string_protected($response_array['PENDINGREASON']) . "\n" .
+                     'Reversal Code: ' . osc_output_string_protected($response_array['REASONCODE']);
+        
+        $Qstatus = $osC_Database->query('insert into :table_orders_status_history (orders_id, orders_status_id, date_added, customer_notified, comments) values (:orders_id, :orders_status_id, now(), :customer_notified, :comments)');
+        $Qstatus->bindTable(':table_orders_status_history', TABLE_ORDERS_STATUS_HISTORY);
+        $Qstatus->bindInt(':orders_id', $insert_id);
+        $Qstatus->bindInt(':orders_status_id', MODULE_PAYMENT_PAYPAL_EXPRESS_TRANSACTIONS_ORDER_STATUS_ID);
+        $Qstatus->bindInt(':customer_notified', '0');
+        $Qstatus->bindValue(':comments', $pp_result);
+        $Qstatus->execute();
+        
+        $Qstatus->freeResult();
       }
-      $post_string = substr($post_string, 0, -1);
-           
-      $response = $this->sendTransactionToGateway($this->api_url, $post_string);
-      $response_array = array();
-      parse_str($response, $response_array);
       
       unset($_SESSION['ppe_token']);
       unset($_SESSION['ppe_payerid']);
-
-      if (($response_array['ACK'] != 'Success') && ($response_array['ACK'] != 'SuccessWithWarning')) {
-        $messageStack->add_session('shopping_cart', stripslashes($response_array['L_LONGMESSAGE0']), 'error');
-        
-        osc_redirect(osc_href_link(FILENAME_CHECKOUT, '', 'SSL'));
-        exit;
-      }else {
-        osC_Order::process($orders_id, $this->order_status);
-      }
+      unset($_SESSION['ppe_payerstatus']);
+      unset($_SESSION['ppe_addressstatus']);
     }
     
     function callback() {
       global $osC_Database, $osC_ShoppingCart, $osC_Currencies;
       
       if (!$osC_ShoppingCart->hasContents()) {
-        osc_redirect(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'));
+        osc_redirect(osc_href_link(FILENAME_CHECKOUT, '', 'SSL'));
       }
       
-      $params = array('USER' => MODULE_PAYMENT_PAYPAL_EXPRESS_API_USERNAME,
-                      'PWD' => MODULE_PAYMENT_PAYPAL_EXPRESS_API_PASSWORD,
-                      'VERSION' => '3.2',
-                      'SIGNATURE' => MODULE_PAYMENT_PAYPAL_EXPRESS_API_SIGNATURE);
+      $params = array('VERSION' => $this->api_version);
       
-      if (isset($_GET['express_action']) && ($_GET['express_action'] == 'retrieve')) {
-        self::_get_express_checkout_details($params);
-      } else {
-        self::_set_express_checkout($params);
+      if (osc_not_null(MODULE_PAYMENT_PAYPAL_EXPRESS_API_USERNAME)) {
+        $params['USER'] = MODULE_PAYMENT_PAYPAL_EXPRESS_API_USERNAME;
+        $params['PWD'] = MODULE_PAYMENT_PAYPAL_EXPRESS_API_PASSWORD;
+        $params['SIGNATURE'] = MODULE_PAYMENT_PAYPAL_EXPRESS_API_SIGNATURE;
+      }else {
+        $params['SUBJECT'] = MODULE_PAYMENT_PAYPAL_EXPRESS_SELLER_ACCOUNT;
+      }
+      
+      switch($_GET['express_action']) {
+        case 'cancel':
+          if (isset($_SESSION['ppe_token'])) {
+            unset($_SESSION['ppe_token']);
+          }
+
+          osc_redirect(osc_href_link(FILENAME_CHECKOUT, '', 'SSL'));
+          
+          break;
+          
+        case 'retrieve':
+          self::_get_express_checkout_details($params);
+          
+          break;
+          
+        default:
+          self::_set_express_checkout($params);
+          
+          break;
       }
       
       exit;
     }
     
-    function _get_express_checkout_details($params) {
-      global $osC_ShoppingCart, $osC_Database, $osC_Customer;
+    function doExpressCheckoutPayment($params) {
+      $params['VERSION'] = $this->api_version;
+      $params['METHOD'] = 'DoExpressCheckoutPayment';
+      $params['PAYMENTACTION'] = ((MODULE_PAYMENT_PAYPAL_EXPRESS_TRANSACTION_METHOD == 'Sale') || (!osc_not_null(MODULE_PAYMENT_PAYPAL_EXPRESS_API_USERNAME))) ? 'Sale' : 'Authorization';
+      $params['BUTTONSOURCE'] = 'TomatoCart1.1.7_Default_EC';
       
+      if (osc_not_null(MODULE_PAYMENT_PAYPAL_EXPRESS_API_USERNAME)) {
+        $params['USER'] = MODULE_PAYMENT_PAYPAL_EXPRESS_API_USERNAME;
+        $params['PWD'] = MODULE_PAYMENT_PAYPAL_EXPRESS_API_PASSWORD;
+        $params['SIGNATURE'] = MODULE_PAYMENT_PAYPAL_EXPRESS_API_SIGNATURE;
+      }else {
+        $params['SUBJECT'] = MODULE_PAYMENT_PAYPAL_EXPRESS_SELLER_ACCOUNT;
+      }
+      
+      $post_string = '';
+      
+      foreach ($params as $key => $value) {
+        $post_string .= $key . '=' . urlencode(utf8_encode(trim($value))) . '&';
+      }
+      
+      $post_string = substr($post_string, 0, -1);
+      
+      $response = $this->sendTransactionToGateway($this->api_url, $post_string);
+      $response_array = array();
+      parse_str($response, $response_array);
+      
+      return $response_array;
+    }
+    
+    function _get_express_checkout_details($params) {
+      global $osC_ShoppingCart, $osC_Currencies, $osC_Language, $osC_Tax, $messageStack, $osC_Customer, $osC_Session;
+      
+      // if there is nothing in the customers cart, redirect them to the shopping cart page
+      if (!$osC_ShoppingCart->hasContents()) {
+        osc_redirect(osc_href_link(FILENAME_CHECKOUT, '', 'SSL', true, true, true));
+      }
+      
+      $params['VERSION'] = $this->api_version;
       $params['METHOD'] = 'GetExpressCheckoutDetails';
       $params['TOKEN'] = $_GET['token'];
       
       $post_string = '';
       foreach ($params as $key => $value) {
-        $post_string .= $key . '=' . urlencode(trim($value)) . '&';
+        $post_string .= $key . '=' . urlencode(utf8_encode(trim($value))) . '&';
       }
       $post_string = substr($post_string, 0, -1);
       
@@ -195,7 +244,46 @@
       parse_str($response, $response_array);
       
       if (($response_array['ACK'] == 'Success') || ($response_array['ACK'] == 'SuccessWithWarning')) {
-        if ($osC_ShoppingCart->getContentType() != 'virtual') {
+        $force_login = false;
+        
+        // Begin: check if e-mail address exists in database and login or create customer account
+        if ($osC_Customer->isLoggedOn() == false) {
+          $force_login = true;
+          
+          if (class_exists('osC_Account') == false) {
+            require_once('includes/classes/account.php');
+          }
+          
+          $email_address = $response_array['EMAIL'];
+          
+          $Qcheck = $osC_Database->query('select * from :table_customers where customers_email_address = :email_address limit 1');
+          $Qcheck->bindTable(':table_customers', TABLE_CUSTOMERS);
+          $Qcheck->bindValue(':email_address', $email_address);
+          $Qcheck->execute();
+          
+          if ($Qcheck->numberOfRows() > 0) {
+            $check = $Qcheck->toArray();
+            
+            $customer_id = $check['customers_id'];
+            $osC_Customer->setCustomerData($customer_id);
+          }else {
+            $data = array('firstname' => $response_array['FIRSTNAME'], 
+                          'lastname' => $response_array['LASTNAME'], 
+                          'email_address' => $email_address, 
+                          'password' => osc_rand(ACCOUNT_PASSWORD, max(ACCOUNT_PASSWORD, 8)));
+            
+            osC_Account::createEntry($data);
+          }
+          $Qcheck->freeResult();
+          
+          if (SERVICE_SESSION_REGENERATE_ID == '1') {
+            $osC_Session->recreate();
+          }
+        }
+        // End: check if e-mail address exists in database and login or create customer account
+        
+        // Begin: Add shipping and billing address from paypal to the shopping cart
+        if ($force_login == true) {
           $country_query = $osC_Database->query('select countries_id, countries_name, countries_iso_code_2, countries_iso_code_3, address_format from :table_countries where countries_iso_code_2 = :country_iso_code_2');
           $country_query->bindTable(':table_countries', TABLE_COUNTRIES);
           $country_query->bindValue(':country_iso_code_2', $response_array['SHIPTOCOUNTRYCODE']);
@@ -237,56 +325,244 @@
           $osC_ShoppingCart->setRawShippingAddress($sendto);
           $osC_ShoppingCart->setRawBillingAddress($sendto);
           $osC_ShoppingCart->setBillingMethod(array('id' => $this->getCode(), 'title' => $this->getMethodTitle()));
+        }
+        // End: Add shipping and billing address from paypal to the shopping cart
+        
+        //Begin: Add the shipping 
+        if ($osC_ShoppingCart->getContentType() != 'virtual') {
+          if ($osC_ShoppingCart->hasShippingMethod() === false) {
+            if (class_exists('osC_Shipping') === false) {
+              include_once('includes/classes/shipping.php');
+            }
+            $osC_Shipping = new osC_Shipping();
           
-          if (!isset($_SESSION['payment'])) {
-            $_SESSION['payment'] = $this->getCode();
+            if ($osC_Shipping->hasQuotes()) {
+              $shipping_set = false;
+              // get all available shipping quotes
+              $quotes = $osC_Shipping->getQuotes();
+            
+              if (isset($response_array['SHIPPINGOPTIONNAME']) && isset($response_array['SHIPPINGOPTIONAMOUNT'])) {
+                foreach($quotes as $quote) {
+                  if (!isset($quote['error'])) {
+                    foreach($quote['methods'] as $rate) {
+                      if ($response_array['SHIPPINGOPTIONNAME'] == $quote['module'] . ' (' . $rate['title'] . ')') {
+                        if ($response_array['SHIPPINGOPTIONAMOUNT'] == $osC_Currencies->formatRaw($rate['cost'] + $osC_Currencies->addTaxRateToPrice($rate['cost'], $quote['tax']))) {
+                          $shipping = $quote['id'] . '_' . $rate['id'];
+                          $module = 'osC_Shipping_' . $quote['module'];
+                        
+                          if (is_object($GLOBALS[$module]) && $GLOBALS[$module]->isEnabled()) {
+                            $quote = $osC_Shipping->getQuote($shipping);
+                          
+                            if (isset($quote['error'])) {
+                              $osC_ShoppingCart->resetShippingMethod();
+                            
+                              $errors[] = $quote['error'];
+                            } else {
+                              $osC_ShoppingCart->setShippingMethod($quote);
+                            
+                              $shipping_set = true;
+                            }
+                          }else {
+                            $osC_ShoppingCart->resetShippingMethod();
+                          }
+                          break 2;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            
+              if ($shipping_set == false) {
+                // select cheapest shipping method
+                $osC_ShoppingCart->setShippingMethod($osC_Shipping->getCheapestQuote());
+              }
+            }
           }
-          
+        
           if (!isset($_SESSION['ppe_token'])) {
             $_SESSION['ppe_token'] = $response_array['TOKEN'];
           }
-          
+        
           if (!isset($_SESSION['ppe_payerid'])) {
             $_SESSION['ppe_payerid'] = $response_array['PAYERID'];
           }
-          
-          if ($osC_Customer->isLoggedOn() === true) {
-            osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'checkout&express=active&view=shippingMethodForm', 'SSL'));
-          } else if ($this->_findEmail($response_array['EMAIL'])) {
-            osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'checkout', 'SSL'));
-          } else {
-            osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'checkout&express=active&view=billingInformationForm', 'SSL'));
+        
+          if (!isset($_SESSION['ppe_payerstatus'])) {
+            $_SESSION['ppe_payerstatus'] = $response_array['PAYERSTATUS'];
           }
+        
+          if (!isset($_SESSION['ppe_addressstatus'])) {
+            $_SESSION['ppe_addressstatus'] = $response_array['ADDRESSSTATUS'];
+          }
+        
+          osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'process', 'SSL'));
         }
+      }else {
+        $messageStack->add_session('checkout', $osC_Language->get('payment_paypal_express_error_title') . ' <strong>' . stripslashes($response_array['L_LONGMESSAGE0']) . '</strong>');
+        
+        osc_redirect(osc_href_link(FILENAME_CHECKOUT, '', 'SSL'));
       }
     }
     
     function _set_express_checkout($params) {
-      global $osC_ShoppingCart, $osC_Currencies;
+      global $osC_ShoppingCart, $osC_Currencies, $osC_Language, $osC_Tax, $messageStack;
+      
+      // if there is nothing in the customers cart, redirect them to the shopping cart page
+      if (!$osC_ShoppingCart->hasContents()) {
+        osc_redirect(osc_href_link(FILENAME_CHECKOUT, '', 'NONSSL', true, true, true));
+      }
       
       $params['METHOD'] = 'SetExpressCheckout';
-      $params['PAYMENTACTION'] = ((MODULE_PAYMENT_PAYPAL_EXPRESS_METHOD == 'Sale') ? 'Sale' : 'Authorization');
+      $params['PAYMENTACTION'] = ((MODULE_PAYMENT_PAYPAL_EXPRESS_TRANSACTION_METHOD == 'Sale') || (!osc_not_null(MODULE_PAYMENT_PAYPAL_EXPRESS_API_USERNAME))) ? 'Sale' : 'Authorization';
       $params['RETURNURL'] = HTTPS_SERVER . DIR_WS_HTTPS_CATALOG . FILENAME_CHECKOUT . '?callback&module=paypal_express&express_action=retrieve';
-      //$params['RETURNURL'] = osc_href_link(FILENAME_CHECKOUT, 'callback&module=paypal_express&express_action=retrieve', 'NONSSL', true, true, true);
-      $params['CANCELURL'] = osc_href_link(FILENAME_CHECKOUT, '', 'NONSSL', true, true, true);
-      $params['AMT'] =  $osC_Currencies->formatRaw($osC_ShoppingCart->getTotal() - $osC_ShoppingCart->getShippingMethod('cost'), $osC_Currencies->getCode());
+      $params['CANCELURL'] = HTTPS_SERVER . DIR_WS_HTTPS_CATALOG . FILENAME_CHECKOUT . '?callback&module=paypal_express&express_action=cancel';
       $params['CURRENCYCODE'] = $osC_Currencies->getCode();
       
-      if ($osC_ShoppingCart->getContentType() == 'virtual') {
-        $params['NOSHIPPING'] = '1';
+      $line_item_no = 0;
+      $items_total = 0;
+      $tax_total = 0;
+      
+      if ($osC_ShoppingCart->hasContents()) {
+        foreach($osC_ShoppingCart->getProducts() as $product) {
+          $product_name = $product['name'];
+          
+        //gift certificate
+          if ($product['type'] == PRODUCT_TYPE_GIFT_CERTIFICATE) {
+            $product_name .= "\n" . ' - ' . $osC_Language->get('senders_name') . ': ' . $product['gc_data']['senders_name'];
+
+            if ($product['gc_data']['type'] == GIFT_CERTIFICATE_TYPE_EMAIL) {
+              $product_name .= "\n" . ' - ' . $osC_Language->get('senders_email')  . ': ' . $product['gc_data']['senders_email'];
+            }
+
+            $product_name .= "\n" . ' - ' . $osC_Language->get('recipients_name') . ': ' . $product['gc_data']['recipients_name'];
+
+            if ($product['gc_data']['type'] == GIFT_CERTIFICATE_TYPE_EMAIL) {
+              $product_name .= "\n" . ' - ' . $osC_Language->get('recipients_email')  . ': ' . $product['gc_data']['recipients_email'];
+            }
+
+            $product_name .= "\n" . ' - ' . $osC_Language->get('message')  . ': ' . $product['gc_data']['message'];
+          }
+
+          if ($osC_ShoppingCart->hasVariants($product['id'])) {
+            foreach ($osC_ShoppingCart->getVariants($product['id']) as $variant) {
+              $product_name .= ' - ' . $variant['groups_name'] . ': ' . $variant['values_name'];
+            }
+          }
+          
+          $product_tax = $osC_Tax->getTaxRate($product['tax_class_id'], $osC_ShoppingCart->getTaxingAddress('country_id'), $osC_ShoppingCart->getTaxingAddress('zone_id'));
+          
+          $params['L_NAME' . $line_item_no] = $product_name;
+          $params['L_AMT' . $line_item_no] = $osC_Currencies->formatRaw($product['final_price']);
+          $params['L_NUMBER' . $line_item_no] = $product['id'];
+          $params['L_QTY' . $line_item_no] = $product['quantity'];
+          $params['L_TAXAMT' . $line_item_no] = $osC_Currencies->formatRaw($product_tax);
+          
+          $tax_total += $osC_Currencies->formatRaw($product_tax) * $product['quantity'];
+          $items_total += $osC_Currencies->formatRaw($product['final_price']) * $product['quantity'];
+          
+          $line_item_no++;
+        }
       }
       
+      $params['ITEMAMT'] = $items_total;
+      $params['TAXAMT'] = $tax_total;
+
       if ($osC_ShoppingCart->hasShippingAddress()) {
+        $params['ADDROVERRIDE'] = '1';
+        $params['SHIPTONAME'] = $osC_ShoppingCart->getShippingAddress('firstname') . ' ' . $osC_ShoppingCart->getShippingAddress('lastname');
         $params['SHIPTOSTREET'] = $osC_ShoppingCart->getShippingAddress('street_address');
         $params['SHIPTOCITY'] = $osC_ShoppingCart->getShippingAddress('city');
-        $params['SHIPTOSTATE'] = $osC_ShoppingCart->getShippingAddress('state');
-        $params['SHIPTOCOUTRYCODE'] = $osC_ShoppingCart->getShippingAddress('country_iso_code_2');
+        $params['SHIPTOSTATE'] = $osC_ShoppingCart->getShippingAddress('zone_code');
+        $params['SHIPTOCOUNTRYCODE'] = $osC_ShoppingCart->getShippingAddress('country_iso_code_2');
         $params['SHIPTOZIP'] = $osC_ShoppingCart->getShippingAddress('postcode');
       }
+      
+      //Begin: handle the shipping
+      $quotes_array = array();
+      
+      if ($osC_ShoppingCart->getContentType() != 'virtual') {
+        if (class_exists('osC_Shipping') === false) {
+          include_once('includes/classes/shipping.php');
+        }
+      
+        $osC_Shipping = new osC_Shipping();
+      
+        if ($osC_Shipping->hasQuotes()) {
+          // get all available shipping quotes
+          $quotes = $osC_Shipping->getQuotes();
+          
+          foreach($quotes as $quote) {
+            if (!isset($quote['error'])) {
+              foreach($quote['methods'] as $rate) {
+                $quotes_array[] = array('id' => $quote['id'] . '_' . $rate['id'],
+                                        'name' => $quote['module'],
+                                        'label' => $rate['title'],
+                                        'cost' => $rate['cost'],
+                                        'tax' => $quote['tax_class_id']);
+              }
+            }
+          }
+        }
+      }
+     
+      $counter = 0;
+      $cheapest_rate = null;
+      $expensive_rate = 0;
+      $cheapest_counter = $counter;
+      $default_shipping = null;
+      
+      foreach($quotes_array as $quote) {
+        $shipping_rate = $osC_Currencies->formatRaw($quote['cost'] + $osC_Currencies->addTaxRateToPrice($quote['cost'], $quote['tax']));
+        
+        $shipping_tax = $quote['cost'] * ($osC_Tax->getTaxRate($quote['tax'], $osC_ShoppingCart->getTaxingAddress('country_id'), $osC_ShoppingCart->getTaxingAddress('zone_id')) / 100);
 
+        if (DISPLAY_PRICE_WITH_TAX == '1') {
+          $shipping_rate = $quote['cost'];
+        } else {
+          $shipping_rate = $quote['cost'] + $shipping_tax;
+        }
+        
+        $params['L_SHIPPINGOPTIONNAME' . $counter] = $quote['name'] . ' (' . $quote['label'] . ')';
+        $params['L_SHIPINGPOPTIONLABEL' . $counter] = $quote['name'] . ' (' . $quote['label'] . ')';
+        $params['L_SHIPPINGOPTIONAMOUNT' . $counter] = $shipping_rate;
+        $params['L_SHIPPINGOPTIONISDEFAULT' . $counter] = 'false';
+        
+        if (is_null($cheapest_rate) || ($shipping_rate < $cheapest_rate)) {
+          $cheapest_rate = $shipping_rate;
+          $cheapest_counter = $counter;
+        }
+        
+        if ($shipping_rate > $expensive_rate) {
+          $expensive_rate = $shipping_rate;
+        }
+        
+        if ($osC_ShoppingCart->getShippingMethod('id') == $quote['id']) {
+          $default_shipping = $counter;
+        }
+        
+        $counter++;
+      }
+      
+      if (!is_null($default_shipping)) {
+        $cheapest_rate = $params['L_SHIPPINGOPTIONAMOUNT' . $default_shipping];
+        $cheapest_counter = $default_shipping;
+      } 
+      
+      if (!is_null($cheapest_rate)) {
+        $params['INSURANCEOPTIONSOFFERED'] = 'false';
+        $params['L_SHIPPINGOPTIONISDEFAULT' . $cheapest_counter] = 'true';
+      }
+      //End: handle shipping
+      
+      $params['SHIPPINGAMT'] = $osC_Currencies->formatRaw($cheapest_rate, '', 1);
+      $params['AMT'] = $osC_Currencies->formatRaw($params['ITEMAMT'] + $params['TAXAMT'] + $params['SHIPPINGAMT'], '', 1);
+      $params['MAXAMT'] = $osC_Currencies->formatRaw($params['AMT'] + $expensive_rate + 100, '', 1);// safely pad higher for dynamic shipping rates (eg, USPS express)
+      
+      //call the setExpressCheckout api     
       $post_string = '';
       foreach ($params as $key => $value) {
-        $post_string .= $key . '=' . urlencode(trim($value)) . '&';
+        $post_string .= $key . '=' . urlencode(utf8_encode(trim($value))) . '&';
       }
       $post_string = substr($post_string, 0, -1);
       
@@ -296,9 +572,11 @@
       parse_str($response, $response_array);
       
       if (($response_array['ACK'] == 'Success') || ($response_array['ACK'] == 'SuccessWithWarning')) {
-        osc_redirect($this->paypal_url . '&token=' . $response_array['TOKEN']);
+        osc_redirect($this->paypal_url . '&token=' . $response_array['TOKEN'] . '&useraction=commit');
       } else {
-        osc_redirect(osc_href_link(FILENAME_CHECKOUT, '', 'SSL'));
+        $messageStack->add_session('checkout', $osC_Language->get('payment_paypal_express_error_title') . ' <strong>' . stripslashes($response_array['L_LONGMESSAGE0']) . '</strong>');
+        
+        osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'checkout', 'SSL'));
       }
     }
     
