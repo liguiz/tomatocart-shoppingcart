@@ -74,19 +74,36 @@
     }
       
     function checkout_initialization_method() {
-//      global $osC_Language;
-//      
-//      if (file_exists(DIR_FS_CATALOG . DIR_WS_IMAGES . 'modules/payment/paypal/btn_express_' . basename($osC_Language->getCode()) . '.gif')) {
-//        $image = DIR_WS_IMAGES . 'modules/payment/paypal/btn_express_' . basename($osC_Language->getCode()) . '.gif';
-//      } else {
-//        $image = DIR_WS_IMAGES . 'modules/payment/paypal/btn_express.gif';
-//      }
-//      
-//      $string = osc_link_object(osc_href_link(FILENAME_CHECKOUT, 'callback&module=paypal_express'), osc_image($image, $osC_Language->get('payment_paypal_express_button_title')));
-//
-//      return $string;
+      global $osC_ShoppingCart, $osC_Currencies, $osC_Language;
       
-      return false;
+      if (MODULE_PAYMENT_PAYPAL_EXPRESS_CHECKOUT_IMAGE == 'Dynamic') {
+        if (MODULE_PAYMENT_PAYPAL_EXPRESS_TRANSACTION_SERVER == 'Live') {
+          $image_button = 'https://fpdbs.paypal.com/dynamicimageweb?cmd=_dynamic-image';
+        } else {
+          $image_button = 'https://fpdbs.sandbox.paypal.com/dynamicimageweb?cmd=_dynamic-image';
+        }
+
+        $params = array('locale=' . $osC_Language->get('payment_paypal_express_language_locale'));
+
+        if (osc_not_null(MODULE_PAYMENT_PAYPAL_EXPRESS_API_USERNAME)) {
+          $response_array = $this->getPalDetails();
+
+          if (isset($response_array['PAL'])) {
+            $params[] = 'pal=' . $response_array['PAL'];
+            $params[] = 'ordertotal=' . $osC_Currencies->formatRaw($osC_ShoppingCart->getTotal());
+          }
+        }
+
+        if (!empty($params)) {
+          $image_button .= '&' . implode('&', $params);
+        }
+      } else {
+        $image_button = $osC_Language->get('payment_paypal_express_button');
+      }
+
+      $string = '<a href="' . osc_href_link(FILENAME_CHECKOUT, 'callback&module=paypal_express',  'NOSSL', false) . '"><img src="' . $image_button . '" border="0" alt="' . osc_output_string_protected($osC_Language->get('payment_paypal_express_text_button')) . '" title="' . osc_output_string_protected($osC_Language->get('payment_paypal_express_text_button')) . '" /></a>';
+
+      return $string;
     }
     
     function selection() {
@@ -98,7 +115,7 @@
       global $osC_ShoppingCart, $osC_Currencies, $messageStack, $osC_Language, $osC_Database;
       
       if (!isset($_SESSION['ppe_token'])) {
-        osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'callback&module=paypal_express', 'SSL', false, false, true));
+        osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'callback&module=paypal_express', 'NOSSL', false));
       }
       
       $params = array('TOKEN' => $_SESSION['ppe_token'],
@@ -221,7 +238,7 @@
     }
     
     function _get_express_checkout_details($params) {
-      global $osC_ShoppingCart, $osC_Currencies, $osC_Language, $osC_Tax, $messageStack, $osC_Customer, $osC_Session;
+      global $osC_ShoppingCart, $osC_Currencies, $osC_Language, $osC_Database, $osC_Tax, $messageStack, $osC_Customer, $osC_Session;
       
       // if there is nothing in the customers cart, redirect them to the shopping cart page
       if (!$osC_ShoppingCart->hasContents()) {
@@ -399,7 +416,7 @@
           osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'process', 'SSL'));
         }
       }else {
-        $messageStack->add_session('checkout', $osC_Language->get('payment_paypal_express_error_title') . ' <strong>' . stripslashes($response_array['L_LONGMESSAGE0']) . '</strong>');
+        $messageStack->add_session('shopping_cart', $osC_Language->get('payment_paypal_express_error_title') . ' <strong>' . stripslashes($response_array['L_LONGMESSAGE0']) . '</strong>');
         
         osc_redirect(osc_href_link(FILENAME_CHECKOUT, '', 'SSL'));
       }
@@ -580,19 +597,26 @@
       }
     }
     
-    function _findEmail($email) {
-      global $osC_Database;
+    function getPalDetails() {
+      $params = array('VERSION' => $this->api_version,
+                      'METHOD' => 'GetPalDetails',
+                      'USER' => MODULE_PAYMENT_PAYPAL_EXPRESS_API_USERNAME,
+                      'PWD' => MODULE_PAYMENT_PAYPAL_EXPRESS_API_PASSWORD,
+                      'SIGNATURE' => MODULE_PAYMENT_PAYPAL_EXPRESS_API_SIGNATURE);
       
-      $Qcheck = $osC_Database->query('select customers_id from :table_customers where customers_email_address = :email');
-      $Qcheck->bindTable(':table_customers', TABLE_CUSTOMERS);
-      $Qcheck->bindValue(':email', $email);
-      $Qcheck->execute();
-      
-      if ($Qcheck->numberOfRows() > 0) {
-        return true;
-      }else {
-        return false;
+      $post_string = '';
+
+      foreach ($params as $key => $value) {
+        $post_string .= $key . '=' . urlencode(utf8_encode(trim($value))) . '&';
       }
+
+      $post_string = substr($post_string, 0, -1);
+      
+      $response = $this->sendTransactionToGateway($this->api_url, $post_string);
+      $response_array = array();
+      parse_str($response, $response_array);
+      
+      return $response_array;
     }
   }
 ?>
