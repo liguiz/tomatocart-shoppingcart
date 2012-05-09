@@ -184,7 +184,7 @@
             if ( ($total['code'] == 'coupon') || ($total['code'] == 'gift_certificate') ) {
               $params['discount_amount_cart'] += $osC_Currencies->formatRaw(abs($total['value']));
             } else {
-              $order_total = array('item_name_' . $i => $total['title'], 'quantity_' . $i => 1, 'amount_' . $i => $total['value']);
+              $order_total = array('item_name_' . $i => $total['title'], 'quantity_' . $i => 1, 'amount_' . $i => round($total['value'], 2));
               $params = array_merge($params, $order_total);
 
               $i++;
