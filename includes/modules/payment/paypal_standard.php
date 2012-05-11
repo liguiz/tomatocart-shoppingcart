@@ -68,6 +68,15 @@
       return array('id' => $this->_code,
                    'module' => $this->_method_title);
     }
+    
+    function pre_confirmation_check() {
+      global $osC_ShoppingCart;
+
+      $cart_id = $osC_ShoppingCart->getCartID();
+      if (empty($cart_id)) {
+        $osC_ShoppingCart->generateCartID();
+      }
+    }
 
     function confirmation() {
       $this->_order_id = osC_Order::insert(ORDERS_STATUS_PREPARING);
@@ -82,9 +91,7 @@
                       'invoice' => $this->_order_id,
                       'custom' => $osC_Customer->getID(),
                       'no_note' => '1',
-                      'lc' => 'EN', //AU, DE, FR, IT, GB, ES, US
                       'notify_url' =>  HTTPS_SERVER . DIR_WS_HTTPS_CATALOG . FILENAME_CHECKOUT . '?callback&module=' . $this->_code,
-                      //'notify_url' => osc_href_link(FILENAME_CHECKOUT, 'callback&module=' . $this->_code, 'SSL', false, false, true),
                       'return' => osc_href_link(FILENAME_CHECKOUT, 'process', 'SSL', null, null, true),
                       'rm' => '2',
                       'cancel_return' => osc_href_link(FILENAME_CHECKOUT, 'checkout', 'SSL', null, null, true),
@@ -193,93 +200,51 @@
         }
       }
 
-      if ( defined('MODULE_PAYMENT_PAYPAL_STANDARD_PAGE_STYLE') ) {
+      if ( osc_not_null('MODULE_PAYMENT_PAYPAL_STANDARD_PAGE_STYLE') ) {
         $params['page_style'] = MODULE_PAYMENT_PAYPAL_STANDARD_PAGE_STYLE;
       }
 
-      if (MODULE_PAYMENT_PAYPAL_STANDARD_EWP_STATUS == '1') {
-        $params['cert_id'] = MODULE_PAYMENT_PAYPAL_STANDARD_EWP_CERT_ID;
+      $process_button_string = '';
 
-        $random_string = osc_create_random_string(5, 'digits') . '-' . $osC_Customer->getID() . '-';
-
-        $data = '';
-        reset($params);
-        foreach ($params as $key => $value) {
-          $data .= $key . '=' . $value . "\n";
-        }
-
-        $fp = fopen(DIR_FS_WORK . $random_string . 'data.txt', 'w');
-        fwrite($fp, $data);
-        fclose($fp);
-
-        unset($data);
-
-        if (function_exists('openssl_pkcs7_sign') && function_exists('openssl_pkcs7_encrypt')) {
-          openssl_pkcs7_sign(DIR_FS_WORK . $random_string . 'data.txt', DIR_FS_WORK . $random_string . 'signed.txt', file_get_contents(MODULE_PAYMENT_PAYPAL_STANDARD_EWP_PUBLIC_KEY), file_get_contents(MODULE_PAYMENT_PAYPAL_STANDARD_EWP_PRIVATE_KEY), array('From' => MODULE_PAYMENT_PAYPAL_STANDARD_ID), PKCS7_BINARY);
-
-          unlink(DIR_FS_WORK . $random_string . 'data.txt');
-
-          // remove headers from the signature
-          $signed = file_get_contents(DIR_FS_WORK . $random_string . 'signed.txt');
-          $signed = explode("\n\n", $signed);
-          $signed = base64_decode($signed[1]);
-
-          $fp = fopen(DIR_FS_WORK . $random_string . 'signed.txt', 'w');
-          fwrite($fp, $signed);
-          fclose($fp);
-
-          unset($signed);
-
-          openssl_pkcs7_encrypt(DIR_FS_WORK . $random_string . 'signed.txt', DIR_FS_WORK . $random_string . 'encrypted.txt', file_get_contents(MODULE_PAYMENT_PAYPAL_STANDARD_EWP_PAYPAL_KEY), array('From' => MODULE_PAYMENT_PAYPAL_STANDARD_ID), PKCS7_BINARY);
-
-          unlink(DIR_FS_WORK . $random_string . 'signed.txt');
-
-          // remove headers from the encrypted result
-          $data = file_get_contents(DIR_FS_WORK . $random_string . 'encrypted.txt');
-          $data = explode("\n\n", $data);
-          $data = '-----BEGIN PKCS7-----' . "\n" . $data[1] . "\n" . '-----END PKCS7-----';
-
-          unlink(DIR_FS_WORK . $random_string . 'encrypted.txt');
-        } else {
-          exec(MODULE_PAYMENT_PAYPAL_STANDARD_EWP_OPENSSL . ' smime -sign -in ' . DIR_FS_WORK . $random_string . 'data.txt -signer ' . MODULE_PAYMENT_PAYPAL_STANDARD_EWP_PUBLIC_KEY . ' -inkey ' . MODULE_PAYMENT_PAYPAL_STANDARD_EWP_PRIVATE_KEY . ' -outform der -nodetach -binary > ' . DIR_FS_WORK . $random_string . 'signed.txt');
-          unlink(DIR_FS_WORK . $random_string . 'data.txt');
-
-          exec(MODULE_PAYMENT_PAYPAL_STANDARD_EWP_OPENSSL . ' smime -encrypt -des3 -binary -outform pem ' . MODULE_PAYMENT_PAYPAL_STANDARD_EWP_PAYPAL_KEY . ' < ' . DIR_FS_WORK . $random_string . 'signed.txt > ' . DIR_FS_WORK . $random_string . 'encrypted.txt');
-          unlink(DIR_FS_WORK . $random_string . 'signed.txt');
-
-          $fp = fopen(DIR_FS_WORK . $random_string . 'encrypted.txt', 'rb');
-          $data = fread($fp, filesize(DIR_FS_WORK . $random_string . 'encrypted.txt'));
-          fclose($fp);
-
-          unset($fp);
-
-          unlink(DIR_FS_WORK . $random_string . 'encrypted.txt');
-        }
-
-        $process_button_string = osc_draw_hidden_field('cmd', '_s-xclick') .
-                                 osc_draw_hidden_field('encrypted', $data);
-
-        unset($data);
-      } else {
-        $process_button_string = '';
-
-        foreach ($params as $key => $value) {
-          $process_button_string .= osc_draw_hidden_field($key, $value);
-        }
+      foreach ($params as $key => $value) {
+        $process_button_string .= osc_draw_hidden_field($key, $value);
       }
 
       return $process_button_string;
     }
 
     function process() {
-      if (isset($_POST['invoice']) && is_numeric($_POST['invoice']) && isset($_POST['receiver_email']) && ($_POST['receiver_email'] == MODULE_PAYMENT_PAYPAL_STANDARD_ID) && isset($_POST['verify_sign']) && (empty($_POST['verify_sign']) === false) && isset($_POST['txn_id']) && (empty($_POST['txn_id']) === false)) {
-        unset($_SESSION['prepOrderID']);
+      global $osC_ShoppingCart, $osC_Database;
+      
+      $prep = explode('-', $_SESSION['prepOrderID']);
+      if ($prep[0] == $osC_ShoppingCart->getCartID()) {
+        $Qcheck = $osC_Database->query('select orders_status_id from :table_orders_status_history where orders_id = :orders_id');
+        $Qcheck->bindTable(':table_orders_status_history', TABLE_ORDERS_STATUS_HISTORY);
+        $Qcheck->bindInt(':orders_id', $prep[1]);
+        $Qcheck->execute();
+        
+        $paid = false;
+        if ($Qcheck->numberOfRows() > 0) {
+          while($Qcheck->next()) {
+            if ($Qcheck->valueInt('orders_status_id') == $this->order_status) {
+              $paid = true;
+            }
+          }
+        }
+        
+        if ($paid === false) {
+          if (osc_not_null(MODULE_PAYMENT_PAYPAL_STANDARD_PROCESSING_ORDER_STATUS_ID)) {
+            osC_Order::process($_POST['invoice'], MODULE_PAYMENT_PAYPAL_STANDARD_PROCESSING_ORDER_STATUS_ID, 'PayPal Processing Transaction');
+          }
+        }
       }
+      
+      unset($_SESSION['prepOrderID']);
     }
 
     function callback() {
       global $osC_Database, $osC_Currencies;
-
+      
       $post_string = 'cmd=_notify-validate&';
 
       foreach ($_POST as $key => $value) {
@@ -308,19 +273,19 @@
             
             $total = $Qtotal->toArray();
             
-            $comment = $_POST['payment_status'] . ' (' . ucfirst($_POST['payer_status']) . '; ' . $osC_Currencies->format($_POST['mc_gross'], false, $_POST['mc_currency']) . ')';
+            $comment_status = $_POST['payment_status'] . ' (' . ucfirst($_POST['payer_status']) . '; ' . $osC_Currencies->format($_POST['mc_gross'], false, $_POST['mc_currency']) . ')';
             
             if ($_POST['payment_status'] == 'Pending') {
-              $comment .= '; ' . $_POST['pending_reason'];
+              $comment_status .= '; ' . $_POST['pending_reason'];
             } elseif ($_POST['payment_status'] == 'Reversed' || $_POST['payment_status'] == 'Refunded') {
-              $comment .= '; ' . $_POST['reason_code'];
+              $comment_status .= '; ' . $_POST['reason_code'];
             }
             
             if ( $_POST['mc_gross'] != number_format($total['value'] * $order['currency_value'], $osC_Currencies->getDecimalPlaces($order['currency'])) ) {
-              $comment .= '; PayPal transaction value (' . osc_output_string_protected($_POST['mc_gross']) . ') does not match order value (' . number_format($total['value'] * $order['currency_value'], $osC_Currencies->getDecimalPlaces($order['currency'])) . ')';
+              $comment_status .= '; PayPal transaction value (' . osc_output_string_protected($_POST['mc_gross']) . ') does not match order value (' . number_format($total['value'] * $order['currency_value'], $osC_Currencies->getDecimalPlaces($order['currency'])) . ')';
             }
             
-            $comments = 'PayPal IPN Verified [' . $comment . ']';
+            $comments = 'PayPal IPN Verified [' . $comment_status . ']';
             
             osC_Order::process($_POST['invoice'], $this->order_status, $comments);
           }
@@ -351,14 +316,14 @@
           $Qcheck->execute();
 
           if ($Qcheck->numberOfRows() > 0) {
-            $comment = $_POST['payment_status'];
+            $comment_status = $_POST['payment_status'];
 
             if ($_POST['payment_status'] == 'Pending') {
-              $comment .= '; ' . $_POST['pending_reason'];
+              $comment_status .= '; ' . $_POST['pending_reason'];
             }elseif ( ($_POST['payment_status'] == 'Reversed') || ($_POST['payment_status'] == 'Refunded') ) {
-              $comment .= '; ' . $_POST['reason_code'];
+              $comment_status .= '; ' . $_POST['reason_code'];
             }
-            $comments = 'PayPal IPN Invalid [' . $comment . ']';
+            $comments = 'PayPal IPN Invalid [' . $comment_status . ']';
 
             osC_Order::insertOrderStatusHistory($_POST['invoice'], $this->order_status, $comments);
           }
