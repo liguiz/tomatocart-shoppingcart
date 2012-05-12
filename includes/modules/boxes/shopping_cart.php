@@ -35,7 +35,7 @@
                     '<span class="quantity"></span> ' . $osC_Language->get('text_items') .
                   '</div>' .
                   '<div id="ajaxCartContentLong" class="expanded">' .
-                    '<ul class="products collapsed" id="ajaxCartContentProducts"><li></li></ul>' .
+                    '<ul class="products collapsed" id="ajaxCartContentProducts"></ul>' .
                     '<p id="ajaxCartContentNoProducts" class="collapsed">' . $osC_Language->get('No products') . '</p>' .
                     '<div id="ajaxCartButtons">' .
                       osc_link_object(osc_href_link(FILENAME_CHECKOUT), osc_draw_image_button('button_ajax_cart.png'), 'style="margin-right:30px;"') .
@@ -58,13 +58,13 @@
              '#ajaxCartButtons a {padding: 1px;text-align: center;text-decoration: none;}' . chr(13) .
              '#ajaxCartOrderTotals span.orderTotalText {float: right}' . chr(13) .
              '#ajaxCartContentLong ul.products {text-align: left;}' .  chr(13) .
-             '#ajaxCartContentLong ul li {padding: 6px 0;font-size: 9px;position: relative;line-height:16px;}' . chr(13) .
-             '#ajaxCartContentLong ul.products span.price {display:block;position:absolute;right:15px;top:8px;}' . chr(13) .
+             '#ajaxCartContentLong ul li {padding: 6px 0;position: relative;line-height:16px;}' . chr(13) .
+             '#ajaxCartContentLong ul.products span.price {display:block;position:absolute;right:15px;top:6px;}' . chr(13) .
              '#ajaxCartContentLong ul.products .removeProduct {cursor: pointer;display: block;width: 11px;height: 13px;position: absolute;right: 0;top: 8px;background: url(includes/languages/' . $osC_Language->getCode() . '/images/buttons/button_ajax_cart_delete.gif) no-repeat left top;}' . chr(13) .
              '#ajaxCartContentLong #ajax_cart_prices {padding: 5px 0;border-top : 1px dashed #777F7D;}' . chr(13) .
              '#ajaxCartOrderTotals {padding:5px 0;border-top: 1px dashed #CCCCCC;}' . chr(13) .
              '#ajaxCartContentLong #ajaxCartOrderTotals li {padding: 2px;font-size: 11px}' . chr(13) .
-             '#ajaxCartContentLong p{color: #616060;font-size: 10px;margin: 0}' . chr(13) .
+             '#ajaxCartContentLong p{color: #616060;padding-bottom:5px;margin: 0}' . chr(13) .
              '#ajaxCartContentLong p.variants, #ajaxCartContentLong p.customizations { padding: 2px;margin: 0 0 0 5px; }' . chr(13) .
              '#ajaxCartContentShort span.cartTotal {float:right; font-weight: bold}' . chr(13) .
              '#ajaxCartContentProducts dd span {display:block;padding-left:32px;}' . "\n\n";                                 

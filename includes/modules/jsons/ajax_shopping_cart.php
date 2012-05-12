@@ -12,7 +12,7 @@
 */
 
   class toC_Json_Ajax_shopping_cart {
-  	const PRODUCTS_NAME_LENGTH = 18;
+  	const PRODUCTS_NAME_LENGTH = 14;
   	
     function loadCart() {
       global $osC_ShoppingCart, $osC_Currencies, $toC_Json;
