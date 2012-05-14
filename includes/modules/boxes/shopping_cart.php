@@ -26,7 +26,7 @@
 
     function initialize() {
       global $osC_Language, $osC_Template, $osC_Session, $osC_Currencies;
-
+      
       $this->_title_link = osc_href_link(FILENAME_CHECKOUT, null, 'SSL');
       
       $content = '<div id="ajaxCartContent">' .
@@ -74,8 +74,9 @@
       
       $js .= '<script type="text/javascript">
                 window.addEvent("domready",function() {
-                  var ajaxCart = new AjaxShoppingCart({
+                  ajaxCart = new AjaxShoppingCart({
                     sessionId : "' . $osC_Session->getID() . '",
+                    currentUrl: "' . osc_get_current_url() . '",
                     error_sender_name_empty: "' . $osC_Language->get('error_sender_name_empty') . '",
                     error_sender_email_empty: "' . $osC_Language->get('error_sender_email_empty') . '",
                     error_recipient_name_empty: "' . $osC_Language->get('error_recipient_name_empty') . '",

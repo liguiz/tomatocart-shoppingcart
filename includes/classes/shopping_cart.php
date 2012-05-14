@@ -1313,13 +1313,8 @@
           }
 
           if (!$this->isVirtualCart()) {
-            if (!$this->hasShippingMethod() || ($this->getShippingMethod('is_cheapest') === true)) {
-              $osC_Shipping = new osC_Shipping();
-              $this->setShippingMethod($osC_Shipping->getCheapestQuote(), false);
-            } else {
-              $osC_Shipping = new osC_Shipping($this->getShippingMethod('id'));
-              $this->setShippingMethod($osC_Shipping->getQuote(), false);
-            }
+            $osC_Shipping = new osC_Shipping($this->getShippingMethod('id'));
+            $this->setShippingMethod($osC_Shipping->getQuote(), false);
           } else {
             //reset shipping address and shipping method
             $this->_shipping_address = array();

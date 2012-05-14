@@ -17,6 +17,7 @@ var AjaxShoppingCart = new Class({
     sessionName: 'sid',
     sessionId: '',
     jsonUrl: 'json.php',
+    currentUrl: 'index.php',
     redirect: 'checkout.php',
     movedPicSize: 2
   },
@@ -421,6 +422,18 @@ var AjaxShoppingCart = new Class({
   				      var result = JSON.decode(response);
   
   					    if (result.success == true) {
+  					    	//if on the checkout page or shopping cart page
+  					    	if (this.options.currentUrl.indexOf('checkout') > 0) {
+  					    	  if (result.hasContents == false) {
+					    	      window.location = this.options.currentUrl;
+					    	    }else {
+					    	    	if ($defined(checkout) && (checkout.steps[checkout.openedForm] >= checkout.steps['shippingMethodForm'])) {
+					    	    		checkout.loadPreviousForms('shippingMethodForm');
+                        checkout.gotoPanel('shippingMethodForm');
+                      }
+				    	      }
+  					    	}
+  					    	
   			          this.loadCart();
   					    }
   				    });

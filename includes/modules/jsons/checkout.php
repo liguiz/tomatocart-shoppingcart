@@ -476,9 +476,9 @@
       $osC_Shipping = new osC_Shipping();
 
 // if no shipping method has been selected, automatically select the cheapest method.
-      if ($osC_ShoppingCart->hasShippingMethod() === false) {
-        $osC_ShoppingCart->setShippingMethod($osC_Shipping->getCheapestQuote());
-      }
+//      if ($osC_ShoppingCart->hasShippingMethod() === false) {
+//        $osC_ShoppingCart->setShippingMethod($osC_Shipping->getCheapestQuote());
+//      }
       
       if (!empty($_POST['shipping_comments'])) {
         $_SESSION['comments'] = osc_sanitize_string($_POST['shipping_comments']);
@@ -773,6 +773,8 @@
     function _getShippingInformationForm() {
       global $osC_ShoppingCart, $osC_Language, $osC_Database, $osC_Customer, $osC_Currencies;
       
+      $osC_Language->load('checkout');
+      
       ob_start();
       
       include('includes/modules/shipping_address_details.php'); 
@@ -786,16 +788,13 @@
     function _getShippingMethodForm() {
       global $osC_ShoppingCart, $osC_Customer, $osC_Language, $osC_Currencies;
       
+      $osC_Language->load('checkout');
+      
       if (class_exists('osC_Shipping') === false) {
         include('includes/classes/shipping.php');
       }
       $osC_Shipping = new osC_Shipping();
       
-      // if no shipping method has been selected, automatically select the cheapest method.
-      if ($osC_ShoppingCart->hasShippingMethod() === false) {
-        $osC_ShoppingCart->setShippingMethod($osC_Shipping->getCheapestQuote());
-      }        
-              
       ob_start();
 
       //load all order total modules
