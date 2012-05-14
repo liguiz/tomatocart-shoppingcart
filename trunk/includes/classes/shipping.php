@@ -56,9 +56,7 @@
         usort($this->_modules, array('osC_Shipping', '_usortModules'));
       }
 
-      if ( empty($this->_quotes) ) {
-        $this->_calculate();
-      }
+      $this->_calculate();
     }
 
 // class methods
@@ -175,13 +173,9 @@
       if (is_array($this->_modules)) {
         $include_quotes = array();
 
-        if (defined('MODULE_SHIPPING_FREE_STATUS') && isset($GLOBALS['osC_Shipping_free']) && $GLOBALS['osC_Shipping_free']->isEnabled()) {
-          $include_quotes[] = 'osC_Shipping_free';
-        } else {
-          foreach ($this->_modules as $module) {
-            if ($GLOBALS['osC_Shipping_' . $module]->isEnabled()) {
-              $include_quotes[] = 'osC_Shipping_' . $module;
-            }
+        foreach ($this->_modules as $module) {
+          if ($GLOBALS['osC_Shipping_' . $module]->isEnabled()) {
+            $include_quotes[] = 'osC_Shipping_' . $module;
           }
         }
 

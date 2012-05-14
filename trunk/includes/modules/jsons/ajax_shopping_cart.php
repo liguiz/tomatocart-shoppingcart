@@ -28,6 +28,8 @@
       $osC_Language->load('products');
       
       if ( is_numeric($_REQUEST['pID']) && osC_Product::checkEntry($_REQUEST['pID']) ) {
+        $osC_ShoppingCart->resetShippingMethod();
+        
         $osC_Product = new osC_Product($_REQUEST['pID']);
         
         //gift certificate check
@@ -85,9 +87,14 @@
       $products_id = isset($_REQUEST['pID']) ? $_POST['pID'] : null;
 
       if ( (!empty($products_id)) && osC_Product::checkEntry($products_id) ) {
-        $osC_ShoppingCart->remove($products_id);        
+        $osC_ShoppingCart->remove($products_id);
+        $osC_ShoppingCart->resetShippingMethod();
+
+        if (!$osC_ShoppingCart->hasContents()) {
+          $osC_ShoppingCart->reset();
+        }
                 
-        $response = array('success' => true);
+        $response = array('success' => true, 'hasContents' => $osC_ShoppingCart->hasContents());
       }else {
         $response = array('success' => false);
       }
