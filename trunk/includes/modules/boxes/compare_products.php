@@ -49,14 +49,17 @@
             }
             
             //if the product have any variants, get the group_name:value_name string
-            $str_variants .= ' -- ';
-            foreach($products_variant['groups_name'] as $groups_name => $value_name) {
-              $str_variants .= '<strong>' . $groups_name . ': ' . $value_name . '</strong>;';
-            }
-            
-            //clean the last ';'
-            if (($pos = strrpos($str_variants, ';')) !== false) {
-              $str_variants = substr($str_variants, 0, -1);
+            if (isset($products_variant) && isset($products_variant['groups_name']) && is_array($products_variant['groups_name']) && !empty($products_variant['groups_name'])) {
+              $str_variants .= ' -- ';
+              
+              foreach($products_variant['groups_name'] as $groups_name => $value_name) {
+                $str_variants .= '<strong>' . $groups_name . ': ' . $value_name . '</strong>;';
+              }
+              
+              //clean the last ';'
+              if (($pos = strrpos($str_variants, ';')) !== false) {
+                $str_variants = substr($str_variants, 0, -1);
+              }
             }
             
             //build the product string that could be used
