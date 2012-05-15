@@ -70,6 +70,12 @@
       } else {
         $order_total = $osC_Weight->convert($osC_ShoppingCart->getWeight(), SHIPPING_WEIGHT_UNIT, MODULE_SHIPPING_TABLE_WEIGHT_UNIT);
       }
+      
+      //fix the shipping cost calculating bug
+      if (!is_int($order_total) && (strpos($order_total, ',') !== false)) {
+        $order_total = str_replace(',', '', $order_total);
+        $order_total = (int)$order_total;
+      }
 
       $table_cost = split("[:,]" , MODULE_SHIPPING_TABLE_COST);
       $size = sizeof($table_cost);
