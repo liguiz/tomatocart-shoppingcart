@@ -149,10 +149,10 @@
     }
 
     function _getQuote() {
-      global $osC_ShoppingCart;
+      global $osC_ShoppingCart, $osC_Currencies;
 
       if ($osC_ShoppingCart->getShippingAddress('country_id') == SHIPPING_ORIGIN_COUNTRY) {
-        $request  = '<RateRequest USERID="' . MODULE_SHIPPING_USPS_USERID . '" PASSWORD="' . MODULE_SHIPPING_USPS_PASSWORD . '">';
+        $request  = '<RateV4Request USERID="' . MODULE_SHIPPING_USPS_USERID . '">' . '<Revision>2</Revision>';
         $services_count = 0;
 
         if (isset($this->service)) {
@@ -176,31 +176,46 @@
                       '</Package>';
           $services_count++;
         }
-        $request .= '</RateRequest>';
+        $request .= '</RateV4Request>';
 
         $request = 'API=Rate&XML=' . urlencode($request);
       } else {
-        $request  = '<IntlRateRequest USERID="' . MODULE_SHIPPING_USPS_USERID . '" PASSWORD="' . MODULE_SHIPPING_USPS_PASSWORD . '">' .
+        $request  = '<IntlRateV2Request USERID="' . MODULE_SHIPPING_USPS_USERID . '">' .
+                    '<Revision>2</Revision>' .
                     '<Package ID="0">' .
                     '<Pounds>' . $this->pounds . '</Pounds>' .
                     '<Ounces>' . $this->ounces . '</Ounces>' .
-                    '<MailType>Package</MailType>' .
+                    '<MailType>All</MailType>' .
+                    '<GXG>' .
+                      '<POBoxFlag>N</POBoxFlag>' .
+                      '<GiftFlag>N</GiftFlag>' .
+                    '</GXG>' .
+                    '<ValueOfContents>' . $osC_ShoppingCart->getSubTotal() + $osC_Currencies->formatRaw($osC_ShoppingCart->getTax()) . '</ValueOfContents>' .
                     '<Country>' . $this->countries[$osC_ShoppingCart->getShippingAddress('country_iso_code_2')] . '</Country>' .
+                    '<Container>RECTANGULAR</Container>' .
+                    '<Size>LARGE</Size>' .
+                    '<Width>2</Width>' .
+                    '<Length>10</Length>' .
+                    '<Height>6</Height>' .
+                    '<Girth>0</Girth>' .
+                    '<OriginZip>' . SHIPPING_ORIGIN_ZIP . '</OriginZip>' .
+                    '<CommercialFlag>N</CommercialFlag>' .
+                    '<ExtraServices>' .
+                         '<ExtraService>0</ExtraService>' .
+                         '<ExtraService>1</ExtraService>' .
+                         '<ExtraService>2</ExtraService>' .
+                         '<ExtraService>3</ExtraService>' .
+                         '<ExtraService>5</ExtraService>' .
+                         '<ExtraService>6</ExtraService>' .
+                    '</ExtraServices>' .
                     '</Package>' .
-                    '</IntlRateRequest>';
+                    '</IntlRateV2Request>';
 
         $request = 'API=IntlRate&XML=' . urlencode($request);
       }
 
-      switch (MODULE_SHIPPING_USPS_SERVER) {
-        case 'production': $usps_server = 'production.shippingapis.com';
-                           $api_dll = 'shippingapi.dll';
-                           break;
-        case 'test':
-        default:           $usps_server = 'testing.shippingapis.com';
-                           $api_dll = 'ShippingAPITest.dll';
-                           break;
-      }
+      $usps_server = 'production.shippingapis.com';
+      $api_dll = 'shippingapi.dll';
 
       $body = '';
 
@@ -228,7 +243,7 @@
           break;
         }
       }
-
+      
       $rates = array();
       if ($osC_ShoppingCart->getShippingAddress('country_id') == SHIPPING_ORIGIN_COUNTRY) {
         if (sizeof($response) == '1') {
