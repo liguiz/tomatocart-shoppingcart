@@ -479,7 +479,7 @@
       $tag_string = '';
 
       foreach ($this->_page_tags as $key => $values) {
-        $tag_string .= '<meta name="' . $key . '" content="' . implode(', ', $values) . '" />' . "\n";
+        $tag_string .= '<meta name="' . $key . '" content="' . rtrim(implode(', ', $values), ', ') . '" />' . "\n";
       }
 
       return $tag_string . "\n";
@@ -813,8 +813,8 @@
  */
 
     function addPageTags($key, $value) {
-      $key = preg_replace('/[^\w\d_ -,]/si', '', $key);
-      $value = preg_replace('/[^\w\d_ -,]/si', '', $value);
+      $key = htmlspecialchars($key);
+      $value = htmlspecialchars($value);
       
       $this->_page_tags[$key][] = $value;
     }
