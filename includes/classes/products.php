@@ -26,6 +26,10 @@
       if (is_numeric($id)) {
         $this->_category = $id;
       }
+      
+      if ( (defined(DISPLAY_SUBCATALOGS_PRODUCTS)) && ((int)DISPLAY_SUBCATALOGS_PRODUCTS == -1) ) {
+        $this->_recursive = false;
+      }
     }
 
 /* Public methods */

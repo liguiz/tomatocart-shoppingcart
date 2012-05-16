@@ -24,7 +24,7 @@
 /* Class constructor */
 
     function osC_Index_Index() {
-      global $osC_Database, $osC_Services, $osC_Language, $breadcrumb, $cPath, $cPath_array, $current_category_id, $osC_Category;
+      global $osC_Database, $osC_Services, $osC_Language, $breadcrumb, $cPath, $cPath_array, $current_category_id, $osC_CategoryTree, $osC_Category;
 
       $this->_page_title = sprintf($osC_Language->get('index_heading'), STORE_NAME);
 
@@ -67,29 +67,52 @@
         if (!empty($meta_description)) {
           $this->addPageTags('description', $meta_description);
         }
-
-        $Qproducts = $osC_Database->query('select p.products_id from :table_products_to_categories ptc left join :table_products p on ptc.products_id = p.products_id where p.products_status = 1 and categories_id = :categories_id limit 1');
-        $Qproducts->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
-        $Qproducts->bindTable(':table_products', TABLE_PRODUCTS);
-        $Qproducts->bindInt(':categories_id', $current_category_id);
-        $Qproducts->execute();
-
-        if ($Qproducts->numberOfRows() > 0) {
-          $this->_page_contents = 'product_listing.php';
-
-          $this->_process();
-        } else {
-          $Qparent = $osC_Database->query('select categories_id from :table_categories where categories_status = 1 and parent_id = :parent_id limit 1');
-          $Qparent->bindTable(':table_categories', TABLE_CATEGORIES);
-          $Qparent->bindInt(':parent_id', $current_category_id);
-          $Qparent->execute();
-
-          if ($Qparent->numberOfRows() > 0) {
-            $this->_page_contents = 'category_listing.php';
-          } else {
+        
+        if ( (defined('DISPLAY_SUBCATALOGS_PRODUCTS')) && ((int)DISPLAY_SUBCATALOGS_PRODUCTS == 1) ) {
+          $sub_categories = array($current_category_id);
+          $sub_categories = $osC_CategoryTree->getChildren($current_category_id, $sub_categories);
+          
+          $Qproducts = $osC_Database->query('select p.products_id from :table_products_to_categories ptc left join :table_products p on ptc.products_id = p.products_id where p.products_status = 1 and categories_id in (:categories_id) limit 1');
+          $Qproducts->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
+          $Qproducts->bindTable(':table_products', TABLE_PRODUCTS);
+          $Qproducts->bindRaw(':categories_id', implode(',', $sub_categories));
+          $Qproducts->execute();
+          
+          if (count($sub_categories) > 1) {
+            if ($Qproducts->numberOfRows() > 0) {
+              $this->_page_contents = 'category_products_listing.php';
+  
+              $this->_process();
+            }
+          }else {
             $this->_page_contents = 'product_listing.php';
-
+  
             $this->_process();
+          }
+        }else {
+          $Qproducts = $osC_Database->query('select p.products_id from :table_products_to_categories ptc left join :table_products p on ptc.products_id = p.products_id where p.products_status = 1 and categories_id = :categories_id limit 1');
+          $Qproducts->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
+          $Qproducts->bindTable(':table_products', TABLE_PRODUCTS);
+          $Qproducts->bindInt(':categories_id', $current_category_id);
+          $Qproducts->execute();
+  
+          if ($Qproducts->numberOfRows() > 0) {
+            $this->_page_contents = 'product_listing.php';
+  
+            $this->_process();
+          } else {
+            $Qparent = $osC_Database->query('select categories_id from :table_categories where categories_status = 1 and parent_id = :parent_id limit 1');
+            $Qparent->bindTable(':table_categories', TABLE_CATEGORIES);
+            $Qparent->bindInt(':parent_id', $current_category_id);
+            $Qparent->execute();
+  
+            if ($Qparent->numberOfRows() > 0) {
+              $this->_page_contents = 'category_listing.php';
+            } else {
+              $this->_page_contents = 'product_listing.php';
+  
+              $this->_process();
+            }
           }
         }
       } else {
