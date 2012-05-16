@@ -67,25 +67,32 @@
               if ($pfrom == 0 && $pto == $prices[$n]) {
                 $price_section = '<b>' . $price_section . '</b>';
               }
-  
-              $this->_content .= '<li>' . osc_link_object(osc_href_link(FILENAME_SEARCH, 'keywords=&x=0&y=0&pfrom=' . 0 . '&pto=' . $prices[$n] . '&' . implode('&', $filters)), $price_section) . '</li>';
+              
+              $params = 'keywords=&x=0&y=0&pfrom=' . 0 . '&pto=' . $prices[$n] . '&' . implode('&', $filters);
             } else if ($n == sizeof($prices)) {
               $price_section = $osC_Currencies->displayRawPrice($prices[$n-1]) . ' + ';
   
               if ($pfrom == $prices[$n-1] && $pto == 0) {
                 $price_section = '<b>' . $price_section . '</b>';
               }
-  
-              $this->_content .= '<li>' . osc_link_object(osc_href_link(FILENAME_SEARCH, 'keywords=&x=0&y=0&pfrom=' . $prices[$n-1] . '&pto=' . '&' . implode('&', $filters)), $price_section) . '</li>';
+              
+              $params = 'keywords=&x=0&y=0&pfrom=' . $prices[$n-1] . '&pto=' . '&' . implode('&', $filters);
+              
             } else {
               $price_section = $osC_Currencies->displayRawPrice($prices[$n-1]) . ' ~ ' . $osC_Currencies->displayRawPrice($prices[$n]);
   
               if ($pfrom == $prices[$n-1] && $pto == $prices[$n]) {
                 $price_section = '<b>' . $price_section . '</b>';
               }
-  
-              $this->_content .= '<li>' . osc_link_object(osc_href_link(FILENAME_SEARCH, 'keywords=&x=0&y=0&pfrom=' . $prices[$n-1] . '&pto=' . $prices[$n] . '&' . implode('&', $filters)), $price_section) . '</li>';
+              
+              $params = 'keywords=&x=0&y=0&pfrom=' . $prices[$n-1] . '&pto=' . $prices[$n] . '&' . implode('&', $filters);
             }
+            
+            if ( (defined('BOX_SHOP_BY_PRICE_RECURSIVE')) && ((int)BOX_SHOP_BY_PRICE_RECURSIVE == 1) ) {
+              $params .= '&recursive=1';
+            }
+  
+            $this->_content .= '<li>' . osc_link_object(osc_href_link(FILENAME_SEARCH, $params), $price_section) . '</li>';
           }
   
           $this->_content .= '</ol>';
@@ -105,6 +112,8 @@
       foreach ($osC_Currencies->currencies as $key => $value) {
         $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('" . $value['title'] . "', '" . "BOX_SHOP_BY_PRICE_" . $key . "', '','" . $value['title'] . " price interval (Price seperated by \";\")', '6', '0', now())");
       }
+      
+      $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('search to be recursive? ', 'BOX_SHOP_BY_PRICE_RECURSIVE', '1', 'Do you want the search to be recursive?If it is true, the products in the sub categories will be displayed.', '6', '0', 'osc_cfg_set_boolean_value(array(1, -1))', now())");
     }
 
     function getKeys() {
@@ -120,6 +129,8 @@
         foreach ($osC_Currencies->currencies as $key => $value) {
           $this->_keys[] = 'BOX_SHOP_BY_PRICE_' . $key;
         }
+        
+        $this->_keys[] = 'BOX_SHOP_BY_PRICE_RECURSIVE';
       }
 
       return $this->_keys;
