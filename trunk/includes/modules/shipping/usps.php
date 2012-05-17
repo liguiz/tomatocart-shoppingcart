@@ -63,9 +63,8 @@
       }
 
       $this->types = array('Express' => 'EXPRESS',
-                           'First Class' => 'First-Class Mail',
-                           'Priority' => 'Priority',
-                           'Parcel' => 'Parcel');
+                           'Priority' => 'PRIORITY',
+                           'Parcel' => 'PARCEL');
 
       $this->intl_types = array('GXG Document' => 'Global Express Guaranteed Document Service',
                                 'GXG Non-Document' => 'Global Express Guaranteed Non-Document Service',
@@ -84,8 +83,8 @@
     function quote() {
       global $osC_Language, $osC_ShoppingCart;
 
-      $this->_setMachinable('False');
-      $this->_setContainer('None');
+      $this->_setMachinable('false');
+      $this->_setContainer('');
       $this->_setSize('REGULAR');
 
 // usps doesnt accept zero weight
@@ -152,7 +151,7 @@
       global $osC_ShoppingCart, $osC_Currencies;
 
       if ($osC_ShoppingCart->getShippingAddress('country_id') == SHIPPING_ORIGIN_COUNTRY) {
-        $request  = '<RateV4Request USERID="' . MODULE_SHIPPING_USPS_USERID . '">' . '<Revision>2</Revision>';
+        $request  = '<RateV4Request USERID="' . MODULE_SHIPPING_USPS_USERID . '">';
         $services_count = 0;
 
         if (isset($this->service)) {
@@ -165,7 +164,7 @@
         reset($this->types);
         while (list($key, $value) = each($this->types)) {
           $request .= '<Package ID="' . $services_count . '">' .
-                      '<Service>' . $key . '</Service>' .
+                      '<Service>' . $value . '</Service>' .
                       '<ZipOrigination>' . SHIPPING_ORIGIN_ZIP . '</ZipOrigination>' .
                       '<ZipDestination>' . $dest_zip . '</ZipDestination>' .
                       '<Pounds>' . $this->pounds . '</Pounds>' .
@@ -178,18 +177,13 @@
         }
         $request .= '</RateV4Request>';
 
-        $request = 'API=Rate&XML=' . urlencode($request);
+        $request = 'API=RateV4&XML=' . urlencode($request);
       } else {
         $request  = '<IntlRateV2Request USERID="' . MODULE_SHIPPING_USPS_USERID . '">' .
-                    '<Revision>2</Revision>' .
                     '<Package ID="0">' .
                     '<Pounds>' . $this->pounds . '</Pounds>' .
                     '<Ounces>' . $this->ounces . '</Ounces>' .
                     '<MailType>All</MailType>' .
-                    '<GXG>' .
-                      '<POBoxFlag>N</POBoxFlag>' .
-                      '<GiftFlag>N</GiftFlag>' .
-                    '</GXG>' .
                     '<ValueOfContents>' . $osC_ShoppingCart->getSubTotal() + $osC_Currencies->formatRaw($osC_ShoppingCart->getTax()) . '</ValueOfContents>' .
                     '<Country>' . $this->countries[$osC_ShoppingCart->getShippingAddress('country_iso_code_2')] . '</Country>' .
                     '<Container>RECTANGULAR</Container>' .
@@ -211,11 +205,12 @@
                     '</Package>' .
                     '</IntlRateV2Request>';
 
-        $request = 'API=IntlRate&XML=' . urlencode($request);
+        $request = 'API=IntlRateV2&XML=' . urlencode($request);
       }
 
+      
       $usps_server = 'production.shippingapis.com';
-      $api_dll = 'shippingapi.dll';
+      $api_dll = 'ShippingAPI.dll';
 
       $body = '';
 
@@ -225,13 +220,13 @@
         $http->addHeader('User-Agent', 'osCommerce');
         $http->addHeader('Connection', 'Close');
 
-        if ($http->Get('/' . $api_dll . '?' . $request)) $body = $http->getBody();
+        if ($http->Get('/' . $api_dll . '?' . $request)) $body = preg_replace(array('/\&lt;sup\&gt;\&amp;reg;\&lt;\/sup\&gt;/', '/\&lt;sup\&gt;\&amp;trade;\&lt;\/sup\&gt;/', '/\" /', '/\",/', '/\"<br>/', '/<br>/'), array('RM', 'TM', '&quot;,', '&quot; ', '&quot;<br>', 'BREAK'), htmlspecialchars_decode($http->getBody()));
 
         $http->Disconnect();
       } else {
         return false;
       }
-
+      
       $response = array();
       while (true) {
         if ($start = strpos($body, '<Package ID=')) {
@@ -258,13 +253,14 @@
         }
 
         $n = sizeof($response);
+        
         for ($i=0; $i<$n; $i++) {
-          if (strpos($response[$i], '<Postage>')) {
-            $service = ereg('<Service>(.*)</Service>', $response[$i], $regs);
+          if (strpos($response[$i], '<Postage') !== false) {
+            $service = ereg('<MailService>(.*)</MailService>', $response[$i], $regs);
             $service = $regs[1];
-            $postage = ereg('<Postage>(.*)</Postage>', $response[$i], $regs);
+            $postage = ereg('<Rate>(.*)</Rate>', $response[$i], $regs);
             $postage = $regs[1];
-
+            
             $rates[] = array($service => $postage);
           }
         }
@@ -289,10 +285,10 @@
               break;
             }
           }
-
+          
           $size = sizeof($services);
           for ($i=0, $n=$size; $i<$n; $i++) {
-            if (strpos($services[$i], '<Postage>')) {
+            if (strpos($services[$i], '<Postage') != false)) {
               $service = ereg('<SvcDescription>(.*)</SvcDescription>', $services[$i], $regs);
               $service = $regs[1];
               $postage = ereg('<Postage>(.*)</Postage>', $services[$i], $regs);
