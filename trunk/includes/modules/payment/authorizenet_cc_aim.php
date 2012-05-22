@@ -56,41 +56,141 @@
       }
     }
     
-    function selection() {
-      return array('id' => $this->_code,
-                   'module' => $this->_method_title);
+    function getJavascriptBlock() {
+      global $osC_Language, $osC_CreditCard;
+
+      $osC_CreditCard = new osC_CreditCard();
+
+      $js = '  if (payment_value == "' . $this->_code . '") {' . "\n" .
+            '    var authorizenet_cc_owner = document.checkout_payment.authorizenet_cc_owner.value;' . "\n" .
+            '    var authorizenet_cc_number = document.checkout_payment.authorizenet_cc_number.value;' . "\n" .
+            '    authorizenet_cc_number = authorizenet_cc_number.replace(/[^\d]/gi, "");' . "\n";
+
+      if (MODULE_PAYMENT_AUTHORIZENET_CC_AIM_VERIFY_WITH_CVC == '1') {
+        $js .= '    var authorizenet_cc_cvc = document.checkout_payment.authorizenet_cc_cvc.value;' . "\n";
+      }
+
+      if (CFG_CREDIT_CARDS_VERIFY_WITH_JS == '1') {
+        $js .= '    var authorizenet_cc_type_match = false;' . "\n";
+      }
+
+      $js .= '    if (authorizenet_cc_owner == "" || authorizenet_cc_owner.length < ' . CC_OWNER_MIN_LENGTH . ') {' . "\n" .
+             '      error_message = error_message + "' . sprintf($osC_Language->get('payment_authorizenet_cc_aim_js_credit_card_owner'), CC_OWNER_MIN_LENGTH) . '\n";' . "\n" .
+             '      error = 1;' . "\n" .
+             '    }' . "\n";
+
+      $has_type_patterns = false;
+
+      if ( (CFG_CREDIT_CARDS_VERIFY_WITH_JS == '1') && (osc_empty(MODULE_PAYMENT_AUTHORIZENET_CC_AIM_ACCEPTED_TYPES) === false) ) {
+        foreach (explode(',', MODULE_PAYMENT_AUTHORIZENET_CC_AIM_ACCEPTED_TYPES) as $type_id) {
+          if ($osC_CreditCard->typeExists($type_id)) {
+            $has_type_patterns = true;
+
+            $js .= '    if ( (authorizenet_cc_type_match == false) && (authorizenet_cc_number.match(' . $osC_CreditCard->getTypePattern($type_id) . ') != null) ) { ' . "\n" .
+                   '      authorizenet_cc_type_match = true;' . "\n" .
+                   '    }' . "\n";
+          }
+        }
+      }
+
+      if ($has_type_patterns === true) {
+        $js .= '    if ((authorizenet_cc_type_match == false) || (mod10(authorizenet_cc_number) == false)) {' . "\n" .
+               '      error_message = error_message + "' . $osC_Language->get('payment_authorizenet_cc_aim_js_credit_card_not_accepted') . '\n";' . "\n" .
+               '      error = 1;' . "\n" .
+               '    }' . "\n";
+      } else {
+        $js .= '    if (authorizenet_cc_number == "" || authorizenet_cc_number.length < ' . CC_NUMBER_MIN_LENGTH . ') {' . "\n" .
+               '      error_message = error_message + "' . sprintf($osC_Language->get('payment_authorizenet_cc_aim_js_credit_card_number'), CC_NUMBER_MIN_LENGTH) . '\n";' . "\n" .
+               '      error = 1;' . "\n" .
+               '    }' . "\n";
+      }
+
+      if (MODULE_PAYMENT_AUTHORIZENET_CC_AIM_VERIFY_WITH_CVC == '1') {
+        $js .= '    if (authorizenet_cc_cvc == "" || authorizenet_cc_cvc.length < 3) {' . "\n" .
+               '      error_message = error_message + "' . sprintf($osC_Language->get('payment_authorizenet_cc_aim_js_credit_card_cvc'), 3) . '\n";' . "\n" .
+               '      error = 1;' . "\n" .
+               '    }' . "\n";
+      }
+
+      $js .= '  }' . "\n";
+
+      return $js;
     }
     
+    function selection() {
+      global $osC_Database, $osC_Language, $osC_ShoppingCart;
+
+      for ($i=1; $i<13; $i++) {
+        $expires_month[] = array('id' => sprintf('%02d', $i), 'text' => strftime('%B',mktime(0,0,0,$i,1)));
+      }
+
+      $year = date('Y');
+      for ($i=$year; $i < $year+10; $i++) {
+        $expires_year[] = array('id' => $i, 'text' => strftime('%Y',mktime(0,0,0,1,1,$i)));
+      }
+
+      $selection = array('id' => $this->_code,
+                         'module' => $this->_method_title,
+                         'fields' => array(array('title' => $osC_Language->get('payment_authorizenet_cc_aim_credit_card_owner'),
+                                                 'field' => osc_draw_input_field('authorizenet_cc_owner', $osC_ShoppingCart->getBillingAddress('firstname') . ' ' . $osC_ShoppingCart->getBillingAddress('lastname'), 'style="margin:5px 0;"')),
+                                           array('title' => $osC_Language->get('payment_authorizenet_cc_aim_credit_card_number'),
+                                                 'field' => osc_draw_input_field('authorizenet_cc_number'), '', 'style="margin:5px 0;"'),
+                                           array('title' => $osC_Language->get('payment_authorizenet_cc_aim_credit_card_expires'),
+                                                 'field' => osc_draw_pull_down_menu('authorizenet_cc_expires_month', $expires_month, null, 'style="margin:5px 0;"') . '&nbsp;' . osc_draw_pull_down_menu('authorizenet_cc_expires_year', $expires_year, null, 'style="margin:5px 0;"'))));
+
+     if (MODULE_PAYMENT_AUTHORIZENET_CC_AIM_VERIFY_WITH_CVC == '1') {
+       $selection['fields'][] = array('title' => $osC_Language->get('payment_authorizenet_cc_aim_credit_card_cvc'),
+                                      'field' => osc_draw_input_field('authorizenet_cc_cvc', null, 'size="5" maxlength="4" style="margin:5px 0;"'));
+     }
+
+      return $selection;
+    }
+    
+    
     function pre_confirmation_check() {
-      return false;
+      $this->_verifyData();
     }
     
     function confirmation() {
-      global $osC_Language, $osC_ShoppingCart;
-      
-      for ($i=1; $i<13; $i++) {
-        $expires_month[] = array('id' => sprintf('%02d', $i), 'text' => strftime('%B',mktime(0,0,0,$i,1,2000)));
-      }
-      
-      $today = getdate();
-      for ($i=$today['year']; $i < $today['year']+10; $i++) {
-        $expires_year[] = array('id' => strftime('%y',mktime(0,0,0,1,1,$i)), 'text' => strftime('%Y',mktime(0,0,0,1,1,$i)));
-      }
-      
-      $confirmation = array('fields' => array(array('title' =>  $osC_Language->get('payment_authorizenet_cc_aim_credit_card_owner'),
-                                                    'field' => osc_draw_input_field('cc_owner', $osC_ShoppingCart->getBillingAddress('firstname') . ' ' . $osC_ShoppingCart->getBillingAddress('lastname'))),
+      global $osC_Language, $osC_CreditCard;
+
+      $confirmation = array('title' => $this->_method_title,
+                            'fields' => array(array('title' => $osC_Language->get('payment_authorizenet_cc_aim_credit_card_owner'),
+                                                    'field' => $osC_CreditCard->getOwner()),
                                               array('title' => $osC_Language->get('payment_authorizenet_cc_aim_credit_card_number'),
-                                                    'field' => osc_draw_input_field('cc_number_nh-dns')),
+                                                    'field' => $osC_CreditCard->getSafeNumber()),
                                               array('title' => $osC_Language->get('payment_authorizenet_cc_aim_credit_card_expires'),
-                                                    'field' => osc_draw_pull_down_menu('cc_expires_month', $expires_month) . '&nbsp;' . osc_draw_pull_down_menu('cc_expires_year', $expires_year)),
-                                              array('title' => $osC_Language->get('payment_authorizenet_cc_aim_credit_card_cvc'),
-                                                    'field' => osc_draw_input_field('cc_cvc_nh-dns', '', 'size="5" maxlength="4"'))));
-                                              
-      return $confirmation;                                               
+                                                    'field' => $osC_CreditCard->getExpiryMonth() . ' / ' . $osC_CreditCard->getExpiryYear())));
+
+      if (MODULE_PAYMENT_AUTHORIZENET_CC_AIM_VERIFY_WITH_CVC == '1') {
+        $confirmation['fields'][] = array('title' => $osC_Language->get('payment_authorizenet_cc_aim_credit_card_cvc'),
+                                          'field' => $osC_CreditCard->getCVC());
+      }
+
+      return $confirmation;
+    }
+    
+    function process_button() {
+      global $osC_CreditCard;
+
+      $fields = osc_draw_hidden_field('authorizenet_cc_owner', $osC_CreditCard->getOwner()) .
+                osc_draw_hidden_field('authorizenet_cc_expires_month', $osC_CreditCard->getExpiryMonth()) .
+                osc_draw_hidden_field('authorizenet_cc_expires_year', $osC_CreditCard->getExpiryYear()) .
+                osc_draw_hidden_field('authorizenet_cc_number', $osC_CreditCard->getNumber());
+
+      if (MODULE_PAYMENT_AUTHORIZENET_CC_AIM_VERIFY_WITH_CVC == '1') {
+        $fields .= osc_draw_hidden_field('authorizenet_cc_cvc', $osC_CreditCard->getCVC());
+      }
+
+      return $fields;
     }
     
     function process() {
-      global $osC_Currencies, $osC_ShoppingCart, $messageStack, $osC_Customer, $osC_Tax;
+      global $osC_Currencies, $osC_ShoppingCart, $messageStack, $osC_Customer, $osC_Tax, $osC_CreditCard;
+      
+      $this->_verifyData();
+      
+      $orders_id = osC_Order::insert();
       
       $params = array('x_login' => substr(MODULE_PAYMENT_AUTHORIZENET_CC_AIM_API_LOGIN_ID, 0, 20), 
                       'x_tran_key' => substr(MODULE_PAYMENT_AUTHORIZENET_CC_AIM_API_TRANSACTION_KEY, 0, 16), 
@@ -107,18 +207,25 @@
                       'x_state' => substr($osC_ShoppingCart->getBillingAddress('state'), 0, 40), 
                       'x_zip' => substr($osC_ShoppingCart->getBillingAddress('postcode'), 0, 20), 
                       'x_country' => substr($osC_ShoppingCart->getBillingAddress('country_iso_code_2'), 0, 60), 
-                      'x_phone' => substr($osC_ShoppingCart->getBillingAddress('telephone_number'), 0, 25), 
                       'x_cust_id' => substr($osC_Customer->getID(), 0, 20), 
-                      'x_customer_ip' => osc_get_ip_address(), 
+                      'x_customer_ip' => osc_get_ip_address(),
+                      'x_invoice_num' => $order_id, 
                       'x_email' => substr($osC_Customer->getEmailAddress(), 0, 255), 
                       'x_description' => substr(STORE_NAME, 0, 255), 
                       'x_amount' => substr($osC_Currencies->formatRaw($osC_ShoppingCart->getTotal()), 0, 15), 
                       'x_currency_code' => substr($osC_Currencies->getCode(), 0, 3), 
                       'x_method' => 'CC', 
                       'x_type' => (MODULE_PAYMENT_AUTHORIZENET_CC_AIM_TRANSACTION_METHOD == 'Capture') ? 'AUTH_CAPTURE' : 'AUTH_ONLY', 
-                      'x_card_num' => substr($_POST['cc_number_nh-dns'], 0, 22), 
-                      'x_exp_date' => $_POST['cc_expires_month'] . $_POST['cc_expires_year'], 
-                      'x_card_code' => substr($_POST['cc_cvc_nh-dns'], 0, 4));
+                      'x_card_num' => $osC_CreditCard->getNumber(), 
+                      'x_exp_date' => $osC_CreditCard->getExpiryMonth() . $osC_CreditCard->getExpiryYear());
+      
+      if (ACCOUNT_TELEPHONE > -1) {
+        $params['x_phone'] = $osC_ShoppingCart->getBillingAddress('telephone_number');
+      }
+      
+      if (MODULE_PAYMENT_AUTHORIZENET_CC_AIM_VERIFY_WITH_CVC == '1') {
+        $params['x_card_code'] = $osC_CreditCard->getCVC();
+      }
       
       if ($osC_ShoppingCart->hasShippingAddress()) {
         $params['x_ship_to_first_name'] = substr($osC_ShoppingCart->getShippingAddress('firstname'), 0, 50);
@@ -184,7 +291,7 @@
       $error = false;
       
       if ($regs[0] == '1') {
-        if (MODULE_PAYMENT_AUTHORIZENET_CC_AIM_MD5_HASH != null) {
+        if (!osc_empty(MODULE_PAYMENT_AUTHORIZENET_CC_AIM_MD5_HASH)) {
           if (strtoupper($regs[37]) != strtoupper(md5(MODULE_PAYMENT_AUTHORIZENET_CC_AIM_MD5_HASH . MODULE_PAYMENT_AUTHORIZENET_CC_AIM_API_LOGIN_ID . $regs[6] . $osC_Currencies->formatRaw($osC_ShoppingCart->getTotal())))) {
             $error = 'general';
           }
@@ -216,23 +323,19 @@
       }
       
       if ($error != false) {
+        osC_Order::remove($orders_id);
+        
         osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'checkout&error=' . $error, 'SSL'));
       }else {
-        $orders_id = osC_Order::insert();
-        
-        osC_Order::process($orders_id, $this->_order_status);
+        osC_Order::process($orders_id, $this->_order_status, $transaction_response);
       }
-    }
-    
-    function process_button() {
-      return false;
     }
     
     function get_error() {
       global $osC_Language;
       
-      $error_message = $osC_Language->get('payment_authorizenet_cc_aim_error_general');
-
+      $error = false;
+      
       if (isset($_GET['error'])) {
         switch ($_GET['error']) {
           case 'invalid_expiration_date':
@@ -255,12 +358,51 @@
             $error_message = $osC_Language->get('payment_authorizenet_cc_aim_error_general');
             break;
         }
+        
+        $error = array('title' => $osC_Language->get('payment_authorizenet_cc_aim_error_title'),
+                       'error' => $error_message);
       }
 
-      $error = array('title' => $osC_Language->get('payment_authorizenet_cc_aim_error_title'),
-                     'error' => $error_message);
-
       return $error;
+    }
+    
+    function _verifyData() {
+      global $osC_Language, $messageStack, $osC_CreditCard;
+
+      $osC_CreditCard = new osC_CreditCard($_POST['authorizenet_cc_number'], $_POST['authorizenet_cc_expires_month'], $_POST['authorizenet_cc_expires_year']);
+      $osC_CreditCard->setOwner($_POST['authorizenet_cc_owner']);
+
+      if (MODULE_PAYMENT_AUTHORIZENET_CC_AIM_VERIFY_WITH_CVC == '1') {
+        $osC_CreditCard->setCVC($_POST['authorizenet_cc_cvc']);
+      }
+
+      if (($result = $osC_CreditCard->isValid(MODULE_PAYMENT_AUTHORIZENET_CC_AIM_ACCEPTED_TYPES)) !== true) {
+        $error = '';
+
+        switch ($result) {
+          case -2:
+            $error = $osC_Language->get('payment_authorizenet_cc_aim_error_invalid_exp_date');
+            break;
+
+          case -3:
+            $error = $osC_Language->get('payment_authorizenet_cc_aim_error_expired');
+            break;
+
+          case -5:
+            $error = $osC_Language->get('payment_authorizenet_cc_aim_error_not_accepted');
+            break;
+
+          default:
+            $error = $osC_Language->get('payment_authorizenet_cc_aim_error_general');
+            break;
+        }
+        
+        if ($messageStack->size('checkout_payment') > 0) {
+          $messageStack->reset();
+        }
+
+        $messageStack->add_session('checkout_payment', $error, 'error');
+      }
     }
   }
 ?>

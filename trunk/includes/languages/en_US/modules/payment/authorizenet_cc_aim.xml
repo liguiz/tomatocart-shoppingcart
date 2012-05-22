@@ -37,6 +37,21 @@
       <group>modules-payment</group>
     </definition>
     <definition>
+      <key>payment_authorizenet_cc_aim_js_credit_card_not_accepted</key>
+      <value><![CDATA[* This credit card type is not accepted. Please try again with another card or payment method.]]></value>
+      <group>modules-payment</group>
+    </definition>
+    <definition>
+      <key>payment_authorizenet_cc_aim_js_credit_card_cvc</key>
+      <value><![CDATA[* The credit card check number (CVC) must be at least 3 characters.]]></value>
+      <group>modules-payment</group>
+    </definition>
+    <definition>
+      <key>payment_authorizenet_cc_aim_js_credit_card_number</key>
+      <value><![CDATA[* The credit card number must be at least %s characters.]]></value>
+      <group>modules-payment</group>
+    </definition>
+    <definition>
       <key>payment_authorizenet_cc_aim_error_title</key>
       <value><![CDATA[There has been an error processing your credit card]]></value>
       <group>modules-payment</group>
@@ -64,6 +79,11 @@
     <definition>
       <key>payment_authorizenet_cc_aim_error_cvc</key>
       <value><![CDATA[The credit card check number (CVC) is invalid. Please check the card information and try again.]]></value>
+      <group>modules-payment</group>
+    </definition>
+    <definition>
+      <key>payment_authorizenet_cc_aim_error_not_accepted</key>
+      <value><![CDATA[This credit card type is not accepted. Please try again with another card or payment method.]]></value>
       <group>modules-payment</group>
     </definition>
   </definitions>
