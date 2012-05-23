@@ -81,6 +81,7 @@ var TocAutoCompleter = new Class({
     cache: true,
     delay: 250,
     width: 235,
+    parentId: 'navigationInner',
     selectionLength: 23
   },
   
@@ -94,6 +95,24 @@ var TocAutoCompleter = new Class({
     }
     
     this.setSelectionValueLength(this.options.selectionLength);
+  },
+  
+  /**
+   * override choiceSelect
+   *
+   * Make the form to submit automatically once the element is selected
+   *
+   */
+  
+  choiceSelect: function(choice) {
+    if (choice) this.choiceOver(choice);
+    this.setSelection(true);
+    this.queryValue = false;
+    this.hideChoices();
+    
+    if ($defined($(this.options.parentId))) {
+      $(this.options.parentId).getElement('form').submit();
+    }
   },
   
   setSelectionValueLength: function(length) {
