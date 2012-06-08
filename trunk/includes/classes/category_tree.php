@@ -573,7 +573,11 @@
       
       if ( is_array($categories) && !empty($categories) ) {
         foreach($categories as $categories_id => $category) {
-          $category_link = $categories_id;
+          if ($this->breadcrumb_usage == true) {
+            $category_link = $this->buildBreadcrumb($categories_id);
+          } else {
+            $category_link = $category_id;
+          }
           
           $result .= $this->child_start_string;     
                  
