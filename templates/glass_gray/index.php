@@ -18,7 +18,6 @@
 <head>
 
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $osC_Language->getCharacterSet(); ?>" />
-<meta http-equiv="x-ua-compatible" content="ie=7" />
 <link rel="shortcut icon" href="templates/<?php echo $osC_Template->getCode(); ?>/images/tomatocart.ico" type="image/x-icon" />
 
 <title><?php echo ($osC_Template->hasMetaPageTitle() ? $osC_Template->getMetaPageTitle() . ' - ' : '') . STORE_NAME; ?></title>
