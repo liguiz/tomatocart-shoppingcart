@@ -125,7 +125,7 @@
  * @access private
  */
 
-    var $_javascript_filenames = array('includes/general.js', 'ext/mootools/mootools-1.2.js', 'ext/mootools/mootools_more.js');
+    var $_javascript_filenames = array('includes/general.js', 'https://ajax.googleapis.com/ajax/libs/mootools/1.2.5/mootools-yui-compressed.js', 'ext/mootools/mootools_more.js');
 
 /**
  * Holds javascript PHP filenames to be included in the page
