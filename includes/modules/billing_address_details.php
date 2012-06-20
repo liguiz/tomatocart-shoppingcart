@@ -67,17 +67,23 @@
     <li style="margin-bottom: 10px">
     <?php
       $Qaddresses = osC_AddressBook::getListing();
-      $address = array();
+      $addresses = array();
       
       while ($Qaddresses->next()) {
-        $address[] = array('id' => $Qaddresses->valueInt('address_book_id'), 'text' => osC_Address::format($Qaddresses->toArray(), ', ') );
+        $address = array('id' => $Qaddresses->valueInt('address_book_id'), 'text' => osC_Address::format($Qaddresses->toArray(), ', '));
+        
+        if ($Qaddresses->valueInt('address_book_id') == $Qaddresses->valueInt('default_address_id')) {
+           array_unshift($addresses, $address);
+        }else {
+           array_push($addresses, $address);
+        }
       }
       
       if($create_billing_address == null) {
         $create_billing_address = false;
       }
       
-      echo osc_draw_pull_down_menu('sel_billing_address', $address);
+      echo osc_draw_pull_down_menu('sel_billing_address', $addresses);
     ?>
     </li>
     <?php
