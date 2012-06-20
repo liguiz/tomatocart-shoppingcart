@@ -22,8 +22,14 @@
         $_page_image = 'table_background_account.gif';
 
     function osC_Account_Wishlist() {
-      global $osC_Language, $osC_Services, $breadcrumb, $messageStack;
+      global $osC_Language, $osC_Services, $breadcrumb, $messageStack, $osC_Customer, $osC_NavigationHistory;
+      
+      if ($osC_Customer->isLoggedOn() === false) {
+        $osC_NavigationHistory->setSnapshot();
 
+        osc_redirect(osc_href_link(FILENAME_ACCOUNT, 'login', 'SSL'));
+      }
+      
       $this->_page_title = $osC_Language->get('wishlist_heading');
       
       if ($osC_Services->isStarted('breadcrumb')) {
