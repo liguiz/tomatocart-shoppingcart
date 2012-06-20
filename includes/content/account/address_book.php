@@ -62,6 +62,7 @@
           $this->_page_title = $osC_Language->get('address_book_edit_entry_heading');
           $this->_page_contents = 'address_book_process.php';
 
+          $this->addJavascriptFilename('includes/javascript/address_book.js');
           $this->addJavascriptPhpFilename('includes/form_check.js.php');
         }
       } elseif (isset($_GET['delete']) && is_numeric($_GET[$this->_module])) {
