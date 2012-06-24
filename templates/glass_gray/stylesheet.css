@@ -939,9 +939,19 @@ SPAN.markProductError {
 /* compareProducts */
 #compareProducts {width: 100%; border: 1px solid #CCCCCC;}
 #compareProducts td.label {font-weight: bold;}
-#compareProducts td {padding: 5px;}
+#compareProducts td {padding: 10px; border-bottom: 1px solid #CCCCCC; border-right:1px solid #CCCCCC;vertical-align: top;}
+#compareProducts td.last {border-right: 0;}
 #compareProducts tr.odd {background: #F8F7F5 none repeat scroll 0 0;}
 #compareProducts tr.even {background: #EEEDED none repeat scroll 0 0 !important;}
+#compareProducts th {background: #D9E5EE; border-bottom: 1px solid #CCCCCC; border-right:1px solid #CCCCCC; padding: 10px;text-indent: 5px; vertical-align: top;}
+#compareProducts tr.first {text-align:center;}
+#compareProducts .links, #compareProducts .button {margin-top: 10px;}
+#compareProducts tr.last th, #compareProducts tr.last td {border-bottom:0;}
+#compareProducts .attribute, #compareProducts .variant {display:block;margin-bottom:5px;}
+
+.compareContainer {padding: 15px;}
+.compareContainer h1 {float: left; margin: 0 0 5px 0;}
+.compareHeader {border-bottom: 1px solid #DDDDDD;}
 
 /* administrator logout */
 #admin_logout a {
