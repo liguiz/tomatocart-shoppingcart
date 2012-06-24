@@ -17,15 +17,19 @@
 
       if (!isset($osC_Product)) {
         $id = false;
-
+        
         foreach ($_GET as $key => $value) {
-          if ( (ereg('^[0-9]+(#?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)*$', $key) || ereg('^[a-zA-Z0-9 -_]*$', $key)) && ($key != $osC_Session->getName()) ) {
+          if ( (ereg('^[0-9]+(_?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)*$', $key) || ereg('^[a-zA-Z0-9 -_]*$', $key)) && ($key != $osC_Session->getName()) ) {
             $id = $key;
           }
 
           break;
         }
-
+        
+        if (strpos( $id, '_') !== false) {
+          $id = str_replace('_', '#', $id);
+        }
+        
         if (($id !== false) && osC_Product::checkEntry($id)) {
           $osC_Product = new osC_Product($id);
         }

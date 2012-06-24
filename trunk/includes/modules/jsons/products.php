@@ -18,10 +18,13 @@
       
       $osC_Language->load('products');
       
-      $content = '<p>';
-      $content .= '<h1>' . $osC_Language->get('compare_products_heading') . '</h1>';
+      $content = '<div class="compareContainer">';
+      $content .=   '<div class="compareHeader clearfix">';
+      $content .=     '<h1>' . $osC_Language->get('compare_products_heading') . '</h1>';
+      $content .=   '</div>';
+      
       $content .= $toC_Compare_Products->outputCompareProductsTable();
-      $content .= '</p>';
+      $content .= '</div>';
       
       echo $content;
     }

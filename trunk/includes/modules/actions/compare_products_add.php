@@ -15,6 +15,8 @@
     function execute() {
       global $osC_Session, $toC_Compare_Products;
       
+      $link = osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $params = osc_get_all_get_params(array('cid', 'action')));
+      
       //Get the compare products id string
       if (isset($_GET['cid'])) {
         $cid = $_GET['cid'];
@@ -24,12 +26,14 @@
         }
         
         //if the products have any variants, the string should be formated as 1#1:1;2:1
-        if (preg_match('/^[0-9]+(#?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)*$/', $cid) || preg_match('^[a-zA-Z0-9 -_]*$', $cid)) {
+        if (preg_match('/^[0-9]+(#?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)*$/', $cid) || preg_match('/^[a-zA-Z0-9 -_]*$/', $cid)) {
           $toC_Compare_Products->addProduct($cid);
+          
+          $link = preg_replace('/^products.php?[a-zA-Z0-9 -_]*$/i', 'products.php?' . $cid, $link);
         }
       }
       
-      osc_redirect(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('cid', 'action'))));
+      osc_redirect($link);
     }
   }
 ?>

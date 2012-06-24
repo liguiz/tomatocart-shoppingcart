@@ -74,15 +74,16 @@
         $this->_content .= '</ul>';
         $this->_content .= 
           '<p>' .
-            '<span style="float: right">' . osc_link_object(osc_href_link(FILENAME_JSON, 'module=products&action=compare_products'), osc_draw_image_button('small_compare_now.png', $osC_Language->get('button_compare_now')), 'class="multibox" rel="width:800,height:400,ajax:true"') . '</span>' .
+            '<span style="float: right">' . osc_link_object(osc_href_link(FILENAME_JSON, 'module=products&action=compare_products'), osc_draw_image_button('small_compare_now.png', $osC_Language->get('button_compare_now')), 'class="multibox" rel="ajax:true"') . '</span>' .
             osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('action')) . '&action=compare_products_clear'), osc_draw_image_button('small_clear.png', $osC_Language->get('button_clear'))) . '&nbsp;&nbsp;' .
           '</p>';
       
         $js .= '<script type="text/javascript">
                   window.addEvent("domready",function() {
-                    var overlay = new Overlay(); 
+                    
                     var box = new MultiBox(\'multibox\', { 
-                        overlay: overlay
+                        movieWidth: 820,
+                        movieHeight: 600
                     });
                   });
                 </script>';
