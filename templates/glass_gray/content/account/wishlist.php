@@ -46,7 +46,7 @@
            <td align="center" valign="top">
              <?php echo osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'wishlist=delete&products_id=' . $product['products_id']), osc_draw_image_button('button_delete.gif', $osC_Language->get('button_delete'))); ?>
              <br />&nbsp;<br/>
-             <?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $product['products_id'] . '&action=cart_add'), osc_draw_image_button('button_add_to_cart.png', $osC_Language->get('button_add_to_cart'))); ?>
+             <?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $product['products_id'] . '&action=cart_add' . (!osc_empty($product['variants']) ? '&variants=' . osc_parse_variants_array($product['variants']) : '')), osc_draw_image_button('button_add_to_cart.png', $osC_Language->get('button_add_to_cart'))); ?>
            </td>
          </tr>    
               
