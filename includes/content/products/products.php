@@ -31,11 +31,15 @@
 
 // PHP < 5.0.2; array_slice() does not preserve keys and will not work with numerical key values, so foreach() is used
         foreach ($_GET as $key => $value) {
-          if ( (ereg('^[0-9]+(#?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)*$', $key) || ereg('^[a-zA-Z0-9 -_]*$', $key)) && ($key != $osC_Session->getName()) ) {
+          if ( (ereg('^[0-9]+(_?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)*$', $key) || ereg('^[a-zA-Z0-9 -_]*$', $key)) && ($key != $osC_Session->getName()) ) {
             $id = $key;
           }
 
           break;
+        }
+        
+        if (strpos( $id, '_') !== false) {
+          $id = str_replace('_', '#', $id);
         }
 
         if (($id !== false) && osC_Product::checkEntry($id)) {
