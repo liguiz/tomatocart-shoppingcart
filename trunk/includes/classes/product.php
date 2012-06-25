@@ -15,6 +15,7 @@
     var $_data = array(),
         $_customers_id = null,
         $_customers_groups_id = null,
+        $_current_variants = null,
         $_customer_group_discount = null;
 
     function osC_Product($id, $customers_id =null) {
@@ -31,6 +32,8 @@
           $Qproduct->bindTable(':table_quantity_unit_classes', TABLE_QUANTITY_UNIT_CLASSES);
   
           if (ereg('^[0-9]+(#?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)*$', $id)) {
+            $this->_current_variants = osc_parse_variants_from_id_string($id);
+            
             $Qproduct->appendQuery('p.products_id = :products_id');
             $Qproduct->bindInt(':products_id', osc_get_product_id($id));
           } else {
@@ -279,7 +282,7 @@
           $combobox_array[$groups_name] = osc_draw_pull_down_menu(
             'variants[' . $groups_id . ']', 
             $values, 
-            $this->_data['default_variant']['groups_id'][$groups_id]);
+            (!osc_empty($this->_current_variants)) ? $this->_current_variants[$groups_id] : $this->_data['default_variant']['groups_id'][$groups_id]);
         }
         return $combobox_array;
       }
@@ -650,7 +653,13 @@
       foreach ($this->_data['images'] as $image) {
         //get variant default image
         if ($this->hasVariants()) {
-          if (is_array($this->_data['default_variant']) && !empty($this->_data['default_variant'])){
+          if (!osc_empty($this->_current_variants)) {
+            $product_id_string = osc_get_product_id_string($this->getID(), $this->_current_variants);
+            $product_variant = $this->_data['variants'][$product_id_string];
+            
+            $default_variant_image = $product_variant['image'];
+            break;
+          }else if (is_array($this->_data['default_variant']) && !empty($this->_data['default_variant'])) {
             if ($image['id'] == $this->_data['default_variant']['image']) {
               $default_variant_image = $image['image'];
             }
