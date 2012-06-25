@@ -83,16 +83,17 @@
           $product_sku = $osC_Product->getSKU();
           
          //if the product have any variants, it means that the $products_id should be a product string such as 1#1:1;2:2
+          $variants = array();
           if ($osC_Product->hasVariants()) {
             $product_variants = $osC_Product->getVariants();
-            $variants = array();
-            
             if (preg_match('/^[0-9]+(#?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)+$/', $products_id)) {
               $products_variant = $product_variants[$products_id];
               
               $variants = osc_parse_variants_from_id_string($products_id);
             }else {
               $products_variant = $osC_Product->getDefaultVariant();
+              
+              $variants = $products_variant['groups_id'];
             }
             
             //if the product have any variants, get the group_name:value_name string
@@ -143,7 +144,7 @@
           $products_id = str_replace('#', '_', $products_id);
           
           $products_images[] = '<div class="image">' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $products_id), $osC_Image->show($image, $osC_Product->getTitle())) . '</div>' .
-                               '<div class="button">' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $products_id . '&action=cart_add'), osc_draw_image_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'))) . '</div>';
+                               '<div class="button">' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $products_id . '&action=cart_add' . (osc_empty(osc_parse_variants_array($variants)) ? '' : '&variants=' . osc_parse_variants_array($variants))), osc_draw_image_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'))) . '</div>';
         }
         
         $content .= '<table id="compareProducts" cellspacing="0" cellpadding="2" border="0">';
