@@ -16,6 +16,7 @@ var TocVariants = new Class({
     hasSpecial: 0,
     remoteUrl: 'json.php',
     linkCompareProductsCls: '.compare-products',
+    linkWishlistCls: '.wishlist',
     lang: {
       txtInStock: 'In Stock',
       txtOutOfStock: 'Out Of Stock',
@@ -37,6 +38,7 @@ var TocVariants = new Class({
   initialize: function(options) {
     this.setOptions(options);
     this.checkCompareProducts();
+    this.checkWishlist();
     this.initializeComboBox();
     this.updateView();
   },
@@ -63,6 +65,20 @@ var TocVariants = new Class({
     }
   },
   
+  //Check the wishlist
+  checkWishlist: function() {
+    var linkWp = $$(this.options.linkWishlistCls);
+    
+    if ($chk(linkWp)) {
+      this.linkWp = linkWp[0];
+      this.linkWpHref = this.linkWp.getProperty('href');
+      
+      if (this.linkWpHref.search(/wid=/) !== -1) {
+        this.linkWpHref = this.linkWpHref.replace(/&wid=\d+/, '');
+      }
+    }
+  },
+  
   getProductsIdString: function() {
     var groups = [];
     this.options.combVariants.each(function(combobox) {
@@ -84,6 +100,14 @@ var TocVariants = new Class({
     	
     	this.linkCp.setProperty('href', href);
 	  }
+	  
+	  //handler the wishlist
+    if ($chk(this.linkWp)) {
+      var href = this.linkWpHref + '&wid=' + productsIdString.replace(/#/, '_');
+      
+      this.linkWp.setProperty('href', href);
+    }
+	  
 	  
     var product = this.options.variants[productsIdString];
     

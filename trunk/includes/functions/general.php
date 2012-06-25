@@ -254,6 +254,28 @@
 
     return $variants_array;
   }
+  
+/**
+ * Parse a variant array into variants string
+ *
+ * @param array $variants the product variant array
+ * @access public
+ * @author jack.yin
+ * 
+ * @return string the product variants string
+ */
+  function osc_parse_variants_array($variants = array()) {
+    $variants_str = '';
+    
+    if (!empty($variants)) {
+      $k = 0;
+      foreach($variants as $groups_id => $values_id) {
+        $variants_str .=  $groups_id . ':' . $values_id . ';';
+      }
+    }
+    
+    return trim($variants_str, ';');
+  }
 
 /**
  * Parse a variants string into variant array

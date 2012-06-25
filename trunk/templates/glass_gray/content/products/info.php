@@ -215,7 +215,7 @@
               echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params() . '&cid=' . $osC_Product->getID() . '&' . '&action=compare_products_add'), $osC_Language->get('add_to_compare'), 'class="compare-products"') . '&nbsp;<span>|</span>&nbsp;';
             }
             
-            echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $osC_Product->getID() . '&action=wishlist_add'), $osC_Language->get('add_to_wishlist'));
+            echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $osC_Product->getID() . '&action=wishlist_add'), $osC_Language->get('add_to_wishlist'), 'class="wishlist"');
           ?>
         </td>
       </tr>
