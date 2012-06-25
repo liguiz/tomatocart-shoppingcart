@@ -25,6 +25,7 @@
         break;
       }
       
+      //change the variants in the product info page, then attach the wid param to represent the variant product
       if (isset($_GET['wid']) && preg_match('/^[0-9]+(_?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)*$/', $_GET['wid'])) {
         $id = $_GET['wid'];
       }
