@@ -40,7 +40,7 @@
   ?>
   
          <tr class="<?php echo ((($rows/2) == floor($rows/2)) ? 'productListing-even' : 'productListing-odd'); ?>">        
-           <td align="center"><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $product['products_id']), $osC_Image->show($product['image'], $product['name'], 'hspace="5" vspace="5"')) . '<br />' . $product['name'] . '<br />' . $osC_Currencies->format($product['price']); ?></td>         
+           <td align="center"><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, (!osc_empty($product['variants']) ? str_replace('#', '_', osc_get_product_id_string($product['products_id'], $product['variants'])) : $product['products_id'])), $osC_Image->show($product['image'], $product['name'], 'hspace="5" vspace="5"')) . '<br />' . $product['name'] . '<br />' . $osC_Currencies->format($product['price']); ?></td>         
            <td valign="top"><?php echo osc_draw_textarea_field('comments[' . $product['products_id'] . ']', $product['comments'], 20, 5, 'id="comments_' . $product['products_id'] . '"'); ?></td>
            <td align="center" valign="top"><?php echo $product['date_added']; ?></td>
            <td align="center" valign="top">
