@@ -26,17 +26,6 @@
 <link rel="stylesheet" type="text/css" href="templates/<?php echo $osC_Template->getCode(); ?>/stylesheet.css" />
 <link rel="stylesheet" type="text/css" href="ext/autocompleter/Autocompleter.css" />
 
-<!--[if IE]>
-<style type="text/css">
-  #productInfoTab a {
-    top:11px;
-  }
-  
-  #productInfoTab a.unselect {
-    top:13px;
-  }
-</style>
-<![endif]-->
 <?php
   if ($osC_Template->hasPageTags()) {
     echo $osC_Template->getPageTags();

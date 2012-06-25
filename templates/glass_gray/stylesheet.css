@@ -962,32 +962,30 @@ SPAN.markProductError {
 .boxReview a {text-align: center; display: block}
 
 #productInfoTab a {
-  border-top: 1px solid #DDDDDD;
-  border-left: 1px solid #DDDDDD;
-  border-right: 1px solid #DDDDDD;
-  display:block;
-  float:left;
-  font-size:13px;
-  font-weight:bold;
-  margin-right:2px;
-  padding:6px 15px 7px;
-  text-decoration: none;
+  background: #EAEAEA;
+  border-color: #DDDDDD;
+  border-style: solid;
+  border-width: 1px;
+  color: #8C8C8C;
+  display: block;
+  float: left;
+  font-size: 13px;
+  font-weight: bold;
+  margin-right: 2px;
+  padding: 6px 15px 7px;
   position: relative;
+  text-decoration: none;
   top: 1px;
+  z-index: 1;
+  cursor: pointer;
 }
 
 #productInfoTab a.select {
   color: #000000;
   background-color: #F3F3F3;
-}
-
-#productInfoTab a.unselect {
-  cursor: pointer;
-  color: #8C8C8C; 
-  background-color: #EAEAEA;
-  border-bottom: 1px solid #DDDDDD;
-  top: 3px;
-  padding:5px 15px;
+  border-bottom: 0 none;
+  padding-bottom: 8px;
+  z-index: 3;
 }
 
 #tabReviews .content {padding: 10px;}
