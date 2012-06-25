@@ -130,6 +130,7 @@
   define('TABLE_WHOS_ONLINE', DB_TABLE_PREFIX . 'whos_online');
   define('TABLE_WISHLISTS', DB_TABLE_PREFIX . 'wishlists');
   define('TABLE_WISHLISTS_PRODUCTS', DB_TABLE_PREFIX . 'wishlists_products');
+  define('TABLE_WISHLISTS_PRODUCTS_VARIANTS', DB_TABLE_PREFIX . 'wishlists_products_variants');
   define('TABLE_ZONES', DB_TABLE_PREFIX . 'zones');
   define('TABLE_ZONES_TO_GEO_ZONES', DB_TABLE_PREFIX . 'zones_to_geo_zones');
   define('TABLE_ORDER_TRACK', DB_TABLE_PREFIX . 'order_track');
