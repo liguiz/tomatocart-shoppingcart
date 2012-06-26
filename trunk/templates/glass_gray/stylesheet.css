@@ -976,7 +976,6 @@ SPAN.markProductError {
   position: relative;
   text-decoration: none;
   top: 1px;
-  z-index: 1;
   cursor: pointer;
 }
 
@@ -985,7 +984,6 @@ SPAN.markProductError {
   background-color: #F3F3F3;
   border-bottom: 0 none;
   padding-bottom: 8px;
-  z-index: 3;
 }
 
 #tabReviews .content {padding: 10px;}
