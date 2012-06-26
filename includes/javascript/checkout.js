@@ -392,8 +392,8 @@ var Checkout = new Class({
     
       this.showNotify($('btnSaveShippingMethod'));
       this.sendRequest(params, function(response) {
-        if ($defined(ajaxCart)) {
-          ajaxCart.loadCart();
+        if (typeof(ajaxCart) != 'undefined') {
+          ajaxCart.loadCart();    
         }
         
         this.hideNotify($('btnSaveShippingMethod'));
