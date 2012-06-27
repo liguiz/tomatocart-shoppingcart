@@ -108,7 +108,6 @@ var TocVariants = new Class({
       this.linkWp.setProperty('href', href);
     }
 	  
-	  
     var product = this.options.variants[productsIdString];
     
     if (product == undefined || (product['status'] == 0)) {
@@ -141,7 +140,9 @@ var TocVariants = new Class({
         this.changeImage(product['image']);
       } else {
         $('productInfoAvailable').set('text', this.options.lang.txtOutOfStock);
-        $('productInfoQty').set('text', product['quantity'] + ' ' + this.options.unitClass);
+        if (this.options.displayQty == true) {
+          $('productInfoQty').set('text', product['quantity'] + ' ' + this.options.unitClass);
+        }
         
         //if not allow checkout then disable the info box
         if (!this.options.allowCheckout) {
