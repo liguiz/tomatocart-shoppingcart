@@ -1719,6 +1719,19 @@ CREATE TABLE toc_wishlists_products (
   PRIMARY KEY  (wishlists_products_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS toc_wishlists_products_variants;
+create table toc_wishlists_products_variants(
+  wishlists_products_variants_id int(11) not null AUTO_INCREMENT,
+  whishlists_id int(11) not null,
+  whishlists_products_id int(11) not null,
+  products_variants_groups_id int(11) not null,
+  products_variants_groups varchar(32) not null,
+  products_variants_values_id int(11) not null,
+  products_variants_values varchar(32) not null,
+  primary key (wishlists_products_variants_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
 
 DROP TABLE IF EXISTS toc_zones;
 CREATE TABLE toc_zones (
