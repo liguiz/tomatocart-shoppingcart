@@ -449,7 +449,8 @@ height: 0;
   padding: 5px;
   border: 1px solid #DDDDDD;
   border-bottom: none;
-  background: #f6f6f6; 
+  background: #f6f6f6;
+  word-wrap:break-word;
 }
 
 .boxContents ul, .boxContents ol {
