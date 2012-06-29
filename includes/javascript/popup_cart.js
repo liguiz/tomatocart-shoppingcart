@@ -18,6 +18,7 @@ var PopupCart = new Class({
     sessionId: null,
     isCartExpanded: false,
     triggerEl: $('popupCart'),
+    btnClose: 'btnClosePopCart',
     container: $('pageHeader'),
     relativeTop: 20,
     relativeLeft: 242
@@ -31,21 +32,13 @@ var PopupCart = new Class({
   
   registerEvents: function() {
     this.options.triggerEl.addEvents({
-      'mouseover': function(e) {
+      'click': function(e) {
         e.stop();
         
         if (this.options.isCartExpanded == false) {
           this.getShoppingCart();
-          clearTimeout(this.timer);
-        }
-      }.bind(this),
-      'mouseleave': function(e) {
-        if (this.options.isCartExpanded == true && $defined(this.cartContainer)) {
-           e.stop();
-        
-          this.timer = function() {
-            this.cartContainer.fade('out');
-          }.bind(this).delay(1000);
+        }else {
+          this.cartContainer.fade('out');
           
           this.options.isCartExpanded = false;
         }
@@ -92,25 +85,16 @@ var PopupCart = new Class({
       }
       
       this.options.container.adopt(this.cartContainer);
+      this.cartContainer.setStyle('opacity', 0).fade('in');
       
-      this.cartContainer.setStyle('opacity', 0).fade('in').addEvents({
-        'mouseleave': function(e) {
-          e.stop();
+      $(this.options.btnClose).addEvent('click', function(e) {
+        e.stop();
         
-          this.timer = function() {
-            this.cartContainer.fade('out');
-          }.bind(this).delay(1000);
-          
-          this.options.isCartExpanded = false;
-        }.bind(this),
-        'mouseover': function(e) {
-          e.stop();
-          
-          clearTimeout(this.timer);
-          this.cartContainer.fade('in');
-          this.options.isCartExpanded = true;
-        }.bind(this)
-      });
+        this.cartContainer.fade('out');
+        
+        this.options.isCartExpanded = false;
+        
+      }.bind(this));
       
       this.options.isCartExpanded = true;
     }

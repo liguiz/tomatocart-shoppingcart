@@ -16,7 +16,7 @@
     function getCartContents() {
       global $osC_Language, $osC_ShoppingCart, $osC_Currencies, $toC_Json, $osC_Image;
       
-      $content =  '<h6>' . osc_link_object(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'), $osC_Language->get('box_shopping_cart_heading')) . '</h6>' . 
+      $content =  '<h6>' . osc_link_object(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'), $osC_Language->get('box_shopping_cart_heading')) . '<button id="btnClosePopCart">X</button></h6>' . 
                     '<div class="content">';
                       
       

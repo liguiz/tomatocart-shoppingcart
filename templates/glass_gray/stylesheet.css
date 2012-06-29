@@ -638,6 +638,7 @@ height: 0;
 #popupCartContent .subtotal {color: #464646; font-weight: bold; float: right;padding-bottom: 10px;}
 #popupCartContent p {padding: 3px 3px 5px 0px; margin: 0;}
 #popupCartContent .content {border: none}
+#btnClosePopCart {background: none;border:0;color:#FFFFFF;cursor:pointer;position:absolute;right:5px;font-weight:bolder;font-size:18px;}
 
 /**product info**/
 #productImages {margin-top: 10px;text-align: center;width: 240px;border:1px solid #DDDDDD;}
