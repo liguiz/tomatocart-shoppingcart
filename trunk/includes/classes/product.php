@@ -650,25 +650,27 @@
       $default_image = null;
       $default_variant_image = null;
       
-      foreach ($this->_data['images'] as $image) {
-        //get variant default image
-        if ($this->hasVariants()) {
-          if (!osc_empty($this->_current_variants)) {
-            $product_id_string = osc_get_product_id_string($this->getID(), $this->_current_variants);
-            $product_variant = $this->_data['variants'][$product_id_string];
-            
-            $default_variant_image = $product_variant['image'];
-            break;
-          }else if (is_array($this->_data['default_variant']) && !empty($this->_data['default_variant'])) {
-            if ($image['id'] == $this->_data['default_variant']['image']) {
-              $default_variant_image = $image['image'];
+      if (isset($this->_data['images']) && is_array($this->_data['images'])) {
+        foreach ($this->_data['images'] as $image) {
+          //get variant default image
+          if ($this->hasVariants()) {
+            if (!osc_empty($this->_current_variants)) {
+              $product_id_string = osc_get_product_id_string($this->getID(), $this->_current_variants);
+              $product_variant = $this->_data['variants'][$product_id_string];
+              
+              $default_variant_image = $product_variant['image'];
+              break;
+            }else if (is_array($this->_data['default_variant']) && !empty($this->_data['default_variant'])) {
+              if ($image['id'] == $this->_data['default_variant']['image']) {
+                $default_variant_image = $image['image'];
+              }
             }
+          } 
+          
+          //get default image
+          if ($image['default_flag'] == '1') {
+            $default_image = $image['image'];
           }
-        } 
-        
-        //get default image
-        if ($image['default_flag'] == '1') {
-          $default_image = $image['image'];
         }
       }
       
