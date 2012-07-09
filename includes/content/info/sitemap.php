@@ -11,6 +11,9 @@
   as published by the Free Software Foundation.
 */
 
+  require_once(realpath(dirname(__FILE__) . '/../../') . '/classes/articles.php');
+  require_once(realpath(dirname(__FILE__) . '/../../') . '/classes/faqs.php');
+
   class osC_Info_Sitemap extends osC_Template {
 
 /* Private variables */
@@ -24,9 +27,15 @@
 /* Class constructor */
 
     function osC_Info_Sitemap() {
-      global $osC_Services, $osC_Language, $breadcrumb;
+      global $osC_Services, $osC_Language, $breadcrumb, $Qarticles_listing, $Qfaqs_listing;
 
       $this->_page_title = $osC_Language->get('info_sitemap_heading');
+      
+      $articles = new toC_Articles();
+      $Qarticles_listing = $articles->getListing();
+      
+      $faqs = new toC_Faqs();
+      $Qfaqs_listing = $faqs->getListing();
 
       if ($osC_Services->isStarted('breadcrumb')) {
         $breadcrumb->add($osC_Language->get('breadcrumb_sitemap'), osc_href_link(FILENAME_INFO, $this->_module));

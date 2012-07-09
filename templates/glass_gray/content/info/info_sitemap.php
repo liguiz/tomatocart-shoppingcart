@@ -42,6 +42,21 @@
             <li><?php echo osc_link_object(osc_href_link(FILENAME_INFO, 'privacy'), $osC_Language->get('box_information_privacy')); ?></li>
             <li><?php echo osc_link_object(osc_href_link(FILENAME_INFO, 'conditions'), $osC_Language->get('box_information_conditions')); ?></li>
             <li><?php echo osc_link_object(osc_href_link(FILENAME_INFO, 'contact'), $osC_Language->get('box_information_contact')); ?></li>
+            <?php
+                while($Qarticles_listing->next()) {
+            ?>
+            <li><?php echo osc_link_object(osc_href_link(FILENAME_INFO, 'articles&articles_id=' . $Qarticles_listing->valueInt('articles_id')), $Qarticles_listing->value('articles_name')); ?></li>
+            <?php
+                }
+            ?>
+            
+            <?php
+                while($Qfaqs_listing->next()) {
+            ?>
+            <li><?php echo osc_link_object(osc_href_link(FILENAME_INFO, 'faqs&faqs_id=' . $Qfaqs_listing->valueInt('faqs_id')), $Qfaqs_listing->value('faqs_question')); ?></li>
+            <?php
+                }
+            ?>
           </ul>
         </li>
       </ul>
