@@ -104,6 +104,13 @@
     
     function _getShoppingCart() {
       global $osC_ShoppingCart, $osC_Currencies, $osC_Language;
+      
+      if (isset($_SESSION['language_change']) && ($_SESSION['language_change']== true)) {
+        $osC_ShoppingCart->reset();
+        $osC_ShoppingCart->synchronizeWithDatabase();
+        
+        unset($_SESSION['language_change']);
+      }
 
       $cart = array();
       
