@@ -103,11 +103,24 @@
     }
     
     function _getShoppingCart() {
-      global $osC_ShoppingCart, $osC_Currencies, $osC_Language;
+      global $osC_ShoppingCart, $osC_Currencies, $osC_Language, $osC_Customer;
       
+      //when the language is changed, it is necessary to update the shopping cart
       if (isset($_SESSION['language_change']) && ($_SESSION['language_change']== true)) {
-        $osC_ShoppingCart->reset();
-        $osC_ShoppingCart->synchronizeWithDatabase();
+        if ($osC_Customer->isLoggedOn()) {
+          $osC_ShoppingCart->reset();
+          $osC_ShoppingCart->synchronizeWithDatabase();
+        }else {
+          foreach($osC_ShoppingCart->getProducts() as $products_id_string => $data) {
+            $osC_Product = new osC_Product($products_id_string);
+            $data['name'] = $osC_Product->getTitle();
+            $data['keyword'] = $osC_Product->getKeyword();
+            
+            $_SESSION['osC_ShoppingCart_data']['contents'][$products_id_string] = $data;
+          }
+          
+          $osC_ShoppingCart->_calculate();
+        }
         
         unset($_SESSION['language_change']);
       }
