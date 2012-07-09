@@ -108,6 +108,8 @@
 
       if ((isset($_SESSION['language']) === false) || (isset($_SESSION['language']) && ($_SESSION['language'] != $this->_code))) {
         $_SESSION['language'] = $this->_code;
+        
+        $_SESSION['language_change'] = true;
       }
     }
 
