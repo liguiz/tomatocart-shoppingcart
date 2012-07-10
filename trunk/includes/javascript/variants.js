@@ -112,7 +112,6 @@ var TocVariants = new Class({
     
     if (product == undefined || (product['status'] == 0)) {
       $('productInfoAvailable').innerHTML = '<font color="red">' + this.options.lang.txtNotAvailable + '</font>';
-      this.disableInfoBox();
     } else {
       if (product['quantity'] > 0) {
         if (this.options.hasSpecial == 0) {
