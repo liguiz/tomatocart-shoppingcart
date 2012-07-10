@@ -203,6 +203,18 @@
                     'flag' => (isset($_REQUEST['product_flag']))? $_REQUEST['product_flag']: 0,
                     'ratings' => $_REQUEST['ratings']);
       
+      //editing the parent category
+      if (isset($_REQUEST['categories_id']) && is_numeric($_REQUEST['categories_id'])) {
+        $subcategories = array();
+        
+        $osC_CategoryTree = new osC_CategoryTree();
+        $subcategories = $osC_CategoryTree->getChildren($_REQUEST['categories_id'], $subcategories);
+        
+        if (!osc_empty($subcategories)) {
+          $data['subcategories'] = $subcategories;
+        }
+      }
+      
       $category_id = osC_Categories_Admin::save((isset($_REQUEST['categories_id']) && is_numeric($_REQUEST['categories_id']) ? $_REQUEST['categories_id'] : null), $data); 
       if ( $category_id > 0) {
         $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'), 'categories_id' => $category_id, 'text' => $_REQUEST['categories_name'][$osC_Language->getID()]);

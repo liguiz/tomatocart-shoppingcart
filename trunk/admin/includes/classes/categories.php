@@ -62,8 +62,16 @@
       $osC_Database->startTransaction();
 
       if ( is_numeric($id) ) {
-        $Qcat = $osC_Database->query('update :table_categories set categories_status = :categories_status, sort_order = :sort_order, last_modified = now() where categories_id = :categories_id');
-        $Qcat->bindInt(':categories_id', $id);
+        //editing the parent category
+        if (isset($data['subcategories'])) {
+          $data['subcategories'][] = $id;
+          
+          $Qcat = $osC_Database->query('update :table_categories set categories_status = :categories_status, sort_order = :sort_order, last_modified = now() where categories_id in (:categories_ids)');
+          $Qcat->bindRaw(':categories_ids', implode(',', $data['subcategories']));
+        }else {
+          $Qcat = $osC_Database->query('update :table_categories set categories_status = :categories_status, sort_order = :sort_order, last_modified = now() where categories_id = :categories_id');
+          $Qcat->bindInt(':categories_id', $id);
+        }
       } else {
         $Qcat = $osC_Database->query('insert into :table_categories (parent_id, categories_status, sort_order, date_added) values (:parent_id, :categories_status, :sort_order, now())');
         $Qcat->bindInt(':parent_id', $data['parent_id']);
@@ -80,18 +88,36 @@
         
         if(is_numeric($id)) {
           if($data['categories_status']){
-            $Qpstatus = $osC_Database->query('update :table_products set products_status = 1 where products_id in (select products_id from :table_products_to_categories where categories_id = :categories_id)');
-	          $Qpstatus->bindTable(':table_products', TABLE_PRODUCTS);
-	          $Qpstatus->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
-	          $Qpstatus->bindInt(":categories_id", $id);
-	          $Qpstatus->execute(); 
+            //editing the parent category
+            if (isset($data['subcategories'])) {
+              $data['subcategories'][] = $id;
+              
+              $Qpstatus = $osC_Database->query('update :table_products set products_status = 1 where products_id in (select products_id from :table_products_to_categories where categories_id in (:categories_ids))');
+              $Qpstatus->bindRaw(':categories_ids', implode(',', $data['subcategories']));
+            }else {
+              $Qpstatus = $osC_Database->query('update :table_products set products_status = 1 where products_id in (select products_id from :table_products_to_categories where categories_id = :categories_id)');
+              $Qpstatus->bindInt(":categories_id", $id);
+            }
+            
+            $Qpstatus->bindTable(':table_products', TABLE_PRODUCTS);
+            $Qpstatus->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
+            $Qpstatus->execute(); 
           }else{
             if($data['flag']) {
-              $Qpstatus = $osC_Database->query('update :table_products set products_status = 0 where products_id in (select products_id from :table_products_to_categories where categories_id = :categories_id)');
-	            $Qpstatus->bindTable(':table_products', TABLE_PRODUCTS);
-	            $Qpstatus->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
-	            $Qpstatus->bindInt(":categories_id", $id);
-	            $Qpstatus->execute();
+              //editing the parent category
+              if (isset($data['subcategories'])) {
+                $data['subcategories'][] = $id;
+                
+                $Qpstatus = $osC_Database->query('update :table_products set products_status = 0 where products_id in (select products_id from :table_products_to_categories where categories_id in (:categories_ids))');
+                $Qpstatus->bindRaw(':categories_ids', implode(',', $data['subcategories']));
+              }else {
+                $Qpstatus = $osC_Database->query('update :table_products set products_status = 0 where products_id in (select products_id from :table_products_to_categories where categories_id = :categories_id)');
+                $Qpstatus->bindInt(":categories_id", $id);
+              }
+            
+              $Qpstatus->bindTable(':table_products', TABLE_PRODUCTS);
+              $Qpstatus->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
+              $Qpstatus->execute();
             }          
           }
         }
