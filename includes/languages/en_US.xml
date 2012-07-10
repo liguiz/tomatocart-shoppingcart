@@ -45,6 +45,11 @@
       <value><![CDATA[Contact Us]]></value>
       <group>general</group>
     </definition>
+    <definition>
+      <key>enter_captcha_code</key>
+      <value><![CDATA[Enter Captcha Code:]]></value>
+      <group>general</group>
+    </definition>
      <definition>
       <key>guest_book</key>
       <value><![CDATA[Guest Book]]></value>
@@ -2474,11 +2479,6 @@ Note: If you did not request this action via our password forgotten page, please
       <group>info</group>
     </definition>
     <definition>
-      <key>enter_captcha_code</key>
-      <value><![CDATA[Enter Captcha Code:]]></value>
-      <group>info</group>
-    </definition>
-    <definition>
       <key>refresh_captcha_image_title</key>
       <value><![CDATA[Refresh Image]]></value>
       <group>info</group>
@@ -2966,6 +2966,16 @@ Note: If you did not request this action via our password forgotten page, please
     <definition>
       <key>field_review_from</key>
       <value><![CDATA[From:]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>field_review_author</key>
+      <value><![CDATA[Your Name:]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>review_note_message</key>
+      <value><![CDATA[<em>Note:</em> HTML is not translated!]]></value>
       <group>products</group>
     </definition>
     <definition>
