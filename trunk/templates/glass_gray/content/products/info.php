@@ -20,6 +20,12 @@
   }
 ?>
 
+<?php
+  if ($messageStack->size('reviews') > 0) {
+    echo $messageStack->output('reviews');
+  }
+?>
+
 <div class="moduleBox">
 
   <div class="content">
@@ -330,19 +336,22 @@
             
             <h3><?php echo $osC_Language->get('heading_write_review'); ?></h3>
             
-            <?php if (!$osC_Customer->isLoggedOn()) { ?>
-              <p><?php echo sprintf($osC_Language->get('login_to_write_review'), osc_href_link(FILENAME_ACCOUNT, 'login', 'SSL')); ?></p>
-            <?php } else { ?>
-  
-              <p><?php echo $osC_Language->get('introduction_rating'); ?></p>
-                
+            <?php
+              if ($osC_Reviews->is_enabled == false) {
+            ?>
+                <p><?php echo sprintf($osC_Language->get('login_to_write_review'), osc_href_link(FILENAME_ACCOUNT, 'login', 'SSL')); ?></p>
+            <?php
+              } else {
+            ?>
+            
               <form id="frmReviews" name="newReview" action="<?php echo osc_href_link(FILENAME_PRODUCTS, 'reviews=new&' . $osC_Product->getID() . '&action=process'); ?>" method="post">
+              <p><label for="author_name"><strong><?php echo $osC_Language->get('field_review_author'); ?></strong></label><input type="text" name="author_name" id="author_name" value="<?php echo $osC_Customer->isLoggedOn() ? $osC_Customer->getName() : (isset($_SESSION['review_author_name']) ? $_SESSION['review_author_name'] : ''); ?>" /></p>
               
               <?php
                 $ratings = osC_Reviews::getCategoryRatings($osC_Product->getCategoryID());
                 if (sizeof($ratings) == 0) {
               ?>
-                <p><?php echo '<b>' . $osC_Language->get('field_review_rating') . '</b>&nbsp;&nbsp;&nbsp;' . $osC_Language->get('review_lowest_rating_title') . ' ' . osc_draw_radio_field('rating', array('1', '2', '3', '4', '5')) . ' ' . $osC_Language->get('review_highest_rating_title'); ?></p>
+                <p><label><?php echo '<strong>' . $osC_Language->get('field_review_rating') . '</strong></label>' . $osC_Language->get('review_lowest_rating_title') . ' ' . osc_draw_radio_field('rating', array('1', '2', '3', '4', '5')) . ' ' . $osC_Language->get('review_highest_rating_title'); ?></p>
                 <input type="hidden" id="rat_flag" name="rat_flag" value="0" />
               <?php 
               } else {
@@ -383,8 +392,18 @@
                 
                 <h6><?php echo $osC_Language->get('field_review'); ?></h6>
                 
-                <?php echo osc_draw_textarea_field('review', null, 45, 5); ?>
-              
+                <?php echo osc_draw_textarea_field('review', isset($_SESSION['review']) ? $_SESSION['review'] : null, 45, 5); ?>
+                <p><?php echo $osC_Language->get('review_note_message'); ?></p>
+                
+                <div class="clearfix captcha">
+                  <div class="captcha-image"><?php echo osc_image(osc_href_link(FILENAME_PRODUCTS, 'reviews=show_captcha'), $osC_Language->get('captcha_image_title'), 215, 80, 'id="captcha-code"'); ?></div>
+                  <div class="captcha-field clearfix">
+                    <div><?php echo osc_link_object(osc_href_link('#'), osc_image('ext/securimage/images/refresh.png', $osC_Language->get('refresh_captcha_image_title')), 'id="refresh-captcha-code"'); ?></div>
+                    <p><?php echo $osC_Language->get('enter_captcha_code'); ?></p>
+                    <div><?php echo osc_draw_input_field('captcha_code', '', 'size="22"'); ?></div>
+                  </div>
+                </div>
+                
                 <div class="submitFormButtons">
                   <input type="hidden" id="radio_lines" name="radio_lines" value="<?php echo $i; ?>"/>
                   <?php echo osc_draw_image_submit_button('submit_reviews.gif', $osC_Language->get('submit_reviews')); ?>
@@ -455,6 +474,17 @@
    <?php } ?>
 
 <div style="clear: both;"></div>
+
+<script type="text/javascript">
+  $('refresh-captcha-code').addEvent('click', function(e) {
+    e.stop();
+    
+    var reviewsController = '<?php echo osc_href_link(FILENAME_PRODUCTS, 'reviews=show_captcha', 'AUTO', true, false); ?>';
+    var captchaImgSrc = reviewsController + '&' + Math.random();
+          
+    $('captcha-code').setProperty('src', captchaImgSrc);
+  });
+</script>
 
 <script type="text/javascript" src="includes/javascript/tab_panel.js"></script>
 <script type="text/javascript" src="includes/javascript/reviews.js"></script>

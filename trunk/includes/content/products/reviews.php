@@ -10,6 +10,7 @@
   it under the terms of the GNU General Public License v2 (1991)
   as published by the Free Software Foundation.
 */
+  require_once("ext/securimage/securimage.php");
 
   class osC_Products_Reviews extends osC_Template {
 
@@ -57,28 +58,35 @@
             $this->_process($products_id);
           }
         }
+      }else if ($_GET[$this->_module] == 'show_captcha') {
+         $this->_show_captcha();
       }
     }
   
 /* Private methods */
+    function _show_captcha() {
+      $img = new securimage();
+      
+      $img->show();
+    }
 
     function _process($id) {
-      global $osC_Language, $messageStack, $osC_Customer;
+      global $osC_Language, $messageStack, $osC_Customer, $osC_Reviews;
 
       $data = array('products_id' => $id);
 
       if ($osC_Customer->isLoggedOn()) {
         $data['customer_id'] = $osC_Customer->getID();
-        $data['customer_name'] = $osC_Customer->getName();
       } else {
         $data['customer_id'] = '0';
-        $data['customer_name'] = $_POST['customer_name'];
       }
-
+      
+      $data['customer_name'] = $_POST['author_name'];
+      
       if (strlen(trim($_POST['review'])) < REVIEW_TEXT_MIN_LENGTH) {
         $messageStack->add('reviews', sprintf($osC_Language->get('js_review_text'), REVIEW_TEXT_MIN_LENGTH));
       } else {
-        $data['review'] = $_POST['review'];
+        $data['review'] = strip_tags($_POST['review']);
       }
       
       $ratings = array();
@@ -92,16 +100,26 @@
       
       if ( !is_array($data['rating']) ) {
         if ( ($data['rating'] < 1) || ($data['rating'] > 5) ) {
-          $messageStack->add('reviews', $osC_Language->get('js_review_rating'));
+          $messageStack->add_session('reviews', $osC_Language->get('js_review_rating'));
         }
       } else {
         foreach ($data['rating'] as $rating) {
           if ( ($rating < 1) || ($rating > 5) ) {
-            $messageStack->add('reviews', $osC_Language->get('js_review_rating'));
+            $messageStack->add_session('reviews', $osC_Language->get('js_review_rating'));
             break;
           }
         }
       }
+      
+      if (isset($_POST['captcha_code']) && !empty($_POST['captcha_code'])) {
+        $securimage = new Securimage();
+        
+        if ($securimage->check($_POST['captcha_code']) == false) {
+          $messageStack->add_session('reviews', $osC_Language->get('field_concat_captcha_check_error'));
+        }
+      } else {
+        $messageStack->add_session('reviews', $osC_Language->get('field_concat_captcha_check_error'));
+      }  
 
       if ($messageStack->size('reviews') < 1) {
         if ($osC_Reviews->is_moderated === true) {
@@ -115,9 +133,20 @@
         }
 
         osC_Reviews::saveEntry($data);
-
-        osc_redirect(osc_href_link(FILENAME_PRODUCTS, $id . "&tab=tabReviews"));
+        
+        if (isset($_SESSION['review_author_name'])) {
+          unset($_SESSION['review_author_name']);
+        }
+        
+        if (isset($_SESSION['review'])) {
+          unset($_SESSION['review']);
+        }
+      }else {
+         $_SESSION['review_author_name'] = $data['customer_name'];
+         $_SESSION['review'] = $data['review'];
       }
+      
+      osc_redirect(osc_href_link(FILENAME_PRODUCTS, $id . '&tab=tabReviews'));
     }
   }
 ?>
