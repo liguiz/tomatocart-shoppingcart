@@ -143,23 +143,8 @@ var TocVariants = new Class({
         if (this.options.displayQty == true) {
           $('productInfoQty').set('text', product['quantity'] + ' ' + this.options.unitClass);
         }
-        
-        //if not allow checkout then disable the info box
-        if (!this.options.allowCheckout) {
-          this.disableInfoBox();
-        }
       }
     }
-  },
-  
-  disableInfoBox: function() {
-    $('productInfoPrice').set('text', '--');
-    $('productInfoSku').set('text', '--');
-    if (this.options.displayQty == true) {
-      $('productInfoQty').set('text', '--');
-    } 
-    $('shoppingCart').fade('out');
-    $('shoppingAction').fade('out');
   },
   
   changeImage: function(image) {
