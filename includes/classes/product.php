@@ -776,7 +776,7 @@
         return $quantity;
       }
     }
-
+    
     function hasVariants() {
       return (isset($this->_data['variants']) && !empty($this->_data['variants']));
     }
@@ -1022,16 +1022,17 @@
              self::outstockAlert($osC_Product->_data['name'], $attrib_stock_left, 'with the variant of ' . $variants_name);
             }
           
-            if ((STOCK_ALLOW_CHECKOUT == '-1') && ($attrib_stock_left < 1)) {
-              $QstockUpdate = $osC_Database->query('update :table_products_variants set products_status = 0 where products_variants_id = :products_variants_id');
-              $QstockUpdate->bindTable(':table_products_variants', TABLE_PRODUCTS_VARIANTS);
-              $QstockUpdate->bindInt(':products_variants_id', $products_variants_id);
-              $QstockUpdate->execute();
-
-              if ( $osC_Database->isError() ) {
-                $error = true;
-              }
-            }
+            //shouldn't disable the product
+//            if ((STOCK_ALLOW_CHECKOUT == '-1') && ($attrib_stock_left < 1)) {
+//              $QstockUpdate = $osC_Database->query('update :table_products_variants set products_status = 0 where products_variants_id = :products_variants_id');
+//              $QstockUpdate->bindTable(':table_products_variants', TABLE_PRODUCTS_VARIANTS);
+//              $QstockUpdate->bindInt(':products_variants_id', $products_variants_id);
+//              $QstockUpdate->execute();
+//
+//              if ( $osC_Database->isError() ) {
+//                $error = true;
+//              }
+//            }
           }
         }
 
@@ -1056,20 +1057,21 @@
 
             if ( !$osC_Database->isError() ) {
               if( $stock_left < 1 && STOCK_EMAIL_ALERT == '1') {
-                //self::outstockAlert($Qstock->value('products_name'), $stock_left);
+                self::outstockAlert($Qstock->value('products_name'), $stock_left);
               }
               
-              if ((STOCK_ALLOW_CHECKOUT == '-1') && ($stock_left < 1)) {
-                $Qupdate = $osC_Database->query('update :table_products set products_status = 0 where products_id = :products_id');
-                $Qupdate->bindTable(':table_products', TABLE_PRODUCTS);
-                $Qupdate->bindInt(':products_id', $products_id);
-                $Qupdate->setLogging($_SESSION['module'], $orders_id);
-                $Qupdate->execute();
-
-                if ( $osC_Database->isError() ) {
-                  $error = true;
-                }
-              }
+              //shouldn't disable the product
+//              if ((STOCK_ALLOW_CHECKOUT == '-1') && ($stock_left < 1)) {
+//                $Qupdate = $osC_Database->query('update :table_products set products_status = 0 where products_id = :products_id');
+//                $Qupdate->bindTable(':table_products', TABLE_PRODUCTS);
+//                $Qupdate->bindInt(':products_id', $products_id);
+//                $Qupdate->setLogging($_SESSION['module'], $orders_id);
+//                $Qupdate->execute();
+//
+//                if ( $osC_Database->isError() ) {
+//                  $error = true;
+//                }
+//              }
             }
           }
         }

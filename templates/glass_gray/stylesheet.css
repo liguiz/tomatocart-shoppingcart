@@ -762,6 +762,10 @@ height: 0;
   background-color: #99ff00;
 }
 
+/*Shopping Cart Page*/
+.stockWarning {border: 1px dotted #C8AD91;background-color: #FFFCF5;padding:10px;}
+.markProductOutOfStock {color:#dc143c;font-weight:bolder;}
+
 /*checkout*/
 #checkoutForm {
   border-bottom: 1px solid #8b8a8a;
