@@ -36,8 +36,17 @@
       
       if ($osC_ShoppingCart->hasContents() === false) {
         osc_redirect(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'));
+      }else {
+        //check the products stock in the cart
+        if (STOCK_ALLOW_CHECKOUT == '-1') {
+          foreach($osC_ShoppingCart->getProducts() as $product) {
+            if ($osC_ShoppingCart->isInStock($product['id']) === false) {
+              osc_redirect(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'));
+            }
+          }
+        }
       }
-
+      
       if ($osC_ShoppingCart->hasBillingMethod()) {
           // load selected payment module
         include('includes/classes/payment.php');
