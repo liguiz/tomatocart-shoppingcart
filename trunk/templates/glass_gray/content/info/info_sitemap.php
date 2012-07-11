@@ -49,7 +49,11 @@
             <?php
                 }
             ?>
-            
+          </ul>
+        </li>
+        <li>
+          <?php echo osc_link_object(osc_href_link(FILENAME_INFO, 'faqs'), $osC_Language->get('info_faqs_heading'));?>
+          <ul>
             <?php
                 while($Qfaqs_listing->next()) {
             ?>
