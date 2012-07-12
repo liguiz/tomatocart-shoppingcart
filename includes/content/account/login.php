@@ -64,7 +64,10 @@
             $Qupdate->bindInt(':customers_id', $osC_Customer->getID());
             $Qupdate->execute();
             
-            $osC_ShoppingCart->synchronizeWithDatabase();
+            if ( defined('SYNCHRONIZE_CART_WITH_DATABASE') && (SYNCHRONIZE_CART_WITH_DATABASE == '1') ) {
+              $osC_ShoppingCart->synchronizeWithDatabase();
+            }
+            
             $toC_Wishlist->synchronizeWithDatabase();
   
             $osC_NavigationHistory->removeCurrentPage();

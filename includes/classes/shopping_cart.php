@@ -204,21 +204,29 @@
           }
         }
         
+        if ( defined('CHECK_STOCKS_SYNCHRONIZE_CART_WITH_DATABASE') && (CHECK_STOCKS_SYNCHRONIZE_CART_WITH_DATABASE == '1') ) {
+          $quatities_remained = $osC_Product->getQuantity($Qproducts->value('products_id'));
+          
+          if ($quatities_remained < 1 || $quatities_remained < $Qproducts->valueInt('customers_basket_quantity')) {
+            continue;
+          }
+        }
+        
         $this->_contents[$Qproducts->value('products_id')] = array('id' => $Qproducts->value('products_id'),
-                                                                   'name' => $osC_Product->getTitle(),
-                                                                   'type' => $osC_Product->getProductType(),
-                                                                   'keyword' => $osC_Product->getKeyword(),
-                                                                   'sku' => $osC_Product->getSKU($variants_array),
-                                                                   'image' => $osC_Product->getImage(),
-                                                                   'price' => $price,
-                                                                   'final_price' => $price,
-                                                                   'quantity' => $Qproducts->valueInt('customers_basket_quantity'),
-                                                                   'weight' => $osC_Product->getWeight($variants_array),
-                                                                   'tax_class_id' => $osC_Product->getTaxClassID(),
-                                                                   'date_added' => osC_DateTime::getShort($Qproducts->value('customers_basket_date_added')),
-                                                                   'weight_class_id' => $osC_Product->getWeightClass(),
-                                                                   'gc_data' => $gc_data);
-
+                                                                 'name' => $osC_Product->getTitle(),
+                                                                 'type' => $osC_Product->getProductType(),
+                                                                 'keyword' => $osC_Product->getKeyword(),
+                                                                 'sku' => $osC_Product->getSKU($variants_array),
+                                                                 'image' => $osC_Product->getImage(),
+                                                                 'price' => $price,
+                                                                 'final_price' => $price,
+                                                                 'quantity' => $Qproducts->valueInt('customers_basket_quantity'),
+                                                                 'weight' => $osC_Product->getWeight($variants_array),
+                                                                 'tax_class_id' => $osC_Product->getTaxClassID(),
+                                                                 'date_added' => osC_DateTime::getShort($Qproducts->value('customers_basket_date_added')),
+                                                                 'weight_class_id' => $osC_Product->getWeightClass(),
+                                                                 'gc_data' => $gc_data);
+        
         $customizations = $Qproducts->value('customizations');
         if (!empty($customizations)) {
           $this->_contents[$Qproducts->value('products_id')]['customizations'] = unserialize($customizations);
