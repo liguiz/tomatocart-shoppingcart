@@ -38,14 +38,16 @@
         $Qadmin->execute();
         
         if ( $Qadmin->numberOfRows() > 0) {
-          if ( osc_validate_password($_REQUEST['user_password'], $Qadmin->value('user_password')) ) {
-            $_SESSION['admin'] = array('id' => $Qadmin->valueInt('id'),
-                                       'username' => $Qadmin->value('user_name'),
-                                       'access' => osC_Access::getUserLevels($Qadmin->valueInt('id')));
-            
-            $response['success'] = true;
-            echo $toC_Json->encode($response);
-            exit;
+          while($Qadmin->next()) {
+            if ( osc_validate_password($_REQUEST['user_password'], $Qadmin->value('user_password')) ) {
+              $_SESSION['admin'] = array('id' => $Qadmin->valueInt('id'),
+                                         'username' => $Qadmin->value('user_name'),
+                                         'access' => osC_Access::getUserLevels($Qadmin->valueInt('id')));
+              
+              $response['success'] = true;
+              echo $toC_Json->encode($response);
+              exit;
+            }
           }
         } 
       }
