@@ -24,7 +24,7 @@
 
       $current_category_id  = empty($_REQUEST['current_category_id']) ? 0 : $_REQUEST['current_category_id'];
       
-      $Qarticles = $osC_Database->query('select a.articles_id, a.articles_status, a.articles_order, ad.articles_name, acd.articles_categories_name from :table_articles a, :table_articles_description ad, :articles_categories_description acd where acd.articles_categories_id = a.articles_categories_id and acd.language_id = ad.language_id and a.articles_id = ad.articles_id and a.articles_id > 5 and ad.language_id = :language_id ');
+      $Qarticles = $osC_Database->query('select a.articles_id, a.articles_status, a.articles_order, ad.articles_name, acd.articles_categories_name from :table_articles a, :table_articles_description ad, :articles_categories_description acd where acd.articles_categories_id = a.articles_categories_id and acd.language_id = ad.language_id and a.articles_id = ad.articles_id and a.articles_categories_id > 1 and ad.language_id = :language_id ');
       if ($current_category_id > 0) {
         $Qarticles->appendQuery('and a.articles_categories_id = :categories_id ');
         $Qarticles->bindInt(':categories_id', $current_category_id);
