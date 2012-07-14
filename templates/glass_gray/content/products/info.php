@@ -402,6 +402,16 @@
                     <p><?php echo $osC_Language->get('enter_captcha_code'); ?></p>
                     <div><?php echo osc_draw_input_field('captcha_code', '', 'size="22"'); ?></div>
                   </div>
+                  <script type="text/javascript">
+                    $('refresh-captcha-code').addEvent('click', function(e) {
+                      e.stop();
+                      
+                      var reviewsController = '<?php echo osc_href_link(FILENAME_PRODUCTS, 'reviews=show_captcha', 'AUTO', true, false); ?>';
+                      var captchaImgSrc = reviewsController + '&' + Math.random();
+                            
+                      $('captcha-code').setProperty('src', captchaImgSrc);
+                    });
+                  </script>
                 </div>
                 
                 <div class="submitFormButtons">
@@ -474,17 +484,6 @@
    <?php } ?>
 
 <div style="clear: both;"></div>
-
-<script type="text/javascript">
-  $('refresh-captcha-code').addEvent('click', function(e) {
-    e.stop();
-    
-    var reviewsController = '<?php echo osc_href_link(FILENAME_PRODUCTS, 'reviews=show_captcha', 'AUTO', true, false); ?>';
-    var captchaImgSrc = reviewsController + '&' + Math.random();
-          
-    $('captcha-code').setProperty('src', captchaImgSrc);
-  });
-</script>
 
 <script type="text/javascript" src="includes/javascript/tab_panel.js"></script>
 <script type="text/javascript" src="includes/javascript/reviews.js"></script>
