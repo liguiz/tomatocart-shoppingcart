@@ -288,7 +288,7 @@
           
           $size = sizeof($services);
           for ($i=0, $n=$size; $i<$n; $i++) {
-            if (strpos($services[$i], '<Postage') != false)) {
+            if (strpos($services[$i], '<Postage') != false) {
               $service = ereg('<SvcDescription>(.*)</SvcDescription>', $services[$i], $regs);
               $service = $regs[1];
               $postage = ereg('<Postage>(.*)</Postage>', $services[$i], $regs);
