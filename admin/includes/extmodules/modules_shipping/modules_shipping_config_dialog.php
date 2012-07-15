@@ -118,6 +118,34 @@ Ext.extend(Toc.modules_shipping.ShippingModuleConfigDialog, Ext.Window, {
             });
               
             this.moduleForm.add(combo);
+          } else if (field.type == 'multiselect') {
+            var multiS = new Ext.ux.Andrie.Select(Ext.applyIf({
+              fieldLabel: '<b>' + field.title + '</b><br/>' + field.description,
+              multiSelect:true,
+              minLength:2
+            }, {
+              store: new Ext.data.SimpleStore({
+                  fields: [{name: 'id', mapping: 'id'}, {name: 'text', mapping: 'text'}],
+                  data : field.values
+              }),
+              valueField:'id',
+              displayField:'text',
+              triggerAction:'all',
+              mode:'local'
+            }));
+            
+            var multiSvalue = new Ext.form.TextField({
+              name: field.name,
+              readOnly:true,
+              value: field.value
+            });
+            
+            multiS.on('change', function(){
+              multiSvalue.setValue(this.getValue());
+            }, multiS);
+            
+            this.moduleForm.add(multiS);
+            this.moduleForm.add(multiSvalue);
           }
         },this);
         
