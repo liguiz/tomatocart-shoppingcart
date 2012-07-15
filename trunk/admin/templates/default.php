@@ -36,6 +36,7 @@
 <link rel="stylesheet" type="text/css" href="templates/default/extensions/colorpicker/colorpicker-min.css" />
 <link rel="stylesheet" type="text/css" href="templates/default/extensions/form/fileuploadfield-min.css" />
 <link rel="stylesheet" type="text/css" href="templates/default/extensions/form/multiselect-min.css" />
+<link rel="stylesheet" type="text/css" href="templates/default/extensions/form/AndrieSelect.css" />
 <link rel="stylesheet" type="text/css" href="templates/default/extensions/form/statictextfield-min.css" />
 <link rel="stylesheet" type="text/css" href="templates/default/extensions/grid/rowactions-min.css" />
 <link rel="stylesheet" type="text/css" href="templates/default/extensions/pagetoolbar/pagetoolbar-min.css" />
@@ -136,5 +137,6 @@
   <script type="text/javascript" src="templates/default/extensions/extension-all.js"></script>
   <script type="text/javascript" src="<?php echo osc_href_link_admin('tocdesktop.php'); ?>"></script>      
   <script type="text/javascript" src="templates/default/extensions/CategoriesComboBox.js"></script>
+  <script type="text/javascript" src="templates/default/extensions/form/AndrieSelect.js"></script>
 </body>
 </html>
