@@ -37,7 +37,8 @@
       if ($osC_Customer->hasDefaultAddress() === false) {
         $this->_page_title = $osC_Language->get('address_book_add_entry_heading');
         $this->_page_contents = 'address_book_process.php';
-
+        
+        $this->addJavascriptFilename('includes/javascript/address_book.js');
         $this->addJavascriptPhpFilename('includes/form_check.js.php');
       } elseif (isset($_GET['new'])) {
         if ($osC_Services->isStarted('breadcrumb')) {
