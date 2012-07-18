@@ -522,7 +522,7 @@
           }
         }
       }
-     
+      
       $counter = 0;
       $cheapest_rate = null;
       $expensive_rate = 0;
@@ -572,8 +572,14 @@
       }
       //End: handle shipping
       
-      $params['SHIPPINGAMT'] = $osC_Currencies->formatRaw($cheapest_rate, '', 1);
+      if ($cheapest_rate == 0) {
+        $params['SHIPPINGAMT'] = (int)$osC_Currencies->formatRaw($cheapest_rate, '', 1);
+      }else {
+        $params['SHIPPINGAMT'] = $osC_Currencies->formatRaw($cheapest_rate, '', 1);
+      }
+      
       $params['AMT'] = $osC_Currencies->formatRaw($params['ITEMAMT'] + $params['TAXAMT'] + $params['SHIPPINGAMT'], '', 1);
+      
       $params['MAXAMT'] = $osC_Currencies->formatRaw($params['AMT'] + $expensive_rate + 100, '', 1);// safely pad higher for dynamic shipping rates (eg, USPS express)
       
       //call the setExpressCheckout api     
