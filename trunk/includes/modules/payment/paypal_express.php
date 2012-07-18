@@ -530,15 +530,7 @@
       $default_shipping = null;
       
       foreach($quotes_array as $quote) {
-        $shipping_rate = $osC_Currencies->formatRaw($quote['cost'] + $osC_Currencies->addTaxRateToPrice($quote['cost'], $quote['tax']));
-        
-        $shipping_tax = $quote['cost'] * ($osC_Tax->getTaxRate($quote['tax'], $osC_ShoppingCart->getTaxingAddress('country_id'), $osC_ShoppingCart->getTaxingAddress('zone_id')) / 100);
-
-        if (DISPLAY_PRICE_WITH_TAX == '1') {
-          $shipping_rate = $quote['cost'];
-        } else {
-          $shipping_rate = $quote['cost'] + $shipping_tax;
-        }
+        $shipping_rate = $osC_Currencies->formatRaw($quote['cost'] + ($quote['cost'] * $quote['tax'] / 100));
         
         $params['L_SHIPPINGOPTIONNAME' . $counter] = $quote['name'] . ' (' . $quote['label'] . ')';
         $params['L_SHIPINGPOPTIONLABEL' . $counter] = $quote['name'] . ' (' . $quote['label'] . ')';
@@ -572,11 +564,7 @@
       }
       //End: handle shipping
       
-      if ($cheapest_rate == 0) {
-        $params['SHIPPINGAMT'] = (int)$osC_Currencies->formatRaw($cheapest_rate, '', 1);
-      }else {
-        $params['SHIPPINGAMT'] = $osC_Currencies->formatRaw($cheapest_rate, '', 1);
-      }
+      $params['SHIPPINGAMT'] = $osC_Currencies->formatRaw($cheapest_rate, '', 1);
       
       $params['AMT'] = $osC_Currencies->formatRaw($params['ITEMAMT'] + $params['TAXAMT'] + $params['SHIPPINGAMT'], '', 1);
       
