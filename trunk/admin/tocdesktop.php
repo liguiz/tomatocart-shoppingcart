@@ -40,7 +40,7 @@ Ext.Ajax.extraParams = {token: token};
 Ext.data.Connection.prototype.extraParams = {token: token};
 Ext.data.ScriptTagProxy.prototype.extraParams = {token: token};
     
-var tocCurrenciesFormatter = Ext.util.Format.CurrencyFactory(parseInt('<?php echo $osC_Currencies->getDecimalPlaces(); ?>'), '<?php echo $osC_Language->getNumericDecimalSeparator(); ?>', '<?php echo $osC_Language->getNumericThousandsSeparator(); ?>', '<?php echo $osC_Currencies->getSymbolLeft(); ?>', '<?php echo $osC_Currencies->getSymbolRight(); ?>');
+var tocCurrenciesFormatter = Ext.util.Format.CurrencyFactory(parseInt('<?php echo $osC_Currencies->getDecimalPlaces(); ?>'), '<?php echo addslashes($osC_Language->getNumericDecimalSeparator()); ?>', '<?php echo addslashes($osC_Language->getNumericThousandsSeparator()); ?>', '<?php echo addslashes($osC_Currencies->getSymbolLeft()); ?>', '<?php echo addslashes($osC_Currencies->getSymbolRight()); ?>');
 
 /*
  * Desktop configuration
