@@ -363,7 +363,7 @@
                   if (!isset($quote['error'])) {
                     foreach($quote['methods'] as $rate) {
                       if ($response_array['SHIPPINGOPTIONNAME'] == $quote['module'] . ' (' . $rate['title'] . ')') {
-                        if ($response_array['SHIPPINGOPTIONAMOUNT'] == $osC_Currencies->formatRaw($rate['cost'] + $osC_Currencies->addTaxRateToPrice($rate['cost'], $quote['tax']))) {
+                        if ($response_array['SHIPPINGOPTIONAMOUNT'] == $osC_Currencies->formatRaw($rate['cost'] + ($quote['cost'] * $quote['tax'] / 100))) {
                           $shipping = $quote['id'] . '_' . $rate['id'];
                           $module = 'osC_Shipping_' . $quote['module'];
                         
@@ -396,25 +396,26 @@
               }
             }
           }
-        
-          if (!isset($_SESSION['ppe_token'])) {
-            $_SESSION['ppe_token'] = $response_array['TOKEN'];
-          }
-        
-          if (!isset($_SESSION['ppe_payerid'])) {
-            $_SESSION['ppe_payerid'] = $response_array['PAYERID'];
-          }
-        
-          if (!isset($_SESSION['ppe_payerstatus'])) {
-            $_SESSION['ppe_payerstatus'] = $response_array['PAYERSTATUS'];
-          }
-        
-          if (!isset($_SESSION['ppe_addressstatus'])) {
-            $_SESSION['ppe_addressstatus'] = $response_array['ADDRESSSTATUS'];
-          }
-        
-          osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'process', 'SSL'));
         }
+        
+        if (!isset($_SESSION['ppe_token'])) {
+          $_SESSION['ppe_token'] = $response_array['TOKEN'];
+        }
+      
+        if (!isset($_SESSION['ppe_payerid'])) {
+          $_SESSION['ppe_payerid'] = $response_array['PAYERID'];
+        }
+      
+        if (!isset($_SESSION['ppe_payerstatus'])) {
+          $_SESSION['ppe_payerstatus'] = $response_array['PAYERSTATUS'];
+        }
+      
+        if (!isset($_SESSION['ppe_addressstatus'])) {
+          $_SESSION['ppe_addressstatus'] = $response_array['ADDRESSSTATUS'];
+        }
+      
+        osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'process', 'SSL'));
+          
       }else {
         $messageStack->add_session('shopping_cart', $osC_Language->get('payment_paypal_express_error_title') . ' <strong>' . stripslashes($response_array['L_LONGMESSAGE0']) . '</strong>');
         
