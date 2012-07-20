@@ -306,16 +306,19 @@
         foreach ($categories as $id => $info) {
           if (isset($totals[$id]) && ($totals[$id] > 0)) {
             $this->data[$parent][$id]['count'] = $totals[$id];
-
-            $parent_category = $parent;
-            while ($parent_category != $this->root_category_id) {
-              foreach ($this->data as $parent_parent => $parent_categories) {
-                foreach ($parent_categories as $parent_category_id => $parent_category_info) {
-                  if ($parent_category_id == $parent_category) {
-                    $this->data[$parent_parent][$parent_category_id]['count'] += $this->data[$parent][$id]['count'];
-
-                    $parent_category = $parent_parent;
-                    break 2;
+            
+            //whether need to calculate the product in the subcategories
+            if ( defined('DISPLAY_SUBCATALOGS_PRODUCTS') && ((int)DISPLAY_SUBCATALOGS_PRODUCTS == 1) ) {
+              $parent_category = $parent;
+              while ($parent_category != $this->root_category_id) {
+                foreach ($this->data as $parent_parent => $parent_categories) {
+                  foreach ($parent_categories as $parent_category_id => $parent_category_info) {
+                    if ($parent_category_id == $parent_category) {
+                      $this->data[$parent_parent][$parent_category_id]['count'] += $this->data[$parent][$id]['count'];
+  
+                      $parent_category = $parent_parent;
+                      break 2;
+                    }
                   }
                 }
               }

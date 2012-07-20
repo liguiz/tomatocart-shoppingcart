@@ -27,7 +27,7 @@
         $this->_category = $id;
       }
       
-      if ( (defined(DISPLAY_SUBCATALOGS_PRODUCTS)) && ((int)DISPLAY_SUBCATALOGS_PRODUCTS == -1) ) {
+      if ( (defined('DISPLAY_SUBCATALOGS_PRODUCTS')) && ((int)DISPLAY_SUBCATALOGS_PRODUCTS == -1) ) {
         $this->_recursive = false;
       }
     }
@@ -95,7 +95,7 @@
     function &execute() {
       global $osC_Database, $osC_Language, $osC_CategoryTree, $osC_Image;
       
-      $Qlisting = $osC_Database->query('select distinct p.*, pd.*, m.*, if(s.status, s.specials_new_products_price, null) as specials_new_products_price, if(s.status, s.specials_new_products_price, if (pv.products_price, pv.products_price, p.products_price)) as final_price, i.image from :table_products p left join :table_products_variants pv on (p.products_id = pv.products_id and pv.is_default = 1) left join :table_manufacturers m using(manufacturers_id) left join :table_specials s on (p.products_id = s.products_id) left join :table_manufacturers_info mi on (m.manufacturers_id = mi.manufacturers_id and mi.languages_id = :languages_id) left join :table_products_images i on (p.products_id = i.products_id and i.default_flag = :default_flag), :table_products_description pd');
+      $Qlisting = $osC_Database->query('select p.*, pd.*, m.*, if(s.status, s.specials_new_products_price, null) as specials_new_products_price, if(s.status, s.specials_new_products_price, if (pv.products_price, pv.products_price, p.products_price)) as final_price, i.image from :table_products p left join :table_products_variants pv on (p.products_id = pv.products_id and pv.is_default = 1) left join :table_manufacturers m using(manufacturers_id) left join :table_specials s on (p.products_id = s.products_id) left join :table_manufacturers_info mi on (m.manufacturers_id = mi.manufacturers_id and mi.languages_id = :languages_id) left join :table_products_images i on (p.products_id = i.products_id and i.default_flag = :default_flag), :table_products_description pd');
       $Qlisting->bindTable(':table_products', TABLE_PRODUCTS);
       $Qlisting->bindTable(':table_products_variants', TABLE_PRODUCTS_VARIANTS);
       $Qlisting->bindTable(':table_manufacturers', TABLE_MANUFACTURERS);
