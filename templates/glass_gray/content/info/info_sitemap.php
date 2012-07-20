@@ -38,10 +38,6 @@
         <li><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, 'reviews'), $osC_Language->get('sitemap_reviews')); ?></li>
         <li><?php echo osc_link_object(osc_href_link(FILENAME_INFO), $osC_Language->get('box_information_heading')); ?>
           <ul>
-            <li><?php echo osc_link_object(osc_href_link(FILENAME_INFO, 'shipping'), $osC_Language->get('box_information_shipping')); ?></li>
-            <li><?php echo osc_link_object(osc_href_link(FILENAME_INFO, 'privacy'), $osC_Language->get('box_information_privacy')); ?></li>
-            <li><?php echo osc_link_object(osc_href_link(FILENAME_INFO, 'conditions'), $osC_Language->get('box_information_conditions')); ?></li>
-            <li><?php echo osc_link_object(osc_href_link(FILENAME_INFO, 'contact'), $osC_Language->get('box_information_contact')); ?></li>
             <?php
                 while($Qarticles_listing->next()) {
             ?>
