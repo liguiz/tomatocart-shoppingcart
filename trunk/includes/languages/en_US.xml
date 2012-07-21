@@ -2294,6 +2294,11 @@ Note: If you did not request this action via our password forgotten page, please
       <group>checkout</group>
     </definition>
     <definition>
+      <key>view_downloadable_products_link</key>
+      <value><![CDATA[There is the download link to the downloadable product!]]></value>
+      <group>checkout</group>
+    </definition>
+    <definition>
       <key>contact_store_owner</key>
       <value><![CDATA[Please direct any questions you have to the <a href="%s">store owner</a>.]]></value>
       <group>checkout</group>

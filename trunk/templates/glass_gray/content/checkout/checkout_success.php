@@ -22,13 +22,27 @@
     $Qorder->bindInt(':customers_id', $osC_Customer->getID());
     $Qorder->execute();
 
-    $Qproducts = $osC_Database->query('select products_id, products_name from :table_orders_products where orders_id = :orders_id order by products_name');
+    $Qproducts = $osC_Database->query('select products_id, products_name, products_type from :table_orders_products where orders_id = :orders_id order by products_name');
     $Qproducts->bindTable(':table_orders_products', TABLE_ORDERS_PRODUCTS);
     $Qproducts->bindInt(':orders_id', $Qorder->valueInt('orders_id'));
     $Qproducts->execute();
 
     $products_array = array();
+    $has_downloadable = false;
+    $has_simple = false;
     while ($Qproducts->next()) {
+      if ($Qproducts->valueInt('products_type') == PRODUCT_TYPE_SIMPLE) {
+        if ($has_simple === false) {
+          $has_simple = true;
+        }
+      }
+      
+      if ($Qproducts->valueInt('products_type') == PRODUCT_TYPE_DOWNLOADABLE) {
+        if ($has_downloadable === false) {
+          $has_downloadable = true;
+        }
+      }
+      
       $products_array[] = array('id' => $Qproducts->valueInt('products_id'),
                                 'text' => $Qproducts->value('products_name'));
     }
@@ -43,7 +57,19 @@
   <div style="float: left;"><?php echo osc_image('templates/' . $osC_Template->getCode() . '/images/order_process_success.png', $osC_Template->getPageTitle()); ?></div>
 
   <div style="padding-top: 30px;">
+    <?php
+      if (isset($has_simple)) {
+        if ($has_simple === true) {
+    ?>
     <p><?php echo $osC_Language->get('order_processed_successfully'); ?></p>
+    <?php
+        }
+      }else {
+    ?>
+    <p><?php echo $osC_Language->get('order_processed_successfully'); ?></p>
+    <?php
+      }
+    ?>
 
     <p>
 
@@ -60,9 +86,9 @@
     }
 
     echo '</p>';
-  } else {
-    echo sprintf($osC_Language->get('view_order_history'), osc_href_link(FILENAME_ACCOUNT, null, 'SSL'), osc_href_link(FILENAME_ACCOUNT, 'orders', 'SSL')) . '<br /><br />' . sprintf($osC_Language->get('contact_store_owner'), osc_href_link(FILENAME_INFO, 'contact'));
   }
+  
+  echo sprintf($osC_Language->get('view_order_history'), osc_href_link(FILENAME_ACCOUNT, null, 'SSL'), osc_href_link(FILENAME_ACCOUNT, 'orders', 'SSL')) . ((isset($has_downloadable) && $has_downloadable === true) ? $osC_Language->get('view_downloadable_products_link') : '') . '<br /><br />' . sprintf($osC_Language->get('contact_store_owner'), osc_href_link(FILENAME_INFO, 'contact'));
 ?>
 
     </p>
