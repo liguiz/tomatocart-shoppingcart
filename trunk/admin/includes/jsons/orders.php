@@ -166,7 +166,9 @@
     }
            
     function deleteOrders() {
-      global $toC_Json, $osC_Language;
+      global $toC_Json, $osC_Language, $osC_Currencies;
+      
+      $osC_Currencies = new osC_Currencies();
      
       $error = false;
       
