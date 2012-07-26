@@ -153,6 +153,12 @@ var Checkout = new Class({
       if (result.success == true) {
         $('billingInformationForm').getElement('div').set('html', result.form);
         
+        //check whether the customer has the default billing address
+        if (!$defined($('sel_billing_address'))) {
+          $('create_billing_address').checked = true;
+          $('create_billing_address').disabled = true;
+        }
+        
         //create new billing address
         if ($defined($('create_billing_address'))) {
           $('create_billing_address').addEvent('click', function(e) {
@@ -279,6 +285,12 @@ var Checkout = new Class({
   
   loadShippingInformationForm: function(form) {
 		$('shippingInformationForm').getElement('div').set('html', form);
+		
+		//check whether the customer has the default shipping address
+    if (!$defined($('sel_shipping_address'))) {
+      $('create_shipping_address').checked = true;
+      $('create_shipping_address').disabled = true;
+    }
 		
 		//create new shipping address
 		if ($defined($('create_shipping_address'))) {
