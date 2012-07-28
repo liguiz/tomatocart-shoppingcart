@@ -152,9 +152,10 @@
     }          
     
     function deleteOrder() {
-      global $toC_Json, $osC_Language, $osC_Currencies;
+      global $toC_Json, $osC_Language, $osC_Currencies, $osC_Tax;
       
-      $osC_Currencies = new osC_Currencies();
+      $osC_Tax = new osC_Tax_Admin();
+      $osC_Currencies = new osC_Currencies_Admin();
       
       if (osC_Order::delete($_REQUEST['orders_id'], (isset($_REQUEST['restock']) && ($_REQUEST['restock'] == 'on') ? true : false))) {
         $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
@@ -166,9 +167,10 @@
     }
            
     function deleteOrders() {
-      global $toC_Json, $osC_Language, $osC_Currencies;
+      global $toC_Json, $osC_Language, $osC_Currencies, $osC_Tax;
       
-      $osC_Currencies = new osC_Currencies();
+      $osC_Tax = new osC_Tax_Admin();
+      $osC_Currencies = new osC_Currencies_Admin();
      
       $error = false;
       
