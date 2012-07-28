@@ -18,10 +18,13 @@ var PopupCart = new Class({
     sessionId: null,
     isCartExpanded: false,
     triggerEl: $('popupCart'),
-    btnClose: 'btnClosePopCart',
+//    btnClose: 'btnClosePopCart',
     container: $('pageHeader'),
+    clsCollapsed: 'cartCallpased',
+    clsExpanded: 'cartExpanded',
+    clsCartText: 'cartText',
     relativeTop: 20,
-    relativeLeft: 242
+    relativeLeft: 222
   },
   
   
@@ -37,10 +40,26 @@ var PopupCart = new Class({
         
         if (this.options.isCartExpanded == false) {
           this.getShoppingCart();
+          
+          $$('.' + this.options.clsCartText).each(function(text) {
+            if (text.hasClass(this.options.clsCollapsed)) {
+              text.removeClass(this.options.clsCollapsed);
+            }
+            
+            text.addClass(this.options.clsExpanded);
+          }.bind(this));
         }else {
           this.cartContainer.fade('out');
           
           this.options.isCartExpanded = false;
+          
+          $$('.' + this.options.clsCartText).each(function(text) {
+            if (text.hasClass(this.options.clsExpanded)) {
+              text.removeClass(this.options.clsExpanded);
+            }
+            
+            text.addClass(this.options.clsCollapsed);
+          }.bind(this));
         }
       }.bind(this)
     });
@@ -87,14 +106,14 @@ var PopupCart = new Class({
       this.options.container.adopt(this.cartContainer);
       this.cartContainer.setStyle('opacity', 0).fade('in');
       
-      $(this.options.btnClose).addEvent('click', function(e) {
-        e.stop();
-        
-        this.cartContainer.fade('out');
-        
-        this.options.isCartExpanded = false;
-        
-      }.bind(this));
+//      $(this.options.btnClose).addEvent('click', function(e) {
+//        e.stop();
+//        
+//        this.cartContainer.fade('out');
+//        
+//        this.options.isCartExpanded = false;
+//        
+//      }.bind(this));
       
       this.options.isCartExpanded = true;
     }
