@@ -32,10 +32,10 @@
 
         $content .= '</table>';
       } else {
-        $content .= $osC_Language->get('box_shopping_cart_empty');
+        $content .= '<strong class="cartEmpty">' . $osC_Language->get('box_shopping_cart_empty') . '</strong>';
       }
       
-      $content .= '<p class="subtotal">' . $osC_Language->get('box_shopping_cart_subtotal') . '&nbsp;&nbsp;' . $osC_Currencies->format($osC_ShoppingCart->getSubTotal()) . '</p>
+      $content .= '<strong class="subtotal">' . $osC_Language->get('box_shopping_cart_subtotal') . '&nbsp;&nbsp;' . $osC_Currencies->format($osC_ShoppingCart->getSubTotal()) . '</strong>
                   </div>';
       
       $response = array('success' => true, 'content' => $content);
