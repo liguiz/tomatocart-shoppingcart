@@ -41,6 +41,25 @@
 ?>
 
 <meta name="Generator" content="TomatoCart" />
+
+<?php
+  $content_left = $osC_Template->getBoxGroup('left');
+  $content_right = $osC_Template->getBoxGroup('right');
+  
+  if (osc_empty($content_left) && osc_empty($content_right)) {
+?>
+<style type="text/css">#pageContent, #pageBlockLeft{width:960px;}</style>
+<?php
+  }else if (osc_empty($content_left)) {
+?>
+<style type="text/css">#pageContent {width: 745px;}</style>
+<?php
+  }else if (osc_empty($content_right)) {
+?>
+<style type="text/css">#pageContent {width: 745px;}#pageBlockLeft{width:960px;}</style>
+<?php
+  }
+?>
 </head>
 <body>
 <?php
@@ -142,8 +161,6 @@
 <div id="pageWrapper">
   <div id="pageBlockLeft">
   <?php
-    $content_left = $osC_Template->getBoxGroup('left');
-
     if (!empty($content_left)) {
   ?>
 
@@ -155,14 +172,6 @@
       </div>
     </div>
 
-  <?php
-    } else {
-  ?>
-    <style type="text/css"><!--
-      #pageContent {
-        width: 745px;
-      }
-    //--></style>
   <?php
     }
   ?>
@@ -214,9 +223,6 @@
     </div>
   </div>
 
-<?php
-    $content_right = $osC_Template->getBoxGroup('right');
-  ?>
   <?php
     if (!empty($content_right)) {
   ?>
@@ -228,26 +234,6 @@
         </div>
       </div>
 
-  <?php
-    } elseif ( empty($content_right) && empty($content_left) ) {
-  ?>
-      <style type="text/css"><!--
-      #pageContent, #pageBlockLeft{
-        width:960px;
-      }
-      --></style>
-  <?php
-    } elseif ( empty($content_right) ) {
-  ?>
-      <style type="text/css"><!--
-      #pageContent {
-        width: 745px;
-      }
-
-      #pageBlockLeft{
-        width:960px;
-      }
-      //--></style>
   <?php
     }
 
