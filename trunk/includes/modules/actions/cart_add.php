@@ -39,6 +39,8 @@
         //customization fields check
         if ($osC_Product->hasRequiredCustomizationFields()) {
           if ( !$toC_Customization_Fields->exists($osC_Product->getID()) ) {
+            $osC_Language->load('products');
+            
             $messageStack->add_session('products', $osC_Language->get('error_customization_fields_missing'), 'error');
             
             osc_redirect(osc_href_link(FILENAME_PRODUCTS, $osC_Product->getID()));  
