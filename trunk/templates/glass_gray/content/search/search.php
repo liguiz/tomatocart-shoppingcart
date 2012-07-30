@@ -82,6 +82,8 @@
       </li>
       <li><?php echo osc_draw_label($osC_Language->get('field_search_price_from'), 'pfrom') . osc_draw_input_field('pfrom'); ?></li>
       <li><?php echo osc_draw_label($osC_Language->get('field_search_price_to'), 'pto') . osc_draw_input_field('pto'); ?></li>
+      <li><?php echo osc_draw_label($osC_Language->get('field_search_date_from'), 'datefrom') . osc_draw_date_pull_down_menu('datefrom', null, false, null, null, date('Y') - $osC_Search->getMinYear(), 0); ?></li>
+      <li><?php echo osc_draw_label($osC_Language->get('field_search_date_to'), 'dateto') . osc_draw_date_pull_down_menu('dateto', null, null, null, null, date('Y') - $osC_Search->getMaxYear(), 0); ?></li>
     </ol>
   </div>
 </div>
