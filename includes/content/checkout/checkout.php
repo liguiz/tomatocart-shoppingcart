@@ -59,7 +59,7 @@
         }
       }
       
-      $this->addJavascriptFilename('includes/javascript/checkout.js');
+      $this->addHeaderJavascriptFilename('includes/javascript/checkout.js');
     } 
   }
 ?>

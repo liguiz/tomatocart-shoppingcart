@@ -31,8 +31,8 @@
     echo $osC_Template->getPageTags();
   }
 
-  if ($osC_Template->hasJavascript()) {
-    $osC_Template->getJavascript();
+  if ($osC_Template->hasHeaderJavascript()) {
+    $osC_Template->getHeaderJavascript();
   }
   
   if ($osC_Template->hasStyleSheet()) {
@@ -275,6 +275,13 @@
     }
   }
 ?>
+
+<?php
+  if ($osC_Template->hasJavascript()) {
+    $osC_Template->getJavascript();
+  }
+?>
+
 
 <script type="text/javascript" src="ext/autocompleter/Autocompleter.js"></script>
 <script type="text/javascript" src="ext/autocompleter/Autocompleter.Request.js"></script>

@@ -125,7 +125,18 @@
  * @access private
  */
 
-    var $_javascript_filenames = array('includes/general.js', 'https://ajax.googleapis.com/ajax/libs/mootools/1.2.5/mootools-yui-compressed.js', 'ext/mootools/mootools_more.js');
+    var $_javascript_filenames = array('includes/general.js');
+    
+/**
+ * Holds javascript filenames to be included in the head of the page
+ *
+ * The javascript files must be plain javascript files without any PHP logic, and are linked to from the page
+ *
+ * @var array
+ * @access private
+ */    
+    
+    var $_header_javascript_filenames = array('https://ajax.googleapis.com/ajax/libs/mootools/1.2.5/mootools-yui-compressed.js', 'ext/mootools/mootools_more.js');
 
 /**
  * Holds javascript PHP filenames to be included in the page
@@ -137,7 +148,18 @@
  */
 
     var $_javascript_php_filenames = array();
-
+    
+/**
+ * Holds javascript PHP filenames to be included in the head of the page
+ *
+ * The javascript PHP filenames can consist of PHP logic to produce valid javascript syntax, and is embedded in the page
+ *
+ * @var array
+ * @access private
+ */
+    
+    var $_header_javascript_php_filenames = array();
+    
 /**
  * Holds blocks of javascript syntax to embedd into the page
  *
@@ -148,6 +170,17 @@
  */
 
     var $_javascript_blocks = array();
+    
+/**
+ * Holds blocks of javascript syntax to embedd into the head of the page
+ *
+ * Each block must contain its relevant <script> and </script> tags
+ *
+ * @var array
+ * @access private
+ */
+    
+    var $_header_javascript_blocks = array();
 
 /**
  * Holds style declarations to embedd into the page head
@@ -569,6 +602,27 @@
         echo $this->_getJavascriptBlocks();
       }
     }
+    
+/**
+ * Returns the javascript to link from or embedd to on the head of the page
+ *
+ * @access public
+ * @return string
+ */
+
+    function getHeaderJavascript() {
+      if (!empty($this->_header_javascript_filenames)) {
+        echo $this->_getHeaderJavascriptFilenames();
+      }
+
+      if (!empty($this->_header_javascript_php_filenames)) {
+        $this->_getHeaderJavascriptPhpFilenames();
+      }
+
+      if (!empty($this->_header_javascript_blocks)) {
+        echo $this->_getHeaderJavascriptBlocks();
+      }
+    }
   
 /**
  * Returns the style sheet to link from or embedd to on the page
@@ -655,6 +709,17 @@
 
     function hasJavascript() {
       return (!empty($this->_javascript_filenames) || !empty($this->_javascript_php_filenames) || !empty($this->_javascript_blocks));
+    }
+    
+/**
+ * Checks to see if the page has javascript in the head tag to link to or embedd from
+ *
+ * @access public
+ * @return boolean
+ */
+
+    function hasHeaderJavascript() {
+      return (!empty($this->_header_javascript_filenames) || !empty($this->_header_javascript_php_filenames) || !empty($this->_header_javascript_blocks));
     }
     
 /**
@@ -831,6 +896,19 @@
           $this->_javascript_filenames[] = $filename;
       }
     }
+    
+/**
+ * Adds a javascript file to link to head tag of the page
+ *
+ * @param string $filename The javascript filename to link to
+ * @access public
+ */
+
+    function addHeaderJavascriptFilename($filename) {
+      if (!in_array($filename, $this->_header_javascript_filenames)) {
+          $this->_header_javascript_filenames[] = $filename;
+      }
+    }
 
 /**
  * Adds a PHP based javascript file to embedd on the page
@@ -842,6 +920,17 @@
     function addJavascriptPhpFilename($filename) {
       $this->_javascript_php_filenames[] = $filename;
     }
+    
+/**
+ * Adds a PHP based javascript file to embedd on the head of the page
+ *
+ * @param string $filename The PHP based javascript filename to embedd
+ * @access public
+ */
+
+    function addHeaderJavascriptPhpFilename($filename) {
+      $this->_header_javascript_php_filenames[] = $filename;
+    }
 
 /**
  * Adds javascript logic to the page
@@ -852,6 +941,17 @@
 
     function addJavascriptBlock($javascript) {
       $this->_javascript_blocks[] = $javascript;
+    }
+    
+/**
+ * Adds javascript logic to the page
+ *
+ * @param string $javascript The javascript block to add on the head of the page
+ * @access public
+ */
+
+    function addHeaderJavascriptBlock($javascript) {
+      $this->_header_javascript_blocks[] = $javascript;
     }
   
   /**
@@ -926,6 +1026,23 @@
 
       return $js_files;
     }
+    
+/**
+ * Returns the javascript filenames to link to on head of the page
+ *
+ * @access private
+ * @return string
+ */
+
+    function _getHeaderJavascriptFilenames() {
+      $js_files = '';
+
+      foreach ($this->_header_javascript_filenames as $filenames) {
+        $js_files .= '<script language="javascript" type="text/javascript" src="' . $filenames . '"></script>' . "\n";
+      }
+
+      return $js_files;
+    }
 
 /**
  * Returns the PHP javascript files to embedd on the page
@@ -938,6 +1055,21 @@
         include($filenames);
       }
     }
+    
+/**
+ * Returns the PHP javascript files to embedd on the head of the page
+ *
+ * @access private
+ */
+
+    function _getHeaderJavascriptPhpFilenames() {
+      foreach ($this->_header_javascript_php_filenames as $filenames) {
+        include($filenames);
+      }
+    }
+    
+    
+    
 
 /**
  * Returns javascript blocks to add to the page
@@ -948,6 +1080,17 @@
 
     function _getJavascriptBlocks() {
       return implode("\n", $this->_javascript_blocks);
+    }
+    
+/**
+ * Returns javascript blocks to add to the head of the page
+ *
+ * @access private
+ * @return string
+ */
+
+    function _getHeaderJavascriptBlocks() {
+      return implode("\n", $this->_header_javascript_blocks);
     }
   }
 ?>
