@@ -492,19 +492,6 @@ height: 0;
   text-align:left;
 }
 
-/* All menu links on hover or focus */
-#categoriesTree a:hover, #categoriesTree a:focus, #subMenusContainer a:hover, #subMenusContainer a:focus, #categoriesTree a.mainMenuParentBtnFocused, #subMenusContainer a.subMenuParentBtnFocused{
-}
-
-/* sub menu links on hover or focus */
-#subMenusContainer a:hover, 
-#subMenusContainer a:focus, 
-#categoriesTree a.mainMenuParentBtnFocused, 
-#subMenusContainer a.subMenuParentBtnFocused,
-#categoriesTree li a:hover,
-#categoriesTree li a:focus{
-}
-
 .subMenuParentBtn{background: url(images/box_category_arrow.png) right center no-repeat;}
 .subMenuParentBtnFocused{background: url(images/box_category_arrow.png) right center no-repeat;}
 .mainMenuParentBtn{background: url(images/box_category_arrow.png) right center no-repeat;}
