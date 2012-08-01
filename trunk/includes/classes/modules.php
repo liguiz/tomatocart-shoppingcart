@@ -124,17 +124,28 @@
     }
 
     function getGroup($group) {
+      global $osC_Template;
+      
       $modules = array();
 
       if (isset($this->_modules[$group])) {
         foreach ($this->_modules[$group] as $module) {
-          if (file_exists('includes/modules/' . $this->_group . '/' . $module . '.php')) {
+          
+          if (file_exists('templates/' . $osC_Template->getCode() . '/includes/modules/' . $this->_group . '/' . $module . '.php')) {
+            $class = 'osC_' . ucfirst($this->_group) . '_' . $module;
+            
+            if (class_exists($class) === false) {
+              include_once('templates/' . $osC_Template->getCode() . '/includes/modules/' . $this->_group . '/' . $module . '.php');
+            }
+            
+            $modules[] = $class;
+          }else if (file_exists('includes/modules/' . $this->_group . '/' . $module . '.php')) {
             $class = 'osC_' . ucfirst($this->_group) . '_' . $module;
 
             if (class_exists($class) === false) {
-              include('includes/modules/' . $this->_group . '/' . $module . '.php');
+              include_once('includes/modules/' . $this->_group . '/' . $module . '.php');
             }
-
+            
             $modules[] = $class;
           }
         }
