@@ -253,6 +253,33 @@ var Checkout = new Class({
             $('payment_method_store_credit').addEvent('click', this.onChkUseStoreCreditChecked.bind(this));
           }  
           
+           //btnRedeemCoupon
+          if ($defined($('btnRedeemCoupon'))) {
+            $('btnRedeemCoupon').addEvent('click', function(e) {
+              this.btnRedeemCouponClick(e);          
+            }.bind(this)); 
+          }
+          
+          if ($defined($('btnDeleteCoupon'))) {
+            $('btnDeleteCoupon').addEvent('click', function(e) {
+              this.btnDeleteCouponClick(e);          
+            }.bind(this)); 
+          }
+          
+      
+          //btnRedeemGiftCertificate
+          if ($defined($('btnRedeemGiftCertificate'))) {
+            $('btnRedeemGiftCertificate').addEvent('click', function(e) {
+              this.btnRedeemGiftCertificateClick(e);          
+            }.bind(this)); 
+          }
+          
+          $$('.btnDeleteGiftCertificate').each(function(btn){
+            btn.addEvent('click', function(e) {
+              this.btnDeleteGiftCertificateClick(btn.getParent().id, e);          
+            }.bind(this)); 
+          }.bind(this));
+          
           //btnSaveBillingInformation
           $('btnSavePaymentMethod').addEvent('click', function(e) {
           	this.showNotify($('btnSavePaymentMethod'));
