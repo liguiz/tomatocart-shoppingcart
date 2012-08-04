@@ -18,7 +18,7 @@
       $address_format = '';
 
       if (is_numeric($address)) {
-        $Qaddress = $osC_Database->query('select ab.entry_firstname as firstname, ab.entry_lastname as lastname, ab.entry_company as company, ab.entry_street_address as street_address, ab.entry_suburb as suburb, ab.entry_city as city, ab.entry_postcode as postcode, ab.entry_state as state, ab.entry_zone_id as zone_id, ab.entry_country_id as country_id, z.zone_code as zone_code, c.countries_name as country_title from :table_address_book ab left join :table_zones z on (ab.entry_zone_id = z.zone_id), :table_countries c where ab.address_book_id = :address_book_id and ab.entry_country_id = c.countries_id');
+        $Qaddress = $osC_Database->query('select ab.entry_firstname as firstname, ab.entry_lastname as lastname, ab.entry_company as company, ab.entry_street_address as street_address, ab.entry_suburb as suburb, ab.entry_city as city, ab.entry_postcode as postcode, ab.entry_state as state, ab.entry_zone_id as zone_id, ab.entry_country_id as country_id, ab.entry_telephone as telephone_number, z.zone_code as zone_code, c.countries_name as country_title from :table_address_book ab left join :table_zones z on (ab.entry_zone_id = z.zone_id), :table_countries c where ab.address_book_id = :address_book_id and ab.entry_country_id = c.countries_id');
         $Qaddress->bindTable(':table_address_book', TABLE_ADDRESS_BOOK);
         $Qaddress->bindTable(':table_zones', TABLE_ZONES);
         $Qaddress->bindTable(':table_countries', TABLE_COUNTRIES);
@@ -60,7 +60,13 @@
       if (empty($address_format)) {
         $address_format = ":name\n:street_address\n:postcode :city\n:country";
       }
-
+      
+      if ( defined('DISPLAY_TELEPHONE_NUMBER') && ((int)DISPLAY_TELEPHONE_NUMBER == 1) ) {
+        if (strpos($address_format, 'telephone_number') == false) {
+          $address_format .= "\n:telephone_number";
+        }
+      }
+      
       $find_array = array('/\:name\b/',
                           '/\:street_address\b/',
                           '/\:suburb\b/',
@@ -68,8 +74,9 @@
                           '/\:postcode\b/',
                           '/\:state\b/',
                           '/\:state_code\b/',
-                          '/\:country\b/');
-
+                          '/\:country\b/', 
+                          '/\:telephone_number\b/');
+      
       $replace_array = array(osc_output_string_protected($firstname . ' ' . $lastname),
                              osc_output_string_protected($address['street_address']),
                              osc_output_string_protected($address['suburb']),
@@ -77,10 +84,11 @@
                              osc_output_string_protected($address['postcode']),
                              osc_output_string_protected($state),
                              osc_output_string_protected($state_code),
-                             osc_output_string_protected($country));
-
+                             osc_output_string_protected($country), 
+                             osc_output_string_protected($address['telephone_number']));
+                             
       $formated = preg_replace($find_array, $replace_array, $address_format);
-
+      
       if ( (ACCOUNT_COMPANY > -1) && !empty($address['company']) ) {
         $company = osc_output_string_protected($address['company']);
 
@@ -90,7 +98,7 @@
       if ($new_line != "\n") {
         $formated = str_replace("\n", $new_line, $formated);
       }
-
+      
       return $formated;
     }
 

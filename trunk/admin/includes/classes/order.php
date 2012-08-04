@@ -122,6 +122,7 @@
                                  'country_title' => $Qorder->valueProtected('delivery_country'),
                                  'country_iso_code_2' => $Qorder->valueProtected('delivery_country_iso2'),
                                  'country_iso_code_3' => $Qorder->valueProtected('delivery_country_iso3'),
+                                 'telephone_number' => $Qorder->valueProtected('delivery_telephone'),
                                  'format' => $Qorder->valueProtected('delivery_address_format'));
 
         $billing_name = explode(' ', $Qorder->valueProtected('billing_name'));
@@ -144,6 +145,7 @@
                                 'country_title' => $Qorder->valueProtected('billing_country'),
                                 'country_iso_code_2' => $Qorder->valueProtected('billing_country_iso2'),
                                 'country_iso_code_3' => $Qorder->valueProtected('billing_country_iso3'),
+                                'telephone_number' => $Qorder->valueProtected('billing_telephone'),
                                 'format' => $Qorder->valueProtected('billing_address_format'));
         
         
