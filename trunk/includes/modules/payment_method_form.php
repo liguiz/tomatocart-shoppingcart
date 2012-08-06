@@ -226,7 +226,7 @@
   <h6><?php echo $osC_Language->get('add_comment_to_order_title'); ?></h6>
 
   <div class="content">
-    <?php echo osc_draw_textarea_field('payment_comments', (isset($_SESSION['comments']) ? $_SESSION['comments'] : null), null, null, 'style="width: 98%;"'); ?>
+    <?php echo osc_draw_textarea_field('payment_comments', (isset($_SESSION['comments']) ? $_SESSION['comments'] : null), 60, 4, 'style="width: 98%;"'); ?>
   </div>
 </div>
 
