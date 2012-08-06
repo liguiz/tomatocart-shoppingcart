@@ -119,7 +119,7 @@
       echo osc_draw_checkbox_field('gift_wrapping', '1', $osC_ShoppingCart->isGiftWrapping() ? true : false) . '&nbsp;<b>' . sprintf($osC_Language->get('gift_wrapping_description'), $osC_Currencies->format(MODULE_ORDER_TOTAL_GIFT_WRAPPING_PRICE)) . '</b>'; ?>
     
     <h6><?php echo '<b>' . $osC_Language->get('gift_wrapping_heading') . '</b>'; ?></h6>
-    <?php echo osc_draw_textarea_field('gift_wrapping_comments', (isset($_SESSION['gift_wrapping_comments']) ? $_SESSION['gift_wrapping_comments'] : null), null, null, 'style="width: 98%;"'); ?>
+    <?php echo osc_draw_textarea_field('gift_wrapping_comments', (isset($_SESSION['gift_wrapping_comments']) ? $_SESSION['gift_wrapping_comments'] : null), 60, 4, 'style="width: 98%;"'); ?>
   </div>
 </div>
 <?php
@@ -130,7 +130,7 @@
   <h6><?php echo $osC_Language->get('add_comment_to_order_title'); ?></h6>
 
   <div class="content">
-    <?php echo osc_draw_textarea_field('shipping_comments', (isset($_SESSION['comments']) ? $_SESSION['comments'] : null), null, null, 'style="width: 98%;"'); ?>
+    <?php echo osc_draw_textarea_field('shipping_comments', (isset($_SESSION['comments']) ? $_SESSION['comments'] : null), 60, 4, 'style="width: 98%;"'); ?>
   </div>
 </div>
 
