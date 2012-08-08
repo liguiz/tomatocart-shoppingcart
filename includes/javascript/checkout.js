@@ -39,6 +39,10 @@ var Checkout = new Class({
     data.module = 'checkout';
     data[this.options.sessionName] = this.options.sessionId;
     
+    if (this.options.template) {
+      data['template'] = this.options.template;
+    }
+    
     var loadRequest = new Request({
       url: this.options.remoteUrl,
       data: data,

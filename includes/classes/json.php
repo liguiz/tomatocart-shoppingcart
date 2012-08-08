@@ -54,6 +54,11 @@
             
             call_user_func(array('toC_Json_' . ucfirst($module), $action));
             exit;
+          }else if (file_exists('includes/modules/jsons/' . $module . '.php')) {
+            require('includes/modules/jsons/' . $module . '.php');
+            
+            call_user_func(array('toC_Json_' . ucfirst($module), $action));
+            exit;
           }
         }
       } else {
