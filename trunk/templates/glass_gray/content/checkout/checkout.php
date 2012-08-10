@@ -157,17 +157,31 @@ $step = 1;
       template: '<?php echo $osC_Template->getCode(); ?>',
       languageCode: '<?php echo $osC_Language->getCode(); ?>',
       sessionId: '<?php echo $osC_Session->getID(); ?>',
-<?php 
-  if ( isset($_GET['view']) && !empty($_GET['view']) ) {
-?>      
-      view: '<?php echo $_GET['view']; ?>',
-<?php 
-  }else if ($messageStack->size('payment_error_msg') > 0) {
-?>
-      view: 'paymentInformationForm',
-<?php
-  }
-?>      
+      <?php
+        $default_image_file = 'includes/languages/' . $osC_Language->getCode() . '/images/buttons/button_continue.gif';
+        $image_file = 'templates/' . $_SESSION['template']['code'] . '/images/buttons/languages/' . $osC_Language->getCode() . '/button_continue.gif';
+        
+        if(file_exists($image_file)){
+      ?>
+      continueBtn: '<?php echo $image_file; ?>',
+      <?php   
+        }else {
+      ?>
+      continueBtn: '<?php echo $default_image_file; ?>',
+      
+      <?php 
+        }
+        
+        if ( isset($_GET['view']) && !empty($_GET['view']) ) {
+      ?>      
+            view: '<?php echo $_GET['view']; ?>',
+      <?php 
+        }else if ($messageStack->size('payment_error_msg') > 0) {
+      ?>
+            view: 'paymentInformationForm',
+      <?php
+        }
+      ?>      
       isVirtualCart: <?php echo ($osC_ShoppingCart->isVirtualCart() ? 'true' : 'false'); ?>,
       isTotalZero: <?php echo ($osC_ShoppingCart->isTotalZero() ? 'true' : 'false'); ?>
     });

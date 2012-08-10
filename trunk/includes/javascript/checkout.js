@@ -23,7 +23,8 @@ var Checkout = new Class({
     sessionName: 'sid',
     sessionId: null,
     isLoggedOn: false,
-    isVirtualCart: false
+    isVirtualCart: false,
+    continueBtn: ''
   },
   
   steps: {
@@ -730,7 +731,7 @@ var Checkout = new Class({
   },
   
   hideNotify: function(image) {
-    image.set('src', 'templates/' + this.options.template + '/images/buttons/languages/' + this.options.languageCode + '/button_continue.gif');
+    image.set('src', this.options.continueBtn);
   }
 });
 
