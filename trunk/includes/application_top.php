@@ -13,7 +13,7 @@
 
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
-
+  
 // set the level of error reporting to E_ALL except E_NOTICE
   if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
     error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
@@ -87,6 +87,13 @@
   }
 
   $Qcfg->freeResult();
+  
+//set the default timezone
+if (defined('STORE_TIME_ZONE') && STORE_TIME_ZONE) {
+  if (!date_default_timezone_set(STORE_TIME_ZONE)) {
+    date_default_timezone_set('UTC');
+  }
+}
 
 
 // include functions
