@@ -29,7 +29,7 @@
       $Qcustomers->bindInt(':language_id', $osC_Language->getID());
       
       if (isset($_REQUEST['search']) && !empty($_REQUEST['search'])) {
-        $Qcustomers->appendQuery('where c.customers_lastname like :customers_lastname or c.customers_firstname like :customers_firstname and c.customers_email_address like :customers_email_address');
+        $Qcustomers->appendQuery('where c.customers_lastname like :customers_lastname or c.customers_firstname like :customers_firstname or c.customers_email_address like :customers_email_address');
         $Qcustomers->bindValue(':customers_lastname', '%' . $_REQUEST['search'] . '%');
         $Qcustomers->bindValue(':customers_firstname', '%' . $_REQUEST['search'] . '%');
         $Qcustomers->bindValue(':customers_email_address', '%' . $_REQUEST['search'] . '%');
