@@ -260,7 +260,7 @@
   </div>
 <?php } ?>
 
-  <div id="productInfoTab">
+  <div id="productInfoTab" class="clearfix">
     <?php
       if ($osC_Product->getDescription()) {
         echo '<a tab="tabDescription" href="javascript:void(0);">' . $osC_Language->get('section_heading_products_description') . '</a>'; 
@@ -282,7 +282,6 @@
         echo '<a tab="tabAccessories" href="javascript:void(0);">' . $osC_Language->get('section_heading_products_accessories') . '</a>'; 
       }
     ?>
-    <div style="clear:both;"></div>
   </div> 
       
    <?php if ($osC_Product->getDescription()) {?>
