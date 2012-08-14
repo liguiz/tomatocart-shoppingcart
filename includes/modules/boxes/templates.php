@@ -38,7 +38,13 @@
 
         foreach ($_GET as $key => $value) {
           if ( ($key != 'template') && ($key != $osC_Session->getName()) && ($key != 'x') && ($key != 'y') ) {
-            $hidden_get_variables .= osc_draw_hidden_field($key, $value);
+            if (is_array($value)) {
+              foreach($value as $hidden_value) {
+                $hidden_get_variables .= osc_draw_hidden_field($key, $hidden_value);
+              }
+            }else {
+              $hidden_get_variables .= osc_draw_hidden_field($key, $value);
+            }
           }
         }
 
