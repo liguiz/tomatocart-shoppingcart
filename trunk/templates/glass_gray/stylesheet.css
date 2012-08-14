@@ -159,6 +159,9 @@ A:hover {
   height: 15px;
 }
 
+a { noFocusLine:expression(this.onFocus=this.blur()) }
+:focus {outline: 0;}
+
 /* new clearfix */
 .clearfix:after {
 visibility: hidden;
