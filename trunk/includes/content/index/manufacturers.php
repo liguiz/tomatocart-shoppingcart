@@ -72,6 +72,10 @@
       if (isset($_GET['filter']) && is_numeric($_GET['filter']) && ($_GET['filter'] > 0)) {
         $osC_Products->setCategory($_GET['filter']);
       }
+      
+      if ( isset($_GET['products_attributes']) && is_array($_GET['products_attributes']) ) {
+        $osC_Products->setProductAttributesFilter($_GET['products_attributes']);
+      }
 
       if (isset($_GET['sort']) && !empty($_GET['sort'])) {
         if (strpos($_GET['sort'], '|d') !== false) {

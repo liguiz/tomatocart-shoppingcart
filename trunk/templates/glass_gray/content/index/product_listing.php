@@ -17,7 +17,10 @@
 <h1><?php echo $osC_Template->getPageTitle(); ?></h1>
 
 <?php
-  require('includes/modules/products_attributes.php');
+  //whether the product attributes filter is enabled
+  if (defined('PRODUCT_ATTRIBUTES_FILTER') && (PRODUCT_ATTRIBUTES_FILTER == '1')) {
+    require('includes/modules/products_attributes.php');
+  }
 
 // optional Product List Filter
   if (PRODUCT_LIST_FILTER > 0) {
@@ -39,6 +42,15 @@
       } else {
         echo osc_draw_hidden_field('cPath', $cPath);
         $options = array(array('id' => '', 'text' => $osC_Language->get('filter_all_manufacturers')));
+      }
+      
+      //whether the products attributes filter and the category/manufacturer filter is linked
+      if (defined('PRODUCT_LINK_FILTER') && (PRODUCT_LINK_FILTER == '1')) {
+        if (isset($_GET['products_attributes']) && is_array($_GET['products_attributes'])) {
+          foreach($_GET['products_attributes'] as $att_value_id => $att_value) {
+            echo osc_draw_hidden_field('products_attributes[' . $att_value_id . ']', $att_value);
+          }
+        }
       }
 
       if (isset($_GET['sort'])) {
