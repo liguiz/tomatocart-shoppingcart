@@ -573,12 +573,17 @@
     }
 
     function sendEmail($id) {
-
       require_once('email_template.php');
       $email_template = toC_Email_Template::getEmailTemplate('new_order_created');
       $email_template->setData($id);
       if (SEND_EXTRA_ORDER_EMAILS_TO != '') {
-        $email_template->addRecipient('', SEND_EXTRA_ORDER_EMAILS_TO);
+        $extra_emials = explode(',', SEND_EXTRA_ORDER_EMAILS_TO);
+        
+        if (is_array($extra_emials) && !osc_empty($extra_emials)) {
+          foreach($extra_emials as $email) {
+            $email_template->addRecipient('', trim($email));
+          }
+        }
       }
       $email_template->buildMessage();
       $email_template->sendEmail();
