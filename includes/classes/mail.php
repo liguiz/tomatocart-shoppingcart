@@ -172,7 +172,10 @@
       
       $mail->IsSMTP();
       $mail->SMTPAuth = true;
-      $mail->SMTPSecure = "ssl";
+      
+      if (defined('EMAIL_SSL') && (EMAIL_SSL == '1')) {
+        $mail->SMTPSecure = "ssl";
+      }
       
       $mail->Host = SMTP_HOST;
       $mail->Port = SMTP_PORT; 
