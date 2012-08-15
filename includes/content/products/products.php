@@ -73,8 +73,10 @@
             require_once('includes/classes/manufacturer.php');
             $osC_Manufacturer = new osC_Manufacturer($_GET['manufacturers']);
             
-            $breadcrumb->add($osC_Manufacturer->getTitle(), osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $_GET['manufacturers'])); 
-            $breadcrumb->add($osC_Product->getTitle(), osc_href_link(FILENAME_PRODUCTS, $osC_Product->getID()));         
+            if ($osC_Services->isStarted('breadcrumb')) {
+              $breadcrumb->add($osC_Manufacturer->getTitle(), osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $_GET['manufacturers'])); 
+              $breadcrumb->add($osC_Product->getTitle(), osc_href_link(FILENAME_PRODUCTS, $osC_Product->getID()));  
+            }
           } else { 
             if ($osC_Services->isStarted('breadcrumb')) {
               $Qcategories = $osC_Database->query('select categories_id, categories_name from :table_categories_description where categories_id in (:categories_id) and language_id = :language_id');
