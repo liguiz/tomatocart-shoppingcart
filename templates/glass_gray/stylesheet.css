@@ -159,8 +159,8 @@ A:hover {
   height: 15px;
 }
 
-a { noFocusLine:expression(this.onFocus=this.blur()) }
-:focus {outline: 0;}
+a, button { noFocusLine:expression(this.onFocus=this.blur()) }
+
 
 /* new clearfix */
 .clearfix:after {
