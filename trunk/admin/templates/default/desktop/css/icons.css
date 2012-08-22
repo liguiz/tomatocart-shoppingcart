@@ -435,3 +435,7 @@
 .icon-tomatocart-feeds {
   background-image: url(../../images/icons/16x16/tomatocart.png) !important;
 }
+
+.icon-modules_addshoppers-win {
+  background-image : url('/admin/includes/extmodules/modules_addshoppers/static/img/favicon.png')
+}
