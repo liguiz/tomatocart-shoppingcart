@@ -99,13 +99,12 @@ include(dirname(__FILE__) . '/../../jsons/modules_addshoppers.php');
         <img src="/admin/includes/extmodules/modules_addshoppers/static/img/feeds.png" />
     </div>
     <div class="big-black">
-        100\'s of button styles available to match your site\'s look &amp; feel.
+        100's of button styles available to match your site's look &amp; feel.
         Place social buttons anywhere. <a target="_blank" href="http://help.addshoppers.com/knowledgebase/articles/98896-social-sharing-button-placement-examples">learn more</a>
     </div>
     <div style="margin-top: 2em;">
         <h2 style="font-size: 20px;">Need help?</h2>
-        <span class="url"><a href="mailto:help@addshoppers.com">help@addshoppers.com</a></span><br />
-        <span class="url"><a target="_blank" href="http://help.addshoppers.com">http://help.addshoppers.com</a></span>
+        <span class="url"><a target="_blank" href="http://forums.addshoppers.com">http://forums.addshoppers.com</a></span>
     </div>
     <!-- div style="margin-top: 1em">
         <h2 style="font-size: 20px">Advanced integration instruction</h2>
@@ -116,21 +115,21 @@ include(dirname(__FILE__) . '/../../jsons/modules_addshoppers.php');
             <li>3. Select the button you want and copy the div code.</li>
             <li>4. Find file <i>product.tpl</i> in <i>themes/prestashop</i>.</li>
             <li>5. Paste our code where you want the buttons to appear.</li>
-            <li>6. Don\'t forget to create canonical links for products or install the appropriate PrestaShop module.</li>
+            <li>6. Don't forget to create canonical links for products or install the appropriate PrestaShop module.</li>
         </ol>
     </div -->
     <div style="text-align: left;">
         <h2 style="font-size: 20px; margin: 1em auto 1em auto; text-align: center">About AddShoppers</h2>
         AddShoppers is a free social sharing and analytics platform built for eCommerce.
         We make it easy to add social sharing buttons to your site, measure the ROI of social at the SKU level,
-        and increase sharing by rewarding social actions. You\'ll discover the value of social sharing, identify
+        and increase sharing by rewarding social actions. You'll discover the value of social sharing, identify
         influencers, and decrease shopping cart abandonment by adding AddShoppers social apps to your store.
         <div class="get-started">
             <a target="_blank" href="http://www.addshoppers.com">Get started with your free account at AddShoppers.com.</a>
         </div>
     </div>
     <div style="margin-top: 2em">
-        If you\'re a large enterprise retailer who needs a more custom solution,
+        If you're a large enterprise retailer who needs a more custom solution,
         <a target="_blank" href="http://www.addshoppers.com/enterprise">learn more</a>.
     </div>
 </div>
@@ -373,12 +372,13 @@ EOD;
                     },
                     {
                         xtype: 'statictextfield', 
-                        value: '<?= '<p>Follow us for updates on new features:</p><center class="social-links"><iframe scrolling="no" frameborder="0" allowtransparency="true" src="http://platform.twitter.com/widgets/follow_button.1340179658.html#_=1344513230302&amp;id=twitter-widget-0&amp;lang=en&amp;screen_name=addshoppers&amp;show_count=false&amp;show_screen_name=true&amp;size=l" class="twitter-follow-button" style="width: 178px; height: 28px;" title="Twitter Follow Button"></iframe><div data-show-faces="true" data-layout="button_count" data-send="false" data-href="https://www.facebook.com/addshoppers" class="fb-like fb_edge_widget_with_comment fb_iframe_widget"><span style="height: 20px; width: 90px;"><iframe scrolling="no" id="f185a1172071" name="f62e17eb9856ca" style="border: medium none; overflow: hidden; height: 20px; width: 90px;" title="Like this content on Facebook." class="fb_ltr" src="http://www.facebook.com/plugins/like.php?channel_url=http://static.ak.facebook.com/connect/xd_arbiter.php?version=9#cb=ff3adc17b4f0ba&origin=<?= $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>&domain=<?= HTTP_SERVER; ?>&relation=parent.parent&amp;extended_social_context=false&amp;href=https://www.facebook.com/addshoppers&amp;layout=button_count&amp;locale=en_US&amp;node_type=link&amp;sdk=joey&amp;send=false&amp;show_faces=false&amp;width=90"></iframe></span></div><div id="___plusone_0" style="height: 20px; width: 90px; display: inline-block; text-indent: 0px; margin: 0px; padding: 0px; background: none repeat scroll 0% 0% transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline;"><iframe width="100%" scrolling="no" frameborder="0" allowtransparency="true" hspace="0" marginheight="0" marginwidth="0" style="position: static; top: 0px; width: 90px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 20px;" tabindex="0" vspace="0" id="I0_1344513230011" name="I0_1344513230011" src="https://plusone.google.com/_/+1/fastbutton?bsv=pr&amp;url=http%3A%2F%2Fplus.google.com%2F112540297435892482797%3Frel%3Dpublisher&amp;size=medium&amp;count=true&amp;origin=http%3A%2F%2Fwnc.dev.clearcode.cc&amp;hl=en-US&amp;jsh=m%3B%2F_%2Fapps-static%2F_%2Fjs%2Fgapi%2F__features__%2Frt%3Dj%2Fver%3DRGzHszIAbCc.pl.%2Fsv%3D1%2Fam%3D!9WWg3hgFJrKAVXxNQA%2Fd%3D1%2Frs%3DAItRSTNpkCTXXPW8MjynzGTaS6RRxI0E-g#_methods=onPlusOne%2C_ready%2C_close%2C_open%2C_resizeMe%2C_renderstart%2Conload&amp;id=I0_1344513230011&amp;parent=http%3A%2F%2Fwnc.dev.clearcode.cc" title="+1"></iframe></div><script type="text/javascript">(function() {var po = document.createElement("script"); po.type = "text/javascript"; po.async = true;po.src = "https://apis.google.com/js/plusone.js";var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(po, s);})();</script><a type="application/rss+xml" title="Subscribe to my feed" rel="alternate" href="http://feeds.feedburner.com/addshoppers" style="vertical-align:middle"><img style="vertical-align:middle;margin-top:-2px;" src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt=""></a></center>'; ?>',
+                        value: '<?= '<strong>Follow us for updates on new features:</strong><center class="social-links"><iframe scrolling="no" frameborder="0" allowtransparency="true" src="http://platform.twitter.com/widgets/follow_button.1340179658.html#_=1344513230302&amp;id=twitter-widget-0&amp;lang=en&amp;screen_name=addshoppers&amp;show_count=false&amp;show_screen_name=true&amp;size=l" class="twitter-follow-button" style="width: 178px; height: 28px;" title="Twitter Follow Button"></iframe><div data-show-faces="true" data-layout="button_count" data-send="false" data-href="https://www.facebook.com/addshoppers" class="fb-like fb_edge_widget_with_comment fb_iframe_widget"><span style="height: 20px; width: 90px;"><iframe scrolling="no" id="f185a1172071" name="f62e17eb9856ca" style="border: medium none; overflow: hidden; height: 20px; width: 90px;" title="Like this content on Facebook." class="fb_ltr" src="http://www.facebook.com/plugins/like.php?channel_url=http://static.ak.facebook.com/connect/xd_arbiter.php?version=9#cb=ff3adc17b4f0ba&origin=<?= $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>&domain=<?= HTTP_SERVER; ?>&relation=parent.parent&amp;extended_social_context=false&amp;href=https://www.facebook.com/addshoppers&amp;layout=button_count&amp;locale=en_US&amp;node_type=link&amp;sdk=joey&amp;send=false&amp;show_faces=false&amp;width=90"></iframe></span></div><div id="___plusone_0" style="height: 20px; width: 90px; display: inline-block; text-indent: 0px; margin: 0px; padding: 0px; background: none repeat scroll 0% 0% transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline;"><iframe width="100%" scrolling="no" frameborder="0" allowtransparency="true" hspace="0" marginheight="0" marginwidth="0" style="position: static; top: 0px; width: 90px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 20px;" tabindex="0" vspace="0" id="I0_1344513230011" name="I0_1344513230011" src="https://plusone.google.com/_/+1/fastbutton?bsv=pr&amp;url=http%3A%2F%2Fplus.google.com%2F112540297435892482797%3Frel%3Dpublisher&amp;size=medium&amp;count=true&amp;origin=http%3A%2F%2Fwnc.dev.clearcode.cc&amp;hl=en-US&amp;jsh=m%3B%2F_%2Fapps-static%2F_%2Fjs%2Fgapi%2F__features__%2Frt%3Dj%2Fver%3DRGzHszIAbCc.pl.%2Fsv%3D1%2Fam%3D!9WWg3hgFJrKAVXxNQA%2Fd%3D1%2Frs%3DAItRSTNpkCTXXPW8MjynzGTaS6RRxI0E-g#_methods=onPlusOne%2C_ready%2C_close%2C_open%2C_resizeMe%2C_renderstart%2Conload&amp;id=I0_1344513230011&amp;parent=http%3A%2F%2Fwnc.dev.clearcode.cc" title="+1"></iframe></div><script type="text/javascript">(function() {var po = document.createElement("script"); po.type = "text/javascript"; po.async = true;po.src = "https://apis.google.com/js/plusone.js";var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(po, s);})();</script><a type="application/rss+xml" title="Subscribe to my feed" rel="alternate" href="http://feeds.feedburner.com/addshoppers" style="vertical-align:middle"><img style="vertical-align:middle;margin-top:-2px;" src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt=""></a></center>'; ?>',
                         hideLabel: true
                     },
                 ],
                 buttons: [
                     new Ext.Button({
+                        style: 'position: relative; top: -10px;',
                         text: 'Save',
                         handler: function(){
                             this.submitAccountSettingsForm();
