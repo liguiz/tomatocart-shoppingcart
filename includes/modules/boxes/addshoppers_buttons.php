@@ -1,15 +1,15 @@
 <?php
 
-require_once(dirname(__FILE__) . "/../../../admin/includes/jsons/modules_addshoppers.php");
+require_once(DIR_FS_CATALOG . DIR_FS_ADMIN . 'includes/jsons/modules_addshoppers.php');
 
 class osC_Boxes_addshoppers_buttons extends osC_Modules {
 
     var $_title,
-            $_code = 'addshoppers_buttons',
-            $_author_name = 'TomatoCart',
-            $_author_www = 'http://www.tomatocart.com',
-            $_group = 'boxes',
-            $_settings;
+          $_code = 'addshoppers_buttons',
+          $_author_name = 'TomatoCart',
+          $_author_www = 'http://www.tomatocart.com',
+          $_group = 'boxes',
+          $_settings;
 
     function osC_Boxes_addshoppers_buttons() {
         $this->_title = 'Addshoppers';
