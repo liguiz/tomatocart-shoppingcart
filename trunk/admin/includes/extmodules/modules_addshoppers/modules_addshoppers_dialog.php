@@ -104,7 +104,7 @@ include(dirname(__FILE__) . '/../../jsons/modules_addshoppers.php');
     </div>
     <div style="margin-top: 2em;">
         <h2 style="font-size: 20px;">Need help?</h2>
-        <span class="url"><a target="_blank" href="http://forums.addshoppers.com">http://forums.addshoppers.com</a></span>
+        <span class="url"><a target="_blank" href="http://forums.addshoppers.com">Addshoppers eCommerce Forums</a></span>
     </div>
     <!-- div style="margin-top: 1em">
         <h2 style="font-size: 20px">Advanced integration instruction</h2>
