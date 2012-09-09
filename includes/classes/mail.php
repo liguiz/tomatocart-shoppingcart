@@ -25,7 +25,6 @@
         $_boundary,
         $_headers = array('X-Mailer' => 'TomatoCart'),
         $_body,
-        $_content_transfer_encoding = '7bit',
         $_charset = 'utf-8';
 
     function osC_Mail($to = null, $to_email_address = null, $from = null, $from_email_address = null, $subject = null) {
@@ -186,7 +185,6 @@
       $mail->SetFrom($this->_from['email_address'], $this->_from['name']);
       
       $mail->CharSet = $this->_charset;
-      $mail->Encoding = $this->_content_transfer_encoding;
       
       if (empty($this->_body_plain)) {
         $mail->MsgHTML($this->_body_html);
