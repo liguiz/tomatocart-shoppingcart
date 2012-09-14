@@ -200,12 +200,19 @@
     function _write($key, $value) {
       global $osC_Database;
 
-      if (!$SESS_LIFE = get_cfg_var('session.gc_maxlifetime')) {
-        $SESS_LIFE = 1440;
+      if (defined('SERVICE_SESSION_MAX_LIFETIME') && ((int)SERVICE_SESSION_MAX_LIFETIME > 0))
+      {
+        $expiry = time() + (int)SERVICE_SESSION_MAX_LIFETIME * 60;
       }
-
-      $expiry = time() + $SESS_LIFE;
-
+      else
+      {
+        if (!$SESS_LIFE = get_cfg_var('session.gc_maxlifetime')) {
+          $SESS_LIFE = 1440;
+        }
+  
+        $expiry = time() + $SESS_LIFE;
+      }
+     
       $Qsession = $osC_Database->query('select count(*) as total from :table_sessions where sesskey = :sesskey');
       $Qsession->bindTable(':table_sessions', TABLE_SESSIONS);
       $Qsession->bindValue(':sesskey', $key);
