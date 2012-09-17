@@ -17,9 +17,9 @@
     function listTemplatesModules() {
       global $toC_Json, $osC_Language;
       
-      $osC_Language->load('modules-' . $_REQUEST['set']);
+      $osC_Language->load('modules-' . $_POST['set']);
       
-      $osC_DirectoryListing = new osC_DirectoryListing('../includes/modules/' . $_REQUEST['set']);
+      $osC_DirectoryListing = new osC_DirectoryListing('../includes/modules/' . $_POST['set']);
       $osC_DirectoryListing->setIncludeDirectories(false);
       
       $files = $osC_DirectoryListing->getFiles();
@@ -27,16 +27,16 @@
   	  $modules = array();
   	
   	  foreach ( $files as $file ) {
-        include('../includes/modules/' . $_REQUEST['set'] . '/' . $file['name']);
+        include('../includes/modules/' . $_POST['set'] . '/' . $file['name']);
     
         $code = substr($file['name'], 0, strrpos($file['name'], '.'));
-        $class = 'osC_' . ucfirst($_REQUEST['set']) . '_' . $code;
+        $class = 'osC_' . ucfirst($_POST['set']) . '_' . $code;
         
   	    if ( class_exists($class) ) {
-          if ( call_user_func(array($class, 'isInstalled'), $code, $_GET['set']) === false ) {
-            $osC_Language->injectDefinitions('modules/' . $_GET['set'] . '/' . $code . '.xml');
+          if ( call_user_func(array($class, 'isInstalled'), $code, $_POST['set']) === false ) {
+            $osC_Language->injectDefinitions('modules/' . $_POST['set'] . '/' . $code . '.xml');
           }
-    
+          
           $module = new $class();
           
           $action = array();
