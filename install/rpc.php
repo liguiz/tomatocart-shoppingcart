@@ -286,7 +286,7 @@
             $database_tables = array('address_book', 'categories', 'categories_description', 'customers', 'customers_basket', 'manufacturers', 'manufacturers_info', 'orders', 'orders_products', 'orders_status', 'orders_status_history', 'orders_products_attributes', 'orders_products_download', 'orders_total', 'products', 'products_attributes', 'products_attributes_download', 'products_description', 'products_options', 'products_options_values', 'products_options_values_to_products_options', 'products_to_categories', 'reviews', 'weight_classes', 'weight_classes_rules');
 
             foreach ($database_tables as $table) {
-              $osC_Database->simpleQuery('alter table ' . $db['DB_TABLE_PREFIX'] . $table . ' type = innodb');
+              $osC_Database->simpleQuery('alter table ' . $db['DB_TABLE_PREFIX'] . $table . ' ENGINE = innodb');
             }
           }
         }
