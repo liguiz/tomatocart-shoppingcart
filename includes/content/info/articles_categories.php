@@ -36,11 +36,11 @@
           $this->setMetaPageTitle($article_categories['page_title']);        
         }
         
-        if (!empty($enty['meta_keywords'])) {
+        if (!empty($article_categories['meta_keywords'])) {
           $this->addPageTags('keywords', $enty['meta_keywords']);
         }
         
-        if (!empty($enty['meta_description'])) {
+        if (!empty($article_categories['meta_description'])) {
           $this->addPageTags('description', $enty['meta_description']);
         }
         
