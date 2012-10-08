@@ -93,9 +93,10 @@
   require('includes/functions/html_output.php');
 
 // include session class
+  ini_set('session.use_trans_sid', '1'); 
   include('includes/classes/session.php');
   $osC_Session = new osC_Session_Admin('toCAdminID');
-  $osC_Session->start();
+  $osC_Session->start();;
   
   require('includes/classes/directory_listing.php');
   require('includes/classes/access.php');
