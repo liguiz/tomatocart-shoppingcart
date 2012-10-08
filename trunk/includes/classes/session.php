@@ -77,8 +77,10 @@
     function destroy() {
       if (isset($_COOKIE[$this->_name])) {
         unset($_COOKIE[$this->_name]);
+        
+        setcookie($this->getName(), '', time()-42000, $this->getCookieParameters('path'), $this->getCookieParameters('domain'));
       }
-
+      
       if (STORE_SESSIONS == '') {
         if (file_exists($this->_save_path . $this->_id)) {
           @unlink($this->_save_path . $this->_id);
@@ -86,6 +88,22 @@
       }
 
       return session_destroy();
+    }
+    
+    function recreate() {
+      $session_backup = $_SESSION;
+
+      $this->destroy();
+
+      $this->osC_Session($this->getName());
+
+      $this->start();
+      
+      session_regenerate_id(true);
+
+      $_SESSION = $session_backup;
+
+      unset($session_backup);
     }
 
     function recreate() {

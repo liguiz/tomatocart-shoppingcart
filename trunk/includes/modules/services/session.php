@@ -18,12 +18,6 @@
       include('includes/classes/session.php');
       $osC_Session = new osC_Session();
       
-      if (isset($_POST[$osC_Session->getName()])) {
-        session_id($_POST[$osC_Session->getName()]);
-      }else if (isset($_GET[$osC_Session->getName()])) {
-        session_id($_GET[$osC_Session->getName()]);
-      }
-
       if (SERVICE_SESSION_FORCE_COOKIE_USAGE == '1') {
         osc_setcookie('cookie_test', 'please_accept_for_session', time()+60*60*24*90);
 
