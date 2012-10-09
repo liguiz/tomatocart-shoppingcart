@@ -14,6 +14,9 @@
   class osC_Services_session {
     function start() {
       global $request_type, $osC_Session, $messageStack;
+      
+      ini_set('session.use_cookies', '1');
+      ini_set('session.use_trans_sid', '0');
 
       include('includes/classes/session.php');
       $osC_Session = new osC_Session();
