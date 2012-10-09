@@ -11,6 +11,37 @@
   as published by the Free Software Foundation.
 */
 
+  // Register Globals
+  if (ini_get('register_globals')) {
+    $globals = array($_REQUEST, $_SERVER, $_FILES);
+  
+    foreach ($globals as $global) {
+      foreach(array_keys($global) as $key) {
+        unset(${$key}); 
+      }
+    }
+  }
+  
+  // Magic Quotes Fix
+  if (ini_get('magic_quotes_gpc')) {
+    function clean($data) {
+        if (is_array($data)) {
+          foreach ($data as $key => $value) {
+            $data[clean($key)] = clean($value);
+          }
+      } else {
+          $data = stripslashes($data);
+      }
+    
+      return $data;
+    }     
+    
+    $_GET = clean($_GET);
+    $_POST = clean($_POST);
+    $_REQUEST = clean($_REQUEST);
+    $_COOKIE = clean($_COOKIE);
+  }
+
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
   
