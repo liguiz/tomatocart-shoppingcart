@@ -106,20 +106,6 @@
       unset($session_backup);
     }
 
-    function recreate() {
-      $session_backup = $_SESSION;
-
-      $this->destroy();
-
-      $this->osC_Session();
-
-      $this->start();
-
-      $_SESSION = $session_backup;
-
-      unset($session_backup);
-    }
-
     function getSavePath() {
       return $this->_save_path;
     }
