@@ -19,8 +19,11 @@ class osC_Boxes_addshoppers_buttons extends osC_Modules {
     function initialize() {
         global $osC_Template;
 
-        $osC_Template->addStylesheet("/admin/includes/extmodules/modules_addshoppers/static/css/shop.css");
-        $osC_Template->addStyleDeclaration('div#addshoppers_container {width: 100%;height: auto;margin:10px 0;}');
+        $osC_Template->addStyleDeclaration('#addshoppers_buttons.addshoppers-disabled{display:none;}
+                                           div#addshoppers_container{width: 100%;height:auto;margin:10px 0;}
+                                           #addshoppers_buttons.addshoppers-enabled:after{content:".";display:block;clear:both;visibility:hidden;line-height:0;height:0;}
+                                           #addshoppers_buttons.addshoppers-enabled .share-buttons-panel{float:right;}
+                                           #addshoppers_buttons.addshoppers-enabled .share-buttons-og{margin-left: 5px;margin-right: 5px;}');
 
         $this->_settings = toC_Json_Modules_addshoppers::getSettings();
         $this->_title_link = osc_href_link(FILENAME_DEFAULT, 'index');
