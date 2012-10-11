@@ -68,6 +68,17 @@
 
       <li><?php echo osc_draw_label($osC_Language->get('field_customer_password'), 'password', null, true) . osc_draw_password_field('password'); ?></li>
       <li><?php echo osc_draw_label($osC_Language->get('field_customer_password_confirmation'), 'confirmation', null, true) . osc_draw_password_field('confirmation'); ?></li>
+      
+      <?php if( ACTIVATE_CAPTCHA == '1') {?>
+        <li class="clearfix captcha">
+          <span class="captcha-image"><?php echo osc_image(osc_href_link(FILENAME_ACCOUNT, 'create=show_captcha', 'AUTO', true, false), $osC_Language->get('captcha_image_title'), 215, 80, 'id="captcha-code"'); ?></span>
+          <span class="captcha-field">
+            <span><?php echo osc_link_object(osc_href_link('#'), osc_image('ext/securimage/images/refresh.png', $osC_Language->get('refresh_captcha_image_title')), 'id="refresh-captcha-code"'); ?></span>
+            <span class="clearfix"><?php echo osc_draw_label($osC_Language->get('enter_captcha_code'), 'captcha_code', null, true); ?></span>
+            <span><?php echo osc_draw_input_field('captcha_code', '', 'size="22"'); ?></span>
+          </span>
+        </li>
+      <?php } ?>
     </ol>
   </div>
 </div>
@@ -99,6 +110,20 @@
 </div>
 
 </form>
+
+<?php if( ACTIVATE_CAPTCHA == '1') {?>
+<script type="text/javascript">
+  $('refresh-captcha-code').addEvent('click', function(e) {
+    e.stop();
+    
+    var contactController = '<?php echo osc_href_link(FILENAME_ACCOUNT, 'create=show_captcha', 'AUTO', true, false); ?>';
+    var captchaImgSrc = contactController + '&' + Math.random();
+          
+    $('captcha-code').setProperty('src', captchaImgSrc);
+  });
+</script>
+<?php } ?>
+  
 <script type="text/javascript">
   window.addEvent("domready",function() {
     var overlay = new Overlay(); 

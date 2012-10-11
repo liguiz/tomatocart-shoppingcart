@@ -12,6 +12,7 @@
 */
 
   require('includes/classes/account.php');
+  require_once("ext/securimage/securimage.php");
 
   class osC_Account_Create extends osC_Template {
 
@@ -52,9 +53,19 @@
       if ($_GET[$this->_module] == 'save') {
         $this->_process();
       }
+      
+      if ($_GET[$this->_module] == 'show_captcha') {
+        $this->_show_captcha();
+      }
     }
 
 /* Private methods */
+    
+    function _show_captcha() {
+      $img = new securimage();
+      
+      $img->show();
+    }
 
     function _process() {
       global $messageStack, $osC_Database, $osC_Language, $osC_Customer;
@@ -119,6 +130,18 @@
         $messageStack->add($this->_module, $osC_Language->get('field_customer_password_mismatch_with_confirmation'));
       } else {
         $data['password'] = $_POST['password'];
+      }
+      
+      if ( ACTIVATE_CAPTCHA == '1' ) {
+        if (isset($_POST['captcha_code']) && !empty($_POST['captcha_code'])) {
+          $securimage = new Securimage();
+          
+          if ($securimage->check($_POST['captcha_code']) == false) {
+            $messageStack->add('create', $osC_Language->get('field_create_account_captcha_check_error'));
+          }
+        } else {
+          $messageStack->add('create', $osC_Language->get('field_create_account_captcha_check_error'));
+        }  
       }
 
       if ($messageStack->size($this->_module) === 0) {
