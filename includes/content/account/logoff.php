@@ -37,13 +37,17 @@
 /* Private methods */
 
     function _process() {
-      global $osC_ShoppingCart, $osC_Customer, $toC_Wishlist;
+      global $osC_ShoppingCart, $osC_Customer, $toC_Wishlist, $osC_Session;
 
       $osC_ShoppingCart->reset();
 
       $osC_Customer->reset();
       
       $toC_Wishlist->reset();
+      
+      if (SERVICE_SESSION_REGENERATE_ID == '1') {
+        $osC_Session->recreate();
+      }
     }
   }
 ?>
