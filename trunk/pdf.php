@@ -30,7 +30,7 @@
     } 
     
     if (isset($_REQUEST['pdf'])) {
-      $pdf = $_REQUEST['pdf'];
+      $pdf = preg_replace('/[^a-zA-Z_]/iu', '', $_REQUEST['pdf']);
     } 
     
     if (!empty($module) && !empty($pdf)) {
