@@ -94,18 +94,18 @@
       $this->write($this->cache_key, $this->cached_data);
     }
 
-    function clear($key) {
+    function clear($key) {      
       $key_length = strlen($key);
 
-      $d = dir(DIR_FS_WORK);
+      $d = opendir(DIR_FS_WORK);
 
-      while ($entry = $d->read()) {
+      while (($entry = readdir($d)) !== false) {
         if ((strlen($entry) >= $key_length) && (substr($entry, 0, $key_length) == $key)) {
           @unlink(DIR_FS_WORK . $entry);
         }
       }
 
-      $d->close();
+      closedir($d);     
     }
   }
 ?>
