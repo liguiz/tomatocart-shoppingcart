@@ -40,8 +40,9 @@
         if ($_REQUEST['module'] != 'login') {
           toc_verify_token();
         }
+        
         if (isset($_REQUEST['module'])) {
-          $module = $_REQUEST['module'];
+          $module = preg_replace('/[^a-zA-Z_]/iu', '', $_REQUEST['module']);
           
           $_SESSION['module'] = $_REQUEST['module'];
           $osC_Language->loadIniFile($module . '.php');

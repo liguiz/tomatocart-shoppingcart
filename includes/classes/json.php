@@ -32,7 +32,7 @@
       $error = false;
       
       if (isset($_REQUEST['module'])) {
-        $module = $_REQUEST['module'];
+        $module = preg_replace('/[^a-zA-Z_]/iu', '', $_REQUEST['module']);
       } 
       
       if (isset($_REQUEST['action'])) {
