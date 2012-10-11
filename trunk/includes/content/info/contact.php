@@ -92,7 +92,7 @@
       if ( ACTIVATE_CAPTCHA == '1' ) {
         if (isset($_POST['captcha_code']) && !empty($_POST['captcha_code'])) {
           $securimage = new Securimage();
-          
+                  
           if ($securimage->check($_POST['captcha_code']) == false) {
             $messageStack->add('contact', $osC_Language->get('field_concat_captcha_check_error'));
           }

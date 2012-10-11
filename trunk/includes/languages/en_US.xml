@@ -650,6 +650,11 @@
       <value><![CDATA[My Wishlist]]></value>
       <group>general</group>
     </definition>
+     <definition>
+      <key>field_create_account_captcha_check_error</key>
+      <value><![CDATA[ERROR: Please specify the correct verify code.]]></value>
+      <group>account</group>
+    </definition>
     <definition>
       <key>share_your_wishlist_title</key>
       <value><![CDATA[Share Your Wishlist]]></value>

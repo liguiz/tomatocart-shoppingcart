@@ -98,16 +98,19 @@
 </div>
 
 </form>
-  <script type="text/javascript">
-    $('refresh-captcha-code').addEvent('click', function(e) {
-      e.stop();
-      
-      var contactController = '<?php echo osc_href_link(FILENAME_INFO, 'contact=show_captcha', 'AUTO', true, false); ?>';
-      var captchaImgSrc = contactController + '&' + Math.random();
-            
-      $('captcha-code').setProperty('src', captchaImgSrc);
-    });
-  </script>
+
+<?php if( ACTIVATE_CAPTCHA == '1') {?>
+<script type="text/javascript">
+  $('refresh-captcha-code').addEvent('click', function(e) {
+    e.stop();
+    
+    var contactController = '<?php echo osc_href_link(FILENAME_INFO, 'contact=show_captcha', 'AUTO', true, false); ?>';
+    var captchaImgSrc = contactController + '&' + Math.random();
+          
+    $('captcha-code').setProperty('src', captchaImgSrc);
+  });
+</script>
+<?php } ?>
   
   <?php if (!empty($departments_description)) { ?>
     <script type="text/javascript">

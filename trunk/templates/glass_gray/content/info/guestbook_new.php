@@ -51,6 +51,7 @@
     </div>
   </div>
   
+  <?php if( ACTIVATE_CAPTCHA == '1') {?>
   <script type="text/javascript">
     $('refresh-captcha-code').addEvent('click', function(e) {
       e.stop();
@@ -61,3 +62,4 @@
       $('captcha-code').setProperty('src', captchaImgSrc);
     });
   </script>
+  <?php } ?>
