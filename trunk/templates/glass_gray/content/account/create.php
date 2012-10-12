@@ -66,8 +66,8 @@
   }
 ?>
 
-      <li><?php echo osc_draw_label($osC_Language->get('field_customer_password'), 'password', null, true) . osc_draw_password_field('password'); ?></li>
-      <li><?php echo osc_draw_label($osC_Language->get('field_customer_password_confirmation'), 'confirmation', null, true) . osc_draw_password_field('confirmation'); ?></li>
+      <li><?php echo osc_draw_label($osC_Language->get('field_customer_password'), 'password', null, true) . osc_draw_password_field('password', 'AUTOCOMPLETE="off"'); ?></li>
+      <li><?php echo osc_draw_label($osC_Language->get('field_customer_password_confirmation'), 'confirmation', null, true) . osc_draw_password_field('confirmation', 'AUTOCOMPLETE="off"'); ?></li>
       
       <?php if( ACTIVATE_CAPTCHA == '1') {?>
         <li class="clearfix captcha">
