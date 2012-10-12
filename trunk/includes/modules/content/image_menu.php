@@ -63,7 +63,7 @@
             '#imageMenu ul li.imageMenu0 a {width:' . $opened_width . 'px;}';
 
         $osC_Template->addStyleDeclaration($css);
-        $osC_Template->addJavascriptFilename('ext/image_menu/imageMenu.js');
+        $osC_Template->addHeaderJavascriptFilename('ext/image_menu/imageMenu.js');
 
         $this->_content .=
             '<script type="text/javascript">' . "\n" .
