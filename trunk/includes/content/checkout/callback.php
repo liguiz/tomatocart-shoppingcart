@@ -20,14 +20,18 @@
 /* Class constructor */
 
     function osC_Checkout_Callback() {
-      if (isset($_GET['module']) && (empty($_GET['module']) === false)) {
-        if (file_exists('includes/modules/payment/' . $_GET['module'] . '.php')) {
+      if (isset($_GET['module'])) {
+        $module_calling = preg_replace('/[^a-zA-Z_]/iu', '', $_GET['module']);
+      } 
+      
+      if (isset($module_calling) && (empty($module_calling) === false)) {
+        if (file_exists('includes/modules/payment/' . $module_calling . '.php')) {
           include('includes/classes/order.php');
 
           include('includes/classes/payment.php');
-          include('includes/modules/payment/' . $_GET['module'] . '.php');
+          include('includes/modules/payment/' . $module_calling . '.php');
 
-          $module = 'osC_Payment_' . $_GET['module'];
+          $module = 'osC_Payment_' . $module_calling;
           $module = new $module();
           $module->callback();
         }
