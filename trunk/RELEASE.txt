@@ -1,3 +1,109 @@
+VERSION V1.1.8
+--BUG FIX
+* Fix the bug - The coupon feature is not available for the virtual product - once click the redeem button, the customer is directed to the shopping cart page
+* Fix the bug - Breadcrumbs sometimes do not show the whole path
+* Fix the bug - Make the store run normally in IE9
+* Fix the bug - Primary / Default address not being passed to billing information and shipping information in the checkout one page
+* Fix the bug - When the user edit the address book. the js error happened
+* Fix the bug - Compare products - for the variants products, the product image is wrong and the add to cart button is not usable. The layout is improved
+* Fix the bug - Share My wishlist bug - When the 'Allow guest to tell a friend' is false, the guest still could share the list to multiple friends
+* Fix the bug - When click the image of the variant product in the wishlist, the produt displayed in the product info page is different
+* Fix the bug - Js error thrown when the ajax shopping cart is disabled
+* Fix the bug - The tabs in the product info page is not displayed normally in IE7, IE8 and IE9
+* Fix the bug - When variants stock in product info (front website) are 0, error in script
+* Fix the bug - When the mouse over or leave from the popup quickly, sometimes it may cause the popup cart to be disabled
+* Fix the bug - Error happened in the rss page when the product hasn't set any image
+* Fix the bug - If there is any variant product in the product listing, the sort by price doesn't work properly
+* Fix the bug - Cart box glitch when changing languages
+* Fix the bug - Articles added via the Information module do not appear in sitemap
+* Fix the bug - When the product is out of stock and the allow checkout is set to false in the admin, the customer still could go to checkout one page
+* Fix the bug - Variants products shows the "out of stock" without the SKU and the price
+* Fix the bug - Fatal error happened when enabling and disabling parent category in the admin panel
+* Fix the bug - Reviews can only be submitted when logged in and are submitted and displayed reguardless of how the Review Level and Moderate Reviews option set
+* Fix the bug - Ajax shopping cart box is not working properly in Opera browser
+* Fix the bug - The sitemap does not include the faqs
+* Fix the bug - Information articles also displaying under Articles
+* Fix the bug - UPS can not work. Add the multiselection feature for the ups configuration screen
+* Fix the bug - When there is any default address book for the customer, the js error will be thrown as createing the new address book
+* Fix the bug - Error happened as using the paypal express payment module- Payment_paypal_express_error_title Invalid shipping total, it should be equal with the shipping amount of the selected shipping option when using the free shipping module
+* Fix the bug - Can not login into the admin panel in French or German language
+* Fix the bug - PayPal Express Checkout Not Working for Downloadable Products
+* Fix the bug - When creating a sub category in a parent category and adding products to it, the store front product list pages display the wrong product counts in the menu and listingPageLinks
+* Fix the bug - Make the checkout success page support the downloadable products
+* Fix the bug - When delete serveral orders with checking the restock checkbox in the admin panel, a php fatal error will be thrown that result in the action failed
+* Fix the bug - The customer without default address shouldn't be allowed to uncheck create new billing address in the checkout one page
+* Fix the bug - When a product has any required customization field and the ajax shopping cart box is disabled, the error message shown in the product details page is not correct as adding the product into the cart
+* Fix the bug - Advanced search didn't check the search field - if set the price from greater than price to in the advance search, the system didn't check it and no error message thrown
+* Fix the bug - The captcha code layout isn't normal in the IE8 and IE9
+* Fix the bug - The height of textarea in the opera, IE, safari is not normal
+* Fix the bug - In the checkout one page, if the user click the continue button and go back, the coninue button is not displayed
+* Fix the bug - It is impossible to search the customer with email address in the customers module of the admin panel
+* Fix the bug - Can not get email after creating account and order
+* Fix the bug - If the breadcrumb service is dsiabled, fatal error happened when clicking the product in the product listing searched by any manufacturer
+
+--IMPROVEMENTS
+* Improvement - Move scripts from head tag to bottom of template to enhance the performance
+* Improvement - Shopping Cart Synchronism With Database
+* Improvement - Make the popup cart compatible with firefox, IE, chrome, safari and opera
+* Improvement - Enhance the security of wishlist
+* Improvement - Make the view of the box or content module could be overrided in the templates
+* Improvement - Add the telephone number into the order details
+* Improvement - Make it possible to override the views of shipping method, checkout method, shipping information and billing information for the checkout one page in the template
+* Improvement - Add the timezone setting under admin panel-ConfiguMake Atributes filter display in the product listing page for the searching manufacturer and the customer could enable or disable the product attributes filter under Admin Panel -> Configuration ->Configuration -> Product Listing Sort Order. In addition, after seaching the products with the attributes filter, the customer could filter the search results with the category or manufacturer filter box.Add the telephone number into the order details
+* Improvement - Make it possilbe to send extra order emails to several peoples
+
+VERSION V1.1.7
+--BUG FIX
+* fix the bug - Polls Not Working.
+* fix the bug - Zoom image error in Chrome and Safari.
+* fix the bug - Fix the problem about the order total in ajax shopping cart.
+* fix the bug - Seach function doesn*t work in orders module.
+* fix the bug - The wrong notification in the payment method form.
+* fix the bug - when there isn't any alternative payment methods on the shopping cart page, the 'or' is displayed too.
+* fix the bug - TomatoCart keywords meta info bug no comma between keywords.
+* fix the bug - Fix the issues about the state Synchronization Between Checkout And Ajax Shopping Cart and improve this section.
+* fix the bug - when add more than 2 variants for the compare product, the warning error will be thrown.
+* fix the bug - there is a gray line at the cetner of the body in chrome.
+* fix the bug - when set the weight up to 1000 in the Zone 1 Shipping Table, the shipping rates is wrong.
+* fix the bug - when set the total cose or weight up to 1000 and the table method is weight, the shipping cost calculated is wrong.
+
+--IMPROVEMENTS
+* Improve the shop by price module to make it search the products in the subcatalogs. It is possible to enable or disable the feature in the admin panel.
+* Improve the catalog section to make it display the subcatalogs and the products in  the subcatalogs. It is possible to enable or disable the feature in the admin panel.
+* Improve the PayPal Standard Websites Payment Module to automatically update the Order Status by IPN and the error notification. Remove the unnecessary configurations in the admin panel and fix the incorrectly formatted item amount.
+* Improve the Paypal Express Module to make it available in the checkout one page and pass the shipping cost to the paypal. The error notification mechanism for this module was improved too.
+* Improve the cart item is not displayed normally in the ajax shopping cart for the chrome. And remove the redundant padding space at the top of the cart
+* Switch the usps shipping api to Rates API(V4) and International Rates API(V2)
+* Adjustment - Only the rigister customer could access checkout one page
+
+--INTEGRATION
+* Integrate the cod fee order total module. This mod allows to add a fee to the total (amount +shippingcost+tax) for Cash on Delivery payments.
+* Integrate the 2checkout payment module.
+* Integrate the usable Authorizenet SIM payment module.
+* Integrate the usable Authorizenet AIM payment module.
+* Integrate the usable sagepay form payment module.
+
+VERSION V1.1.6
+--BUG FIX
+* fix the bug  --  state/Province drop down not loading.
+* fix the bug - The page tags display in the head tag incorrectly.
+* fix the bug - Customizations result in js error.
+* fix the bug - Customer Groups set with discount - in product info with variants the discount isn't viewable.
+* fix the bug - Wrong verification code in guest book module.
+* fix the bug - Captcha stopped working on Contact page.
+* fix the bug - removing item from compare products box. 
+* fix the bug - Can not login in the admin panel anymore. 
+* fix the bug - The navigationbar gives wrong number of products in product listing page. 
+* fix the bug - Customer name with more than 2 parts, only 2 parts are displayed. 
+* fix the bug - Autocompleter searchbox not working. 
+* fix the bug - Cart Box: make smaller (by arrow up) works only on the selected page.
+* fix the bug - When creating new address in address book - State/Province: drop down not loading. 
+* fix the bug - Delete order with variants and restock doesn't work. 
+* fix the bug - Text in checkout process - Shipping information wrong. 
+* fix the bug - zoom image display wrong large scale image. 
+* fix the bug -> Paypal Direct sends 'Authorisation' when it should send 'sale'. 
+* fix the bug -> Specials page - select menu is not working correctly.  
+
 VERSION 1.1.5
 --BUG FIX
  * fix bug #521 -- Problem with displaying product pages in BG lang.
