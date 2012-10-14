@@ -41,6 +41,26 @@
     $_REQUEST = clean($_REQUEST);
     $_COOKIE = clean($_COOKIE);
   }
+  
+// filter the input data to prevent XSS Attacks
+  function filter($data) {
+    if (is_array($data)) {
+        foreach ($data as $key => $value) {
+        unset($data[$key]);
+        
+          $data[filter($key)] = filter($value);
+        }
+    } else { 
+        $data = htmlspecialchars($data, ENT_COMPAT);
+    }
+
+    return $data;
+  }
+  
+  $_GET = filter($_GET);
+  $_POST = filter($_POST);
+  $_REQUEST = filter($_REQUEST);
+  $_COOKIE = filter($_COOKIE);
 
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
