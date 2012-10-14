@@ -43,24 +43,14 @@
   }
   
 // filter the input data to prevent XSS Attacks
-  function filter($data) {
-    if (is_array($data)) {
-        foreach ($data as $key => $value) {
-        unset($data[$key]);
-        
-          $data[filter($key)] = filter($value);
-        }
-    } else { 
-        $data = htmlspecialchars($data, ENT_COMPAT);
+  if (!class_exists('toC_Security')) {
+    if (file_exists('includes/classes/security.php')) {
+      include('includes/classes/security.php');
     }
-
-    return $data;
   }
   
-  $_GET = filter($_GET);
-  $_POST = filter($_POST);
-  $_REQUEST = filter($_REQUEST);
-  $_COOKIE = filter($_COOKIE);
+  $security = new toC_Security();
+  $security->filter_input();
 
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
