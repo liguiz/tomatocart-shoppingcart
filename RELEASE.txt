@@ -4,10 +4,11 @@ VERSION V1.1.8.1
 2. Recreate the session as the store owner login to the admin panel to prevent the session fixation attack. 
 3. Pass the correct session id to the admin system when the cookie is diabled or works incorrectly to prevent the issue that the administrator can't login into the admin panel.
 4. Block access to the directories in the system except the normal script that could be executed.For example, if accessing your store via www.youdomain.com/includes, a blank page will be returned to prevent from exposing your files structure on your web server.
-5. Prevent the CSRF Vulnerabilities in the json.php and pdf.php
+5. Prevent the CSRF Vulnerabilities in the json.php, pdf.php and callback.php
 6. In the store front, when the user login into the store, create an account or logged out, a new session will be recreated. The old session will be destroyed and removed from the database to prevent the session table crashed. This is the effective way to prevent the session fixation attack.
 7. Remove the ext/securimage/example_form.ajax.php to prevent the "processForm()" Cross-Site Scripting Vulnerability. And also remove the example_from.php,  securimage_show_example.php, securimage_show_example.php2 bceause they are useless.
 8. Remove the ext/securimage/securimage_play.php to prevent the authentication bypass. And remove the securimage_play.swf too because it is useless.
+9. Prevent the js error in the checkout one page on some web server.
 
 VERSION V1.1.8
 --BUG FIX
