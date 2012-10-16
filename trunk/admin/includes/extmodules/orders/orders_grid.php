@@ -348,7 +348,7 @@ Ext.extend(Toc.orders.OrdersGrid, Ext.grid.EditorGridPanel, {
   },
   
   onPrintOrder: function(record) {
-    this.openWin('<?php echo osc_href_link_admin(FILENAME_PDF); ?>' + '?module=orders&pdf=order&orders_id=' + record.get('orders_id') + '&token=' + token, 900, 500);
+    this.openWin('<?php echo osc_href_link_admin(FILENAME_PDF); ?>' + '&module=orders&pdf=order&orders_id=' + record.get('orders_id') + '&token=' + token, 900, 500);
   },
     
   onRowAction:function(grid, record, action, row, col) {
