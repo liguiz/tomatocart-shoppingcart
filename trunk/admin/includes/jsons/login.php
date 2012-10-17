@@ -14,7 +14,7 @@
   
   class toC_Json_Login {
     function login() {
-      global $toC_Json, $osC_Language, $osC_Database, $osC_Session;
+      global $toC_Json, $osC_Language, $osC_Database;
       
       $Qcheck_session = $osC_Database->query('select count(*) from :table_sessions');
       $Qcheck_session->bindTable(':table_sessions', TABLE_SESSIONS);
@@ -40,13 +40,11 @@
         if ( $Qadmin->numberOfRows() > 0) {
           while($Qadmin->next()) {
             if ( osc_validate_password($_REQUEST['user_password'], $Qadmin->value('user_password')) ) {
-              $osC_Session->recreate();
               $_SESSION['admin'] = array('id' => $Qadmin->valueInt('id'),
                                          'username' => $Qadmin->value('user_name'),
                                          'access' => osC_Access::getUserLevels($Qadmin->valueInt('id')));
               
               $response['success'] = true;
-              $response['sid'] = session_id();
               echo $toC_Json->encode($response);
               exit;
             }
