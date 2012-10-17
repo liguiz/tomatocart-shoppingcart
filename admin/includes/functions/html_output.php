@@ -19,36 +19,19 @@
  * @access public
  */
 
-  function osc_href_link_admin($page = null, $parameters = null, $trans_sid = true) {
-    global $osC_Session;
-    
-    $_sid = $osC_Session->getName() . '=' . $osC_Session->getID();
-    
+  function osc_href_link_admin($page = null, $parameters = null) {
     if (ENABLE_SSL === true) {
       $link = HTTPS_SERVER . DIR_WS_HTTPS_CATALOG . DIR_FS_ADMIN;
     } else {
       $link = HTTP_SERVER . DIR_WS_HTTP_CATALOG . DIR_FS_ADMIN;
     }
-    
-    $link .= $page;
 
-    if ($trans_sid == true) {
-      $link .= '?' . $_sid; 
-    
-      if (!empty($parameters)) {
-        $link .= '&' . $parameters;
-      }
-    }else {
-      if (!empty($parameters)) {
-        $link .= '?' . $parameters;
-      }
-    }
-   
-    
+    $link .= $page . '?' . $parameters;
+
     while ( (substr($link, -1) == '&') || (substr($link, -1) == '?') ) {
       $link = substr($link, 0, -1);
     }
-    
+
     return $link;
   }
 
