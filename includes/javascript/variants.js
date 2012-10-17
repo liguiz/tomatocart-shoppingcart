@@ -111,21 +111,20 @@ var TocVariants = new Class({
     var product = this.options.variants[productsIdString];
     
     if (product == undefined || (product['status'] == 0)) {
+    	$('productInfoPrice').set('html', '<font color="red">--</font>');
       $('productInfoAvailable').innerHTML = '<font color="red">' + this.options.lang.txtNotAvailable + '</font>';
     } else {
       if (product['quantity'] > 0) {
-        if (this.options.hasSpecial == 0) {
-        	// get the formatted price of the variants product by ajax requst
-        	this.sendRequest({action: 'get_variants_formatted_price', products_id_string: productsIdString}, function(response) {
-            var result = JSON.decode(response);
-            
-            if (result.success == true) {
-              $('productInfoPrice').set('text', result.formatted_price + ' ' + this.options.lang.txtTaxText);
-            }else {
-              alert(result.feedback);
-            }
-        	}.bind(this));
-        }
+      	// get the formatted price of the variants product by ajax requst
+      	this.sendRequest({action: 'get_variants_formatted_price', products_id_string: productsIdString}, function(response) {
+          var result = JSON.decode(response);
+          
+          if (result.success == true) {
+            $('productInfoPrice').set('html', result.formatted_price + ' ' + this.options.lang.txtTaxText);
+          }else {
+            alert(result.feedback);
+          }
+      	}.bind(this));
         
         $('productInfoSku').set('text', product['sku']);
         if (this.options.displayQty == true) {
