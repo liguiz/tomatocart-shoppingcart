@@ -254,7 +254,7 @@
     }
   
     function uploadImage() {
-      global $toC_Json, $osC_Database, $osC_Session;
+      global $toC_Json, $osC_Database, $osC_Session, $osC_Language;
       
       $osC_Image = new osC_Image_Admin();
       
