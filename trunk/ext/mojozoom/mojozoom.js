@@ -11,6 +11,19 @@ var MojoZoom = (function() {
 
 	var defaultWidth = 256;
 	var defaultHeight = 256;
+	
+  function msieversion() { 
+    var ua = window.navigator.userAgent 
+    var msie = ua.indexOf("MSIE ") 
+    
+    // If Internet Explorer, return version number 
+    if (msie > 0) {      
+      return parseInt(ua.substring(msie + 5, ua.indexOf(".", msie)));
+    }
+    
+    // If another browser, return 0 
+    return 0;
+  }  
 
 	function addEvent(element, ev, handler) 
 	{
@@ -58,17 +71,6 @@ var MojoZoom = (function() {
 	}
 
 	function makeZoomable(img, zoomSrc, zoomImgCtr, zoomWidth, zoomHeight, alwaysShow, onImgClick) {
-		// make sure the image is loaded, if not then add an onload event and return
-//		if (!img.complete && !img.__mojoZoomQueued) {
-//			addEvent(img, "load", function() {
-//				img.__mojoZoomQueued = true;
-//				setTimeout(function() {
-//				makeZoomable(img, zoomSrc, zoomImgCtr, zoomWidth, zoomHeight, alwaysShow);
-//				}, 1);
-//			});
-//			return;
-//		}
-
 		img.__mojoZoomQueued = false;
 
 		// Wrap everything in a timeout.
@@ -256,14 +258,17 @@ var MojoZoom = (function() {
 					zoomImgCtr.style.visibility = "visible";
 
 					var pos = getEventMousePos(zoomInput, e);
-					if (e.srcElement && isIE) {
-						if (e.srcElement == zoom) return;
-						if (e.srcElement != zoomInput) {
-							var zoomImgPos = getElementPos(e.srcElement);
-							pos.x -= (imgPos.x - zoomImgPos.x);
-							pos.y -= (imgPos.y - zoomImgPos.y);
-						}
-					}
+					
+          if (msieversion()> 0 && msieversion() < 9) { 
+            if (e.srcElement && isIE) { 
+              if (e.srcElement == zoom) return; 
+              if (e.srcElement != zoomInput) { 
+                var zoomImgPos = getElementPos(e.srcElement); 
+                pos.x -= (imgPos.x - zoomImgPos.x); 
+                pos.y -= (imgPos.y - zoomImgPos.y); 
+              } 
+            } 
+          } 
 					var x = markerWidth/2;
 					var y = markerHeight/2;
 
