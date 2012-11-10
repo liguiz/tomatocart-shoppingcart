@@ -267,7 +267,7 @@
       }
       
       if ($osC_Services->isStarted('reviews')) {
-        echo '<a tab="tabReviews" href="javascript:void(0);">' . $osC_Language->get('section_heading_reviews') . '(' . $osC_Reviews->getReviewsCount($osC_Product->getID()) . ')</a>';
+        echo '<a tab="tabReviews" href="javascript:void(0);">' . $osC_Language->get('section_heading_reviews') . '(' . $osC_Reviews->getTotal($osC_Product->getID()) . ')</a>';
       }
       
       if ($osC_Product->hasQuantityDiscount()) {
@@ -298,7 +298,7 @@
         <div class="moduleBox">
           <div class="content">
             <?php
-              if ($osC_Reviews->getReviewsCount($osC_Product->getID())==0) {
+              if ($osC_Reviews->getTotal($osC_Product->getID())==0) {
                 echo '<p>' . $osC_Language->get('no_review') . '</p>';
               } else {
                 $Qreviews = osC_Reviews::getListing($osC_Product->getID());
@@ -343,7 +343,7 @@
               } else {
             ?>
             
-              <form id="frmReviews" name="newReview" action="<?php echo osc_href_link(FILENAME_PRODUCTS, 'reviews=new&' . $osC_Product->getID() . '&action=process'); ?>" method="post">
+              <form id="frmReviews" name="newReview" action="<?php echo osc_href_link(FILENAME_PRODUCTS, 'reviews=new&' . $osC_Product->getID() . '&action=process', 'SSL'); ?>" method="post">
               <p><label for="author_name"><strong><?php echo $osC_Language->get('field_review_author'); ?></strong></label><input type="text" name="author_name" id="author_name" value="<?php echo $osC_Customer->isLoggedOn() ? $osC_Customer->getName() : (isset($_SESSION['review_author_name']) ? $_SESSION['review_author_name'] : ''); ?>" /></p>
               
               <?php
@@ -394,6 +394,9 @@
                 <?php echo osc_draw_textarea_field('review', isset($_SESSION['review']) ? $_SESSION['review'] : null, 45, 5); ?>
                 <p><?php echo $osC_Language->get('review_note_message'); ?></p>
                 
+                <?php
+                  if ((ACTIVATE_CAPTCHA === '1') && ($osC_Customer->isLoggedOn() === false) ) {
+                ?>
                 <div class="clearfix captcha">
                   <div class="captcha-image"><?php echo osc_image(osc_href_link(FILENAME_PRODUCTS, 'reviews=show_captcha'), $osC_Language->get('captcha_image_title'), 215, 80, 'id="captcha-code"'); ?></div>
                   <div class="captcha-field clearfix">
@@ -412,6 +415,9 @@
                     });
                   </script>
                 </div>
+                <?php
+                  }
+                ?>
                 
                 <div class="submitFormButtons">
                   <input type="hidden" id="radio_lines" name="radio_lines" value="<?php echo $i; ?>"/>

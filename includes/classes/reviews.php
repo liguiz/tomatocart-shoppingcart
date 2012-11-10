@@ -180,18 +180,6 @@
       }
     }
     
-    function getReviewsCount($id) {
-      global $osC_Database, $osC_Language;
-
-      $Qreview = $osC_Database->query('select count(*) as reviews_count from :table_reviews where products_id = :products_id and languages_id = :languages_id');
-      $Qreview->bindTable(':table_reviews', TABLE_REVIEWS);
-      $Qreview->bindInt(':languages_id', $osC_Language->getID());
-      $Qreview->bindInt(':products_id', $id);
-      $Qreview->execute();
-      
-      return $Qreview->ValueInt('reviews_count');
-    }
-    
     function getCustomersRatings($reviews_id) {
       global $osC_Database, $osC_Language;
 

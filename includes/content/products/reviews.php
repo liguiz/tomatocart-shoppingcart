@@ -111,16 +111,18 @@
         }
       }
       
-      if (isset($_POST['captcha_code']) && !empty($_POST['captcha_code'])) {
-        $securimage = new Securimage();
-        
-        if ($securimage->check($_POST['captcha_code']) == false) {
+      if ((ACTIVATE_CAPTCHA === '1') && ($osC_Customer->isLoggedOn() === false) ) {
+        if (isset($_POST['captcha_code']) && !empty($_POST['captcha_code'])) {
+          $securimage = new Securimage();
+          
+          if ($securimage->check($_POST['captcha_code']) == false) {
+            $messageStack->add_session('reviews', $osC_Language->get('field_concat_captcha_check_error'));
+          }
+        } else {
           $messageStack->add_session('reviews', $osC_Language->get('field_concat_captcha_check_error'));
-        }
-      } else {
-        $messageStack->add_session('reviews', $osC_Language->get('field_concat_captcha_check_error'));
-      }  
-
+        }  
+      }
+      
       if ($messageStack->size('reviews') < 1) {
         if ($osC_Reviews->is_moderated === true) {
           $data['status'] = '0';
