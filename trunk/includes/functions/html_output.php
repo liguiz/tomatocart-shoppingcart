@@ -58,10 +58,10 @@
     while ( (substr($link, -1) == '&') || (substr($link, -1) == '?') ) {
       $link = substr($link, 0, -1);
     }
-
+    
 // Add the session ID when moving from different HTTP and HTTPS servers, or when SID is defined
     if ( ($add_session_id === true) && $osC_Session->hasStarted() && (SERVICE_SESSION_FORCE_COOKIE_USAGE == '-1') ) {
-      if (!osc_empty(SID)) {
+      if ( (SID !== '')) {
         $_sid = SID;
       } elseif ( (($request_type == 'NONSSL') && ($connection == 'SSL') && (ENABLE_SSL === true)) || (($request_type == 'SSL') && ($connection != 'SSL')) ) {
         if (HTTP_COOKIE_DOMAIN != HTTPS_COOKIE_DOMAIN) {
