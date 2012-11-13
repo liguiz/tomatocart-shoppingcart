@@ -58,11 +58,7 @@ class toC_Sefu {
     if ( preg_match("/index.php\?cPath=([0-9_]+)(.*)/", $link, $matches) > 0 ) {
       $categories = @explode('_', $matches[1]);
 
-      if(sizeof($categories) > 1){
-        $category_id = end($categories);
-      }else{
-        $category_id = $matches[1];
-      }
+      $category_id = $matches[1];
     
       $link = $this->makeUrl($page, $this->getCategoryUrl($matches[1]), 'cPath', $category_id, '');
       if( !empty($matches[2]) ) {
@@ -77,7 +73,7 @@ class toC_Sefu {
       }
     }
     //cPath & products
-    else if ( preg_match("/products.php\?([0-9]+)&cPath=([0-9]+)(.*)/", $link, $matches) > 0 ) {
+    else if ( preg_match("/products.php\?([0-9]+)&cPath=([0-9_]+)(.*)/", $link, $matches) > 0 ) {
       $link = $matches[2] . $this->_reg_anchors['cPath'] . $this->getCategoryUrl($matches[2]) . '/' . 
               $matches[1] . $this->_reg_anchors['products_id'] . $this->getProductUrl($matches[1]) . '.html';
       
