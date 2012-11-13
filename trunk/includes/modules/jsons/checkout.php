@@ -678,7 +678,7 @@
     }
     
     function redeemCoupon() {
-      global $toC_Json, $osC_Language, $osC_Payment, $osC_ShoppingCart, $osC_Currencies, $osC_Payment;;
+      global $toC_Json, $osC_Language, $osC_Payment, $osC_ShoppingCart, $osC_Currencies, $osC_Payment;
     
       $osC_Language->load('checkout');
       

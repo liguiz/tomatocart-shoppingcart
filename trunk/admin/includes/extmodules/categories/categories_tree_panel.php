@@ -218,7 +218,7 @@ Ext.extend(Toc.categories.CategoriesTreePanel, Ext.tree.TreePanel, {
       ]
     });
     
-    this.menuContext.showAt(event.getXY());;
+    this.menuContext.showAt(event.getXY());
   },
     
   refresh: function() {

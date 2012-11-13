@@ -89,7 +89,7 @@
              '#sliderLeft a:hover {background:#fff url(images/arrow_left_blue.gif) no-repeat center center; text-decoration:none}' . "\n" .
              '#sliderRight a {background:#fff url(images/arrow_right_gray.gif) no-repeat center center;display:block;width:30px;}' . "\n" .
              '#sliderRight a:hover {background:#fff url(images/arrow_right_blue.gif) no-repeat center center; text-decoration:none}' . "\n" .
-             '#productsSliderWrapper {position:relative;background:#fff;width:' . $wrapper_width . 'px;height:' . $height . 'px;overflow:hidden;;float:left;}' . "\n" .
+             '#productsSliderWrapper {position:relative;background:#fff;width:' . $wrapper_width . 'px;height:' . $height . 'px;overflow:hidden;float:left;}' . "\n" .
              '#productsSlider {position:absolute;text-align:center}' . "\n" .
              '#productsSlider span {display:block; float:left;width:' . $image_width . 'px}';
 
