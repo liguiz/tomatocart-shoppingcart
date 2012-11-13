@@ -449,7 +449,7 @@ class Piwik_LogStats_Generator
 				&& mt_rand(0,1)==0)
 			{
 				$url .= '&'. Piwik_LogStats_Config::getInstance()->LogStats['campaign_keyword_var_name'] 
-							. '=' . $this->getRandomString(6,3,'ALL');;
+							. '=' . $this->getRandomString(6,3,'ALL');
 			}
 		}
 		else

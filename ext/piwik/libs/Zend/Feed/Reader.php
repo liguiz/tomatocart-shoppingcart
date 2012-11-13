@@ -240,7 +240,7 @@ class Zend_Feed_Reader
                     $etag = $cache->load($cacheId.'_etag');
                 }
                 if (is_null($lastModified)) {
-                    $lastModified = $cache->load($cacheId.'_lastmodified');;
+                    $lastModified = $cache->load($cacheId.'_lastmodified');
                 }
                 if ($etag) {
                     $client->setHeaders('If-None-Match', $etag);

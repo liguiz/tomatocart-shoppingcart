@@ -171,7 +171,7 @@ Ext.extend(Toc.file_manager.DirectoryTreePanel, Ext.tree.TreePanel, {
       ]
     });
     
-    this.menuContext.showAt(event.getXY());;
+    this.menuContext.showAt(event.getXY());
   },
   
   onBeforeLoad: function(node) {

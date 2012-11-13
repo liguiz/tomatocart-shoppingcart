@@ -269,7 +269,7 @@ Ext.extend(Toc.products.CategoriesTreePanel, Ext.tree.TreePanel, {
       ]
     });
     
-    this.menuContext.showAt(event.getXY());;
+    this.menuContext.showAt(event.getXY());
   },
   
   refresh: function() {

@@ -554,6 +554,6 @@ class Zend_Cache_Backend_Static
      */
     protected function _decodeId($id)
     {
-        return pack('H*', $id);;
+        return pack('H*', $id);
     }
 }

@@ -426,7 +426,7 @@ class Piwik_Tracker_Generator
 				&& mt_rand(0,1)==0)
 			{
 				$url .= '&'. Piwik_Tracker_Config::getInstance()->Tracker['campaign_keyword_var_name'] 
-							. '=' . $this->getRandomString(6,3,'ALL');;
+							. '=' . $this->getRandomString(6,3,'ALL');
 			}
 		}
 		else
