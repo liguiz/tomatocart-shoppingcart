@@ -604,7 +604,7 @@
 
       $price = '';
       if ($this->isGiftCertificate() && $this->isOpenAmountGiftCertificate()) {
-        $price = $osC_Currencies->displayPrice($this->_data['open_amount_min_value'], $this->_data['tax_class_id']) . ' ~ ' . $price = $osC_Currencies->displayPrice($this->_data['open_amount_max_value'], $this->_data['tax_class_id']);;
+        $price = $osC_Currencies->displayPrice($this->_data['open_amount_min_value'], $this->_data['tax_class_id']) . ' ~ ' . $price = $osC_Currencies->displayPrice($this->_data['open_amount_max_value'], $this->_data['tax_class_id']);
       } else {
         if (($with_special === true) && is_object($osC_Services) && $osC_Services->isStarted('specials') && ($new_price = $osC_Specials->getPrice($this->_data['id']))) {
           if ($this->hasVariants()) {
