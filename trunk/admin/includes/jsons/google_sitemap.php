@@ -17,12 +17,14 @@
     function createGoogleSitemap() {
     	global $toC_Json, $osC_Language;
 
-    	$google_sitemap = new toC_Google_Sitemap( $_REQUEST['products_frequency'], 
-                                            	  $_REQUEST['products_priority'], 
-                                            	  $_REQUEST['categories_frequency'],
-                                            	  $_REQUEST['categories_priority'],
-                                            	  $_REQUEST['articles_frequency'],
-                                            	  $_REQUEST['articles_priority'] );
+    	$google_sitemap = new toC_Google_Sitemap($_POST['languages_code'],
+                                               $_POST['products_frequency'], 
+                                               $_POST['products_priority'], 
+                                               $_POST['categories_frequency'],
+                                               $_POST['categories_priority'],
+                                               $_POST['articles_frequency'],
+                                               $_POST['articles_priority']);
+    	                                        
     	
     	if ($google_sitemap->generateSitemap()) {
     		$response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));

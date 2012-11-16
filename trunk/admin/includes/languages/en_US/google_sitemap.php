@@ -16,6 +16,7 @@ introduction_google_sitemaps_submission  = <b>NOTE:</b> The location of the Site
 
 google_sitemaps_infobox_title = What is Google Sitemaps?
 
+field_language_selection = Select Language:
 field_categories = Categories Frequency:
 field_products = Products Frequency:
 field_articles = Articles Frequency:
