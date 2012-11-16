@@ -19,7 +19,7 @@ Toc.google_sitemap.GoogleSitemapDialog = function(config) {
   config.id = 'google_sitemap-win';
   config.title = '<?php echo $osC_Language->get('heading_title'); ?>';
   config.width = 600;
-  config.height = 440;
+  config.height = 500;
   config.iconCls = 'icon-google_sitemap-win';
   config.layout = 'fit';
   config.items = this.buildForm();
@@ -49,37 +49,74 @@ Ext.extend(Toc.google_sitemap.GoogleSitemapDialog, Ext.Window, {
        ]
     });
     
+    var dsLanguages = new Ext.data.Store({
+      url: Toc.CONF.CONN_URL,
+      baseParams: {
+        module: 'languages', 
+        action: 'get_languages'
+      },
+      reader: new Ext.data.JsonReader({
+        root: Toc.CONF.JSON_READER_ROOT,
+        fields: ['id', 'text']
+      })                                                                                    
+    });
+    
 		this.fsCreateSitemap = new Ext.form.FieldSet({
 			labelWidth: 130,
       title: '<?php echo $osC_Language->get('button_create_sitemaps'); ?>',
-      layout: 'column',
+      layout: 'form',
       autoHeight: true,
+      layoutConfig: {
+        labelSeparator: ''
+      },
       items: [
         {
-          columnWidth: 0.55,
-          layout: 'form',
-          border: false,
-          defaults: {xtype: 'combo', store: store, mode: 'local', valueField: 'id', displayField: 'text', value: 'daily', allowBlank: false, editable: false, triggerAction: 'all', anchor: '90%'},
-          labelSeparator: ' ',   
-          items: [
-            {fieldLabel: '<?php echo $osC_Language->get("field_categories"); ?>', hiddenName: 'categories_frequency' }, 
-            {fieldLabel: '<?php echo $osC_Language->get("field_products"); ?>', hiddenName: 'products_frequency'},
-            {fieldLabel: '<?php echo $osC_Language->get("field_articles"); ?>', hiddenName: 'articles_frequency'}
-          ] 
+          xtype: 'combo', 
+          fieldLabel: '<?php echo $osC_Language->get('field_language_selection'); ?>', 
+          id: 'languages',
+          width: 230,
+          name: 'languages',
+          mode: 'remote', 
+          store: dsLanguages,
+          displayField: 'text',
+          valueField: 'id',
+          triggerAction: 'all',
+          hiddenName: 'languages_code',
+          readOnly: true,
+          allowBlank: false
         },
         {
-          columnWidth: 0.45,
-          layout: 'form',
+          layout: 'column',
           border: false,
-          labelWidth: 70,
-          defaults: {xtype: 'numberfield', fieldLabel: '<?php echo $osC_Language->get('field_priority'); ?>', decimalPrecision: 2, allowNegative: false, allowBlank: false, maxValue: 1, minValue: 0, anchor: '90%'},
-          labelSeparator: ' ', 
           items: [
-            {name: 'categories_priority', value: 0.5}, 
-            {name: 'products_priority', value: 0.5}, 
-            {name: 'articles_priority', value: 0.25}
-          ]
+           {
+              columnWidth: 0.55,
+              layout: 'form',
+              border: false,
+              defaults: {xtype: 'combo', store: store, mode: 'local', valueField: 'id', displayField: 'text', value: 'daily', allowBlank: false, editable: false, triggerAction: 'all', anchor: '90%'},
+              labelSeparator: ' ',   
+              items: [
+                {fieldLabel: '<?php echo $osC_Language->get("field_categories"); ?>', hiddenName: 'categories_frequency' }, 
+                {fieldLabel: '<?php echo $osC_Language->get("field_products"); ?>', hiddenName: 'products_frequency'},
+                {fieldLabel: '<?php echo $osC_Language->get("field_articles"); ?>', hiddenName: 'articles_frequency'}
+              ] 
+            },
+            {
+              columnWidth: 0.45,
+              layout: 'form',
+              border: false,
+              labelWidth: 70,
+              defaults: {xtype: 'numberfield', fieldLabel: '<?php echo $osC_Language->get('field_priority'); ?>', decimalPrecision: 2, allowNegative: false, allowBlank: false, maxValue: 1, minValue: 0, anchor: '90%'},
+              labelSeparator: ' ', 
+              items: [
+                {name: 'categories_priority', value: 0.5}, 
+                {name: 'products_priority', value: 0.5}, 
+                {name: 'articles_priority', value: 0.25}
+              ]
+            }
+          ]      
         }
+       
       ],
       buttons: [
       	new Ext.Button({

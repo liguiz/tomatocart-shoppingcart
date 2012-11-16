@@ -30,12 +30,17 @@
         $_products_priority = '',
         $_categories_priority = '',
         $_articles_priority = '',
+        $_original_language_code = '',
         $_sefu = null;
 
-    function toC_Google_Sitemap($products_change_freq = 'weekly', $products_priority = 0.5, $categories_change_freq = 'weekly', $categories_priority = 0.5, $articles_change_freq = 'weekly', $articles_priority = 0.25){
-      global $osC_CategoryTree;
-
-      $this->_file_name = "sitemaps";
+    function toC_Google_Sitemap($language_code = 'en_US', $products_change_freq = 'weekly', $products_priority = 0.5, $categories_change_freq = 'weekly', $categories_priority = 0.5, $articles_change_freq = 'weekly', $articles_priority = 0.25){
+      global $osC_CategoryTree, $osC_Language;
+      
+      $this->_original_language_code = $osC_Language->getCode();
+      
+      $osC_Language->set($language_code);
+      
+      $this->_file_name = "sitemaps_{$language_code}_";
       $this->_save_path = DIR_FS_CATALOG;
       $this->_base_url = HTTP_SERVER . DIR_WS_HTTP_CATALOG;
       $this->_max_file_size = 10 * 1024 * 1024;
@@ -124,28 +129,42 @@
 
     function _createXmlHeader() {
       $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-      $xml .= '<urlset xmlns="http://www.google.com/schemas/sitemap/0.84">' . "\n";
+      $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
       return $xml;
     }
 
     function _createIndexSitemap() {
-      $handle = fopen($this->_save_path . $this->_file_name . 'Index.xml', 'w');
+      global $osC_Language;
+      
+      $handle = fopen($this->_save_path . 'sitemapsIndex.xml', 'w');
       $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-      $xml .= '<sitemapindex xmlns="http://www.google.com/schemas/sitemap/0.84">' . "\n";
+      $xml .= '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
       fwrite($handle, $xml);
-
-      for($i = 0; $i < sizeof($this->_file_array); $i++) {
-        $content = "\t". '<sitemap>' . "\n";
-        $content .= "\t\t" . '<loc>'.$this->_base_url . basename($this->_file_array[$i]) . '</loc>' . "\n";
-        $content .= "\t\t" . '<lastmod>'.date ("Y-m-d", filemtime($this->_save_path . basename($this->_file_array[$i]))).'</lastmod>' . "\n";
-        $content .= "\t" . '</sitemap>' . "\n";
-        fwrite($handle, $content);
+      
+      $directory_listing = new osC_DirectoryListing($this->_save_path);
+      $directory_listing->setIncludeDirectories(false);
+      $directory_listing->setIncludeFiles(true);
+      $directory_listing->setCheckExtension('xml');
+      $xmls = $directory_listing->getFiles();
+      
+      if (!empty($xmls)) {
+        foreach($xmls as $xml) {
+          if (($xml['name'] !== $this->_file_name . 'Index.xml') && preg_match('/^sitemaps[A-Za-z_]+\.xml$/', $xml['name'])) {
+            $content = "\t". '<sitemap>' . "\n";
+            $content .= "\t\t" . '<loc>'.$this->_base_url . basename($xml['name']) . '</loc>' . "\n";
+            $content .= "\t\t" . '<lastmod>'.date ("Y-m-d", filemtime($this->_save_path . basename($xml['name']))).'</lastmod>' . "\n";
+            $content .= "\t" . '</sitemap>' . "\n";
+            fwrite($handle, $content);
+          }
+        }
       }
 
       fwrite($handle, '</sitemapindex>');
 
       fclose($handle);
+      
+      $osC_Language->set($this->_original_language_code);
 
       return true;
     }
