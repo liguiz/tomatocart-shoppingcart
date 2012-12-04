@@ -111,8 +111,6 @@ var TocVariants = new Class({
 	  
     var product = this.options.variants[productsIdString];
     
-    console.dir(product);
-    
     if (product == undefined || (product['status'] == 0)) {
     	$('productInfoPrice').set('html', '<font color="red">--</font>');
       $('productInfoAvailable').innerHTML = '<font color="red">' + this.options.lang.txtNotAvailable + '</font>';
