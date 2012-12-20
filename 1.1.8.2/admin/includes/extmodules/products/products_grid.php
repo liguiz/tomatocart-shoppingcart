@@ -348,7 +348,11 @@ Ext.extend(Toc.products.ProductsGrid, Ext.grid.GridPanel, {
     var store = this.getStore();
 
     store.baseParams['categories_id'] = categoriesId;
-    store.load();
+    store.baseParams['start'] = 0;
+    store.baseParams['limit'] = this.getBottomToolbar().displayNum.getValue();
+    
+    store.load({callback: function() {delete store.baseParams['start']; delete store.baseParams['limit'];}});
+
   },
   
   onSearch: function(){
