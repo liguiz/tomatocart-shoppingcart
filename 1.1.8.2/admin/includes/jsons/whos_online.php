@@ -106,35 +106,37 @@
         $customers_info .= '<tr><td><b>' . $osC_Language->get('field_referrer_url') . '</b></td><td>' . $Qwho->value('referrer_url') . '</td></tr>';
         $customers_info .= '</table>';
         
-        $products_table = '<table width="100%">';
-        foreach ($cart['contents'] as $product) {
-          $product_info = $product['quantity'] . '&nbsp;x&nbsp;' . $product['name'];
-          
-          if ( $product['type'] == PRODUCT_TYPE_GIFT_CERTIFICATE ) {
-            $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $osC_Language->get('senders_name') . ': ' . $product['gc_data']['senders_name'] . '</i></nobr>';
+        if (isset($cart['contents']) && count($cart['contents']) > 0) {
+          $products_table = '<table width="100%">';
+          foreach ($cart['contents'] as $product) {
+            $product_info = $product['quantity'] . '&nbsp;x&nbsp;' . $product['name'];
             
-            if ($product['gift_certificates_type'] == GIFT_CERTIFICATE_TYPE_EMAIL) {
-              $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $osC_Language->get('senders_email') . ': ' . $product['gc_data']['senders_email'] . '</i></nobr>';
+            if ( $product['type'] == PRODUCT_TYPE_GIFT_CERTIFICATE ) {
+              $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $osC_Language->get('senders_name') . ': ' . $product['gc_data']['senders_name'] . '</i></nobr>';
+              
+              if ($product['gift_certificates_type'] == GIFT_CERTIFICATE_TYPE_EMAIL) {
+                $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $osC_Language->get('senders_email') . ': ' . $product['gc_data']['senders_email'] . '</i></nobr>';
+              }
+              
+              $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $osC_Language->get('recipients_name') . ': ' . $product['gc_data']['recipients_name'] . '</i></nobr>';
+              
+              if ($product['gift_certificates_type'] == GIFT_CERTIFICATE_TYPE_EMAIL) {
+                $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $osC_Language->get('recipients_email') . ': ' . $product['gc_data']['recipients_email'] . '</i></nobr>';
+              }
+              
+              $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $osC_Language->get('messages') . ': ' . $product['gc_data']['message'] . '</i></nobr>';
             }
             
-            $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $osC_Language->get('recipients_name') . ': ' . $product['gc_data']['recipients_name'] . '</i></nobr>';
-            
-            if ($product['gift_certificates_type'] == GIFT_CERTIFICATE_TYPE_EMAIL) {
-              $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $osC_Language->get('recipients_email') . ': ' . $product['gc_data']['recipients_email'] . '</i></nobr>';
+            if ( isset($product['variants']) && is_array($product['variants']) && ( sizeof($product['variants']) > 0 ) ) {
+              foreach ( $product['variants'] as $variants ) {
+                $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $variants['groups_name'] . ': ' . $variants['values_name'] . '</i></nobr>';
+              }
             }
             
-            $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $osC_Language->get('messages') . ': ' . $product['gc_data']['message'] . '</i></nobr>';
+            $products_table .= '<tr><td>' . $product_info . '</td><td width="60" valign="top" align="right">' . $osC_Currencies->displayPriceWithTaxRate($product['final_price'], $product['tax'], 1, $currency) . '</td></tr>';
           }
-          
-          if ( isset($product['variants']) && is_array($product['variants']) && ( sizeof($product['variants']) > 0 ) ) {
-            foreach ( $product['variants'] as $variants ) {
-              $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $variants['groups_name'] . ': ' . $variants['values_name'] . '</i></nobr>';
-            }
-          }
-          
-          $products_table .= '<tr><td>' . $product_info . '</td><td width="60" valign="top" align="right">' . $osC_Currencies->displayPriceWithTaxRate($product['final_price'], $product['tax'], 1, $currency) . '</td></tr>';
+          $products_table .= '</table>';
         }
-        $products_table .= '</table>';
       
         $customers_name = $Qwho->value('full_name') . ' (' . $Qwho->valueInt('customer_id') . ')';
         $customers_name .= ' -- ' . (($geoip === $_SERVER['REMOTE_ADDR']) ? $osC_Language->get('text_administrator') : '' );
