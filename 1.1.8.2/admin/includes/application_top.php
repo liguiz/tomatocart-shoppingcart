@@ -128,9 +128,6 @@
 
   osc_setlocale(LC_TIME, explode(',', $osC_Language->getLocale()));
 
-// define our localization functions
-  require('includes/functions/localization.php');
-
 // initialize the message stack for output messages
   require('../includes/classes/message_stack.php');
   $osC_MessageStack = new messageStack();

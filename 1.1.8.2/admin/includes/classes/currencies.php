@@ -122,9 +122,56 @@
       $Qcurrencies->execute();
 
       while ( $Qcurrencies->next() ) {
-        $rate = call_user_func('quote_' . $service . '_currency', $Qcurrencies->value('code'));
-
-        if ( !empty($rate) ) {
+        //verify whether the currecy is the default currency
+        if ($Qcurrencies->value('code') === DEFAULT_CURRENCY) {
+          continue;
+        }
+        
+        $rate = null;
+        $api_json_response = null;
+         
+        //call the google finance api to get the live rate
+        $google_fi_host = 'rate-exchange.appspot.com';
+        $request_url = 'http://rate-exchange.appspot.com/currency?from=' . $Qcurrencies->value('code') . '&to=' . DEFAULT_CURRENCY;
+        
+        //create and send http get request with curl as it is available
+        if (function_exists('curl_init')) {
+          $curl = curl_init($request_url);
+          curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+          $api_json_response = curl_exec($curl); 
+        //send the http get request with file_get_contents
+        }elseif (function_exists('stream_context_create')) {
+          $api_json_response = file_get_contents($request_url);
+        //send the http get request with socket
+        }else {
+          $socket = fsockopen($google_fi_host, 80, $errno, $errstr, 30);
+          
+          if ($socket !== false) {
+            $header = "GET / HTTP/1.1\r\n";
+            $header .= "Host: " . $google_fi_host . "\r\n";
+            $header .= "Connection: Close\r\n\r\n";
+            
+            fwrite($socket, $header);
+            
+            while (!feof($socket)) {
+              $api_json_response .= fgets($socket, 1024);
+            }
+            
+            fclose($socket);
+          }
+        }
+        
+        if ($api_json_response != null) {
+          $api_json_response = json_decode($api_json_response);
+          
+          //verify whether there is any error returned from the google finance api as updating the currency
+          if (empty($api_json_response->err)) {
+            $rate = $api_json_response->rate;
+          }
+        }
+        
+        //update the currency rate
+        if ($rate !== null) {
           $Qupdate = $osC_Database->query('update :table_currencies set value = :value, last_updated = now() where currencies_id = :currencies_id');
           $Qupdate->bindTable(':table_currencies', TABLE_CURRENCIES);
           $Qupdate->bindValue(':value', $rate);
