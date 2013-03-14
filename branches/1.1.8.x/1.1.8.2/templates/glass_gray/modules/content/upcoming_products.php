@@ -14,8 +14,10 @@
 
 <!-- module upcoming_products start //-->
 
-<h6><?php echo $osC_Box->getTitle(); ?></h6>
+<div class="moduleBox">
+  <h6><?php echo $osC_Box->getTitle(); ?></h6>
 
-<?php echo $osC_Box->getContent(); ?>
+  <div class="content"><?php echo $osC_Box->getContent(); ?></div>
+</div>
 
 <!-- module upcoming_products end //-->
