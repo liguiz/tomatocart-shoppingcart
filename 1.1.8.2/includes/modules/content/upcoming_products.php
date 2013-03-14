@@ -27,7 +27,7 @@
     }
 
     function initialize() {
-      global $osC_Database, $osC_Language, $osC_Currencies;
+      global $osC_Database, $osC_Language, $osC_Currencies, $osC_Image, $osC_Template;
 
       $Qupcoming = $osC_Database->query('select p.products_id, p.products_price, p.products_tax_class_id, p.products_date_available as date_expected, pd.products_name, pd.products_keyword, s.specials_new_products_price, i.image from :table_products p left join :table_products_images i on (p.products_id = i.products_id and i.default_flag = :default_flag) left join :table_specials s on (p.products_id = s.products_id and s.status = 1), :table_products_description pd where to_days(p.products_date_available) >= to_days(now()) and p.products_status = :products_status and p.products_id = pd.products_id and pd.language_id = :language_id order by p.products_date_available limit :max_display_upcoming_products');
       $Qupcoming->bindTable(':table_products', TABLE_PRODUCTS);
@@ -44,26 +44,41 @@
       }
 
       $Qupcoming->execute();
-
+      
+      $i = 0;
       if ($Qupcoming->numberOfRows() > 0) {
-        $this->_content = '<ol style="list-style: none;">';
+        $this->_content = '<div class="upcomingProductsModule clearfix">';
 
         while ($Qupcoming->next()) {
-          $this->_content .= '<li>' . osC_DateTime::getLong($Qupcoming->value('date_expected')) . ': ' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qupcoming->value('products_id')), $Qupcoming->value('products_name')) . ' ';
-
-          if (osc_empty($Qupcoming->value('specials_new_products_price'))) {
-            $this->_content .= '(' . $osC_Currencies->displayPrice($Qupcoming->value('products_price'), $Qupcoming->valueInt('products_tax_class_id')) . ')';
-          } else {
-            $this->_content .= '(<s>' . $osC_Currencies->displayPrice($Qupcoming->value('products_price'), $Qupcoming->valueInt('products_tax_class_id')) . '</s> <span class="productSpecialPrice">' . $osC_Currencies->displayPrice($Qupcoming->value('specials_new_products_price'), $Qupcoming->valueInt('products_tax_class_id')) . '</span>)';
+          $osC_Product = new osC_Product($Qupcoming->valueInt('products_id'));
+          
+          if(($i % 3 == 0) && ($i != 0)) {
+            $this->_content .= '<div class="productItem clearLeft">';
+          }else {
+            $this->_content .= '<div class="productItem">';
           }
-
-          $this->_content .= '</li>';
+          
+          $this->_content .= '<div class="productName">' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qupcoming->value('products_id')), $Qupcoming->value('products_name')) . '</div>' .
+                             '<div>' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qupcoming->value('products_id')), $osC_Image->show($Qupcoming->value('image'), $Qupcoming->value('products_name'))) . '</div>' .
+                             '<div>' . $osC_Product->getPriceFormated(true) . '</div>' .
+                             '<div><strong>' . osC_DateTime::getLong($Qupcoming->value('date_expected')) . '</strong></div>';
+                             
+          $this->_content .= '</div>';
+          
+          $i++;
         }
 
-        $this->_content .= '</ol>';
+        $this->_content .= '</div>';
       }
-
+      
       $Qupcoming->freeResult();
+      
+      //add the css block for this module
+      $osC_Template->addStyleDeclaration('.clearLeft{clear:left;}
+                                          .upcomingProductsModule{overflow: auto; height: 100%;}
+                                          .upcomingProductsModule .productItem{width: 32%; float: left; text-align: center; padding: 2px;}
+                                          .upcomingProductsModule .productItem .productName{height:30px;}
+                                          .upcomingProductsModule .productItem div {margin:3px 0;}');
     }
 
     function install() {
