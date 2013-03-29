@@ -43,7 +43,7 @@
   define('PROJECT_VERSION', 'TomatoCart v1.1.8.2');
 
 // set the type of request (secure or not)
-  $request_type = (isset($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) == 'on')) ? 'SSL' : 'NONSSL';
+  $request_type = (isset($_SERVER['HTTPS']) && ((strtolower($_SERVER['HTTPS']) == 'on') || $_SERVER['HTTPS']) == 1 || $_SERVER['SERVER_PORT'] == 443)) ? 'SSL' : 'NONSSL';
 
   if ($request_type == 'NONSSL') {
     define('DIR_WS_CATALOG', DIR_WS_HTTP_CATALOG);
