@@ -112,7 +112,7 @@
       return false;
     }
 
-    function updateRates($service) {
+    function updateRates() {
       global $osC_Database;
 
       $updated = array('0' => array(), '1' => array());
@@ -186,7 +186,7 @@
                                 'code' => $Qcurrencies->value('code'));
         }
       }
-
+      
       osC_Cache::clear('currencies');
 
       return $updated;
