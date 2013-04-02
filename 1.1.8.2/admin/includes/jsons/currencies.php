@@ -167,7 +167,7 @@
       $error = false;
       $feedback = array();
       
-      $results = osC_Currencies_Admin::updateRates($_REQUEST['service']);
+      $results = osC_Currencies_Admin::updateRates();
       
       if ( count($results[0]) ) {
         $error = true;
