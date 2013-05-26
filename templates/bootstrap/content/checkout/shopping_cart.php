@@ -67,7 +67,7 @@
     ?>
     
             </td>
-            <td valign="middle">
+            <td valign="top">
     
             <?php
             echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $products['id']), '<b>' . $products['name'] . '</b>');
