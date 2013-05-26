@@ -117,13 +117,8 @@
                 $href = osc_href_link(FILENAME_PRODUCTS, $Qlisting->value('products_id') . (isset($_GET['manufacturers']) ? '&manufacturers=' . $_GET['manufacturers'] : ($cPath ? '&cPath=' . $cPath : '')));
                 
                 //image
-                $image = $osC_Image->show($Qlisting->value('image'), $Qlisting->value('products_name'), 'class="thumb"');
-                
-                if ($Qlisting->value('products_type') == PRODUCT_TYPE_SIMPLE) {
-                    $image_link = osc_link_object($href, $image, 'id="productImage'. $Qlisting->value('products_id') . '"');
-                } else {
-                    $image_link = osc_link_object($href, $image);
-                }
+                $image = $osC_Image->show($Qlisting->value('image'), $Qlisting->value('products_name'), 'class="thumb productImage"');
+                $image_link = osc_link_object($href, $image, 'id="img_ac_productlisting_'. $Qlisting->value('products_id') . '"');
                 
                 $buy_now_link = osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add');
                 $compare_link = osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('action')) . '&cid=' . $Qlisting->value('products_id') . '&action=compare_products_add');
@@ -145,7 +140,17 @@
                     <span class="price">
                         <?php echo $osC_Product->getPriceFormated(true); ?></span>
                     <span class="buttons hidden-phone">
+                    	<?php 
+                    	    if ($Qlisting->value('products_type') == PRODUCT_TYPE_SIMPLE) {
+                    	?>
+                        <a id="ac_productlisting_<?php echo $Qlisting->value('products_id'); ?>" class="btn btn-small btn-info ajaxAddToCart" href="<?php echo $buy_now_link; ?>">
+                    	<?php 
+                    	    } else {
+                    	?>
                         <a class="btn btn-small btn-info" href="<?php echo $buy_now_link; ?>">
+                    	<?php 
+                    	    }
+                    	?>
                         	<i class="icon-shopping-cart icon-white "></i> 
                         	<?php echo $osC_Language->get('button_buy_now'); ?>
                         </a><br />
