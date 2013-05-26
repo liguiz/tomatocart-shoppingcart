@@ -46,14 +46,14 @@
             	    endif;
             	?>
                 <div class="left">
-                    <?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $product['products_id']), $product['products_image'], 'id="productImage' . $product['products_id'] . '"'); ?> 
+                    <?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $product['products_id']), $product['products_image'], 'id="img_ac_newproductsmodule_' . $product['products_id'] . '"'); ?> 
                     <h3><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $product['products_id']), $product['products_name']); ?></h3>
                     <p class="description"><?php echo strip_tags($osC_Product->getDescription()); ?></p>
                 </div>
                 <div class="right">
                     <span class="price"><?php echo $osC_Product->getPriceFormated(true); ?></span>
                     <span class="buttons hidden-phone">
-                        <a class="btn btn-small btn-info" href="<?php echo osc_href_link(FILENAME_PRODUCTS, $product['products_id'] . '&action=cart_add'); ?>">
+                        <a id="ac_newproductsmodule_<?php echo $product['products_id']; ?>" class="btn btn-small btn-info ajaxAddToCart" href="<?php echo osc_href_link(FILENAME_PRODUCTS, $product['products_id'] . '&action=cart_add'); ?>">
                         	<i class="icon-shopping-cart icon-white "></i> 
                         	<?php echo $osC_Language->get('button_buy_now'); ?>
                         </a>

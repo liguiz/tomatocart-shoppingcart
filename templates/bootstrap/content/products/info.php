@@ -44,7 +44,7 @@
                     
                     $images = $osC_Product->getImages();
                     foreach ($images as $image){
-                        echo osc_link_object($osC_Image->getImageUrl($image['image'], 'originals'), $osC_Image->show($image['image'], $osC_Product->getTitle(), '', 'mini'), 'rel="milkbox:group_products" product-info-img="' . $osC_Image->getImageUrl($image['image'], 'product_info') . '" large-img="' . $osC_Image->getImageUrl($image['image'], 'large') . '" style="float:left" class="mini"') . "\n";
+                        echo osc_link_object($osC_Image->getImageUrl($image['image'], 'large'), $osC_Image->show($image['image'], $osC_Product->getTitle(), '', 'mini'), 'rel="milkbox:group_products" product-info-img="' . $osC_Image->getImageUrl($image['image'], 'product_info') . '" large-img="' . $osC_Image->getImageUrl($image['image'], 'large') . '" style="float:left" class="mini"') . "\n";
                     }
                 ?>
                 </div>
@@ -53,7 +53,7 @@
             <form class="form-inline span7" id="cart_quantity" name="cart_quantity" action="<?php echo osc_href_link(FILENAME_PRODUCTS, osc_get_all_get_params(array('action')) . '&action=cart_add'); ?>" method="post">
             	<div id="product-info">
             		<div class="price-info">
-            			<span class="price"><?php echo $osC_Product->getPriceFormated(true); ?></span>
+            			<span id="productInfoPrice" class="price"><?php echo $osC_Product->getPriceFormated(true); ?></span>
             			<span class="tax"><?php echo ( (DISPLAY_PRICE_WITH_TAX == '1') ? $osC_Language->get('including_tax') : '' ); ?></span>
                         <?php
                             if ($osC_Product->getAverageReviewsRating() > 0) {
@@ -64,11 +64,11 @@
             		<div class="divider"></div>
                     <div>
                       	<label><?php echo $osC_Language->get('field_sku'); ?></label>
-                      	<span><?php echo $osC_Product->getSKU(); ?></span>
+                      	<span id="productInfoSku"><?php echo $osC_Product->getSKU(); ?></span>
                     </div>
                     <div>
                       	<label><?php echo $osC_Language->get('field_availability'); ?></label>
-                      	<span><?php echo ($osC_Product->getQuantity() > 0) ? $osC_Language->get('in_stock') : $osC_Language->get('out_of_stock'); ?></span>
+                      	<span id="productInfoAvailable"><?php echo ($osC_Product->getQuantity() > 0) ? $osC_Language->get('in_stock') : $osC_Language->get('out_of_stock'); ?></span>
                     </div>
                 <?php 
                     if (PRODUCT_INFO_QUANTITY == '1') {
@@ -207,12 +207,12 @@
                 }
             ?>
             		<div class="divider"></div>
-                    <div>
+                    <div id="shoppingCart">
                     	<b><?php echo $osC_Language->get('field_short_quantity'); ?></b>&nbsp;
                     	<?php echo osc_draw_input_field('quantity', $osC_Product->getMOQ(), 'size="3"'); ?>&nbsp;
-                    	<button type="submit" id="ac_productsinfo_<?php echo osc_get_product_id($osC_Product->getID()); ?>" class="btn btn-info" title="<?php echo $osC_Language->get('button_add_to_cart'); ?>"><i class="icon-shopping-cart icon-white "></i> <?php echo $osC_Language->get('button_add_to_cart'); ?></button>
+                    	<button type="submit" id="ac_productsinfo_<?php echo osc_get_product_id($osC_Product->getID()); ?>" class="btn btn-info ajaxAddToCart" title="<?php echo $osC_Language->get('button_add_to_cart'); ?>"><i class="icon-shopping-cart icon-white "></i> <?php echo $osC_Language->get('button_add_to_cart'); ?></button>
                     </div>
-                    <div>
+                    <div id="shoppingAction">
                       <?php
                           if ($osC_Template->isInstalled('compare_products', 'boxes')) {
                               echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params() . '&cid=' . $osC_Product->getID() . '&' . '&action=compare_products_add'), $osC_Language->get('add_to_compare'), 'class="compare-products"') . '&nbsp;<span>|</span>&nbsp;';
@@ -509,7 +509,7 @@
 <script type="text/javascript" src="ext/mojozoom/mojozoom.js"></script>
 
 <?php if ($osC_Product->hasVariants()) { ?>
-  <script type="text/javascript" src="includes/javascript/variants.js"></script>
+  <script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/javascript/variants.js"></script>
 <?php } ?>
 
 <script type="text/javascript">
@@ -550,7 +550,7 @@ window.addEvent('domready', function(){
     ?>
   new TocVariants({
     remoteUrl: '<?php echo osc_href_link('json.php', null, 'SSL', false, false, true); ?>',
-    combVariants: $$('tr.variantCombobox select'),
+    combVariants: $$('.variantCombobox select'),
     variants: <?php echo $toC_Json->encode($osC_Product->getVariants()); ?>,
     productsId: <?php echo $osC_Product->getID(); ?>,
     displayQty:  <?php echo (PRODUCT_INFO_QUANTITY == '1') ? 'true' : 'false'; ?>,
