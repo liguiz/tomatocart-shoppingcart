@@ -18,7 +18,6 @@ var PopupCart = new Class({
     sessionId: null,
     isCartExpanded: false,
     triggerEl: $('popupCart'),
-//    btnClose: 'btnClosePopCart',
     container: $('pageHeader'),
     clsCollapsed: 'cartCallpased',
     clsExpanded: 'cartExpanded',
@@ -84,6 +83,7 @@ var PopupCart = new Class({
   
   displayCart: function(response) {
     var result = JSON.decode(response);
+    var _this = this;
 
     if (result.success == true) {
       if (!$defined(this.cartContainer)) {
@@ -99,21 +99,26 @@ var PopupCart = new Class({
             'left': pos.left - this.options.relativeLeft    
           }
         });
+        
+        this.cartContainer.addEvent('click', function(e) {
+            e.stop();
+        });
+        
+        $(document.body).addEvent('click', function(e) {
+            var display = _this.cartContainer.getStyle('display');
+            
+            if (display == 'block') {
+                _this.cartContainer.fade('out');
+                
+                _this.options.isCartExpanded = false;
+            }
+        });
       } else {
         this.cartContainer.set('html', result.content);
       }
       
       this.options.container.adopt(this.cartContainer);
       this.cartContainer.setStyle('opacity', 0).fade('in');
-      
-//      $(this.options.btnClose).addEvent('click', function(e) {
-//        e.stop();
-//        
-//        this.cartContainer.fade('out');
-//        
-//        this.options.isCartExpanded = false;
-//        
-//      }.bind(this));
       
       this.options.isCartExpanded = true;
     }
