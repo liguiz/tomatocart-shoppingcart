@@ -61,7 +61,7 @@ function build_categories_dropdown_menu($parents_id = 0, $categories = null, $da
     if ($parents_id == 0) {
         $data = $osC_CategoryTree->data;
         $categories = $data[0];
-        $result = '<ul class="nav" role="navigation">';
+        $result = '<ul class="nav">';
     } else {
         $result = ($parents_id == 0) ? '<ul role="menu" class="dropdown-menu" aria-labelledby="drop' . $parents_id . '">' : '<ul class="dropdown-menu">';
     }
@@ -120,14 +120,17 @@ function output_javascripts() {
     
     //add mootools 1.2.6
     $js_files = '<script type="text/javascript" src="templates/' . $osC_Template->getCode() . '/javascript/mootools-1.2.6.min.js"></script>' . "\n";
-
+    
     //add other javascript files
     foreach ($javascript_filenames as $filename) {
         //if it is mootools javascript, omit it
-        if (strpos($filename, 'mootools') === FALSE) {
+        if (strpos($filename, 'mootools') === FALSE || strpos($filename, 'ajax_shopping_cart') === FALSE) {
             $js_files .= '<script type="text/javascript" src="' . $filename . '"></script>' . "\n";
         } 
     }
+    
+    //add ajax_shopping_cart.js
+    $js_files .= '<script type="text/javascript" src="templates/' . $osC_Template->getCode() . '/javascript/ajax_shopping_cart.js"></script>' . "\n";
 
     echo $js_files;
     
