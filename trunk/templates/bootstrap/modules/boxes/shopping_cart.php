@@ -31,13 +31,13 @@ global $osC_Session, $osC_Language;
         <div id="ajaxCartContent">
             <div id="ajaxCartContentShort" class="collapsed">
                 <span class="cartTotal"></span>  
-                <span class="quantity"></span>  $osC_Language->get('text_items') .
+                <span class="quantity"></span>  <?php echo $osC_Language->get('text_items'); ?> .
             </div>
             <div id="ajaxCartContentLong" class="expanded">
                 <ul class="products collapsed" id="ajaxCartContentProducts"></ul>
                 <p id="ajaxCartContentNoProducts" class="collapsed"><?php echo $osC_Language->get('No products'); ?></p>
                 <div id="ajaxCartButtons">
-                	<a class="btn btn-mini ajaxAddToCart" href="<?php echo osc_href_link(FILENAME_CHECKOUT); ?>"><i class="icon-shopping-cart icon-white"></i> <?php echo $osC_Language->get('checkout');?>&nbsp;</a>
+                	<a class="btn btn-mini" href="<?php echo osc_href_link(FILENAME_CHECKOUT); ?>"><i class="icon-shopping-cart icon-white"></i> <?php echo $osC_Language->get('checkout');?>&nbsp;</a>
                     <div style="visibility:hidden"> 
                     	<span>clear-bug-div</span>
                     </div>
