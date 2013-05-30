@@ -275,8 +275,8 @@ require_once 'helper.php';
             ?>
     	</div>
     	<div class="span3">
-        	<!-- PayPal Logo --><table border="0" cellpadding="10" cellspacing="0" align="center" width="100%"><tr><td align="center"><a href="https://www.paypal.com/webapps/mpp/paypal-popup" title="How PayPal Works" onclick="javascript:window.open('https://www.paypal.com/webapps/mpp/paypal-popup','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;"><img src="templates/<?php echo $osC_Template->getCode(); ?>/images/paypal_solution.jpg" border="0" alt="PayPal Acceptance Mark"></a></td></tr></table><!-- PayPal Logo -->
-			<!-- PayPal Logo --><table border="0" cellpadding="10" cellspacing="0" align="center" width="100%"><tr><td align="center"><a href="https://www.paypal.com/webapps/mpp/paypal-popup" title="How PayPal Works" onclick="javascript:window.open('https://www.paypal.com/webapps/mpp/paypal-popup','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;"><img src="templates/<?php echo $osC_Template->getCode(); ?>/images/paypal_accepting.jpg" border="0" alt="Now accepting PayPal"></a></td></tr></table><!-- PayPal Logo -->
+        	<!-- PayPal Logo --><table style="width: 100%; text-align: center"><tr><td><a href="https://www.paypal.com/webapps/mpp/paypal-popup" title="How PayPal Works" onclick="javascript:window.open('https://www.paypal.com/webapps/mpp/paypal-popup','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;"><img src="templates/<?php echo $osC_Template->getCode(); ?>/images/paypal_solution.jpg" alt="PayPal Acceptance Mark"></a></td></tr></table><!-- PayPal Logo -->
+			<!-- PayPal Logo --><table style="width: 100%; text-align: center"><tr><td><a href="https://www.paypal.com/webapps/mpp/paypal-popup" title="How PayPal Works" onclick="javascript:window.open('https://www.paypal.com/webapps/mpp/paypal-popup','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;"><img src="templates/<?php echo $osC_Template->getCode(); ?>/images/paypal_accepting.jpg" alt="Now accepting PayPal"></a></td></tr></table><!-- PayPal Logo -->
     	</div>
     </div>
     <div class="row">
@@ -316,7 +316,7 @@ require_once 'helper.php';
 <script type="text/javascript" src="ext/autocompleter/Autocompleter.Request.js"></script>
 <script type="text/javascript" src="ext/autocompleter/Observer.js"></script>
 <script type="text/javascript" src="includes/javascript/auto_completer.js"></script>
-<script type="text/javascript" src="includes/javascript/popup_cart.js"></script>
+<script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/javascript/popup_cart.js"></script>
 <script type="text/javascript" src="includes/javascript/bookmark.js"></script>
 <script type="text/javascript" src="ext/menumatic/menumatic_0.68.3.js"></script>
 
