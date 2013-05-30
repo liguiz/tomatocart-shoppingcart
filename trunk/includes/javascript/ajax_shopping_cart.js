@@ -181,15 +181,15 @@ var AjaxShoppingCart = new Class({
                 var cloneProductImg = productImg.clone();
                 var srcPos = productLink.getCoordinates();
                 
-                cloneProductImg.injectAfter(productLink).setStyles({
+                cloneProductImg.injectAfter($(document)).setStyles({
                   'position': 'absolute',
                   'left': productImg.getCoordinates().left,
                   'top': productImg.getCoordinates().top-5
                 });
                 
                 var srcImage = cloneProductImg;
-              }else if ( $defined($('productImage' + pID)) ) {
-                var srcImage = $('productImage' + pID).getElement('img.productImage');
+              }else if ( $defined($('img_' + btnId)) ) {
+                var srcImage = $('img_' + btnId).getElement('img.productImage');
                  var srcPos = srcImage.getCoordinates();
               }
 
@@ -197,13 +197,13 @@ var AjaxShoppingCart = new Class({
 
               var floatImage = srcImage.clone().setStyles({
                 'position': 'absolute',
-                'width': srcPos.width * this.options.movedPicSize,
-                'height': srcPos.height * this.options.movedPicSize,
+                'width': srcPos.width,
+                'height': srcPos.height,
                 'left': srcPos.left,
                 'top': srcPos.top
               });
 
-              floatImage.injectAfter(srcImage).setStyles({position: 'absolute'}).set('morph', {
+              floatImage.injectAfter($(document.body)).setStyles({position: 'absolute'}).set('morph', {
                 duration: 700,
                 onComplete: function() {
                   floatImage.fade('out');
