@@ -146,7 +146,7 @@
       $height = 0;
     }
 
-    $image = '<img src="' . osc_output_string($image) . '" border="0" alt="' . osc_output_string($title) . '"';
+    $image = '<img src="' . osc_output_string($image) . '" alt="' . osc_output_string($title) . '"';
 
     if (!empty($title)) {
       $image .= ' title="' . osc_output_string($title) . '"';
