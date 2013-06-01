@@ -134,8 +134,8 @@ Ext.extend(Ext.app.App, Ext.util.Observable, {
     this.isReady = true;
     
     this.onReady(function(){
-      Ext.get('x-loading-mask').hide();
-      Ext.get('x-loading-panel').hide();
+      Ext.get('x-loading-mask').remove();
+      Ext.get('x-loading-panel').remove();
       
       this.showLiveFeedNotification();
     },this);
