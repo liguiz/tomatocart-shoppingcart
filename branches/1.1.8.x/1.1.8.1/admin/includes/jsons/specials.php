@@ -255,7 +255,10 @@
 
     $osC_CategoryTree = new osC_CategoryTree_Admin();
     
-    $current_category_id = isset($_REQUEST['categories_id']) && !empty($_REQUEST['categories_id']) ? $_REQUEST['categories_id'] : 0;
+    //Get the current category - Fix the bug#78
+    $cPath = isset($_POST['categories_id']) && !empty($_POST['categories_id']) ? $_POST['categories_id'] : 0;
+    $cPath_array = array_unique(array_filter(explode('_', $cPath), 'is_numeric'));
+    $current_category_id = end($cPath_array);
 
     if ( $current_category_id > 0 ) {
       $osC_CategoryTree->setBreadcrumbUsage(false);
