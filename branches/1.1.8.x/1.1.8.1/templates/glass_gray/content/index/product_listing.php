@@ -34,13 +34,19 @@
     $Qfilterlist->execute();
 
     if ($Qfilterlist->numberOfRows() > 1) {
-
-      echo '<form name="filter" action="' . osc_href_link(FILENAME_DEFAULT) . '" method="get">' . $osC_Language->get('filter_show') . '&nbsp;';
+      //products listing page for specific manufactuer
       if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
-        echo osc_draw_hidden_field('manufacturers', $_GET['manufacturers']);
+        $action = osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $_GET['manufacturers']);
+        
+      //product listing page for specific category
+      }else {
+        $action = osc_href_link(FILENAME_DEFAULT, 'cPath=' . $cPath);
+      }
+
+      echo '<form name="filter" action="' . $action . '" method="get">' . $osC_Language->get('filter_show') . '&nbsp;';
+      if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
         $options = array(array('id' => '', 'text' => $osC_Language->get('filter_all_categories')));
       } else {
-        echo osc_draw_hidden_field('cPath', $cPath);
         $options = array(array('id' => '', 'text' => $osC_Language->get('filter_all_manufacturers')));
       }
       

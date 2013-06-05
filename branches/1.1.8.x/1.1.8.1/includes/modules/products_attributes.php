@@ -36,11 +36,19 @@
   if (isset($Qgroups) && ($Qgroups->numberOfRows() > 0)) {
     echo '<div class="moduleBox"><h6>'.$osC_Language->get('products_attributes_filter').'</h6>' . "\n";
     echo '  <div id="productAttributes" class="content">' . "\n";
-    if ( isset($current_category_id) && !empty($current_category_id) ) {
-      echo '    <form name="filter" action="' . osc_href_link(FILENAME_DEFAULT) . '" method="get">' . osc_draw_hidden_field('cPath', isset($_GET['cPath'])? $_GET['cPath'] :'') . osc_draw_hidden_session_id_field();
-    }else if ( isset($_GET['manufacturers']) && !empty($_GET['manufacturers']) ) {
-      echo '    <form name="filter" action="' . osc_href_link(FILENAME_DEFAULT) . '" method="get">' . osc_draw_hidden_field('manufacturers', $_GET['manufacturers']) . osc_draw_hidden_session_id_field();
+    
+   //products listing page for specific manufactuer
+    if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
+      $action = osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $_GET['manufacturers']);
+      
+    //product listing page for specific category
+    }else {
+      $action = osc_href_link(FILENAME_DEFAULT, 'cPath=' . $cPath);
     }
+      
+    echo '<form name="filter" action="' . $action . '" method="get">';
+    
+    echo osc_draw_hidden_session_id_field();
     
     //whether the products attributes filter and the category/manufacturer filter is linked
     if (defined('PRODUCT_LINK_FILTER') && (PRODUCT_LINK_FILTER == '1')) {
