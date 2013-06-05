@@ -55,7 +55,7 @@ var TocVariants = new Class({
   checkCompareProducts: function() {
   	var linkCp = $$(this.options.linkCompareProductsCls);
   	
-    if ($chk(linkCp)) {
+    if (linkCp.length > 0) {
       this.linkCp = linkCp[0];
       this.linkCpHref = this.linkCp.getProperty('href');
       
@@ -69,7 +69,7 @@ var TocVariants = new Class({
   checkWishlist: function() {
     var linkWp = $$(this.options.linkWishlistCls);
     
-    if ($chk(linkWp)) {
+    if (linkWp.length > 0) {
       this.linkWp = linkWp[0];
       this.linkWpHref = this.linkWp.getProperty('href');
       
@@ -95,14 +95,14 @@ var TocVariants = new Class({
   	var productsIdString = this.getProductsIdString();
   	
   	//if it is in the product info page and the product have any variants, add the variants into the compare products link
-  	if ($chk(this.linkCp)) {
+  	if (this.linkCp) {
     	var href = this.linkCpHref + '&cid=' + productsIdString.replace(/#/, '_');
     	
     	this.linkCp.setProperty('href', href);
 	  }
 	  
 	  //handler the wishlist
-    if ($chk(this.linkWp)) {
+    if (this.linkWp) {
       var href = this.linkWpHref + '&wid=' + productsIdString.replace(/#/, '_');
       
       this.linkWp.setProperty('href', href);
@@ -151,6 +151,8 @@ var TocVariants = new Class({
       var href = link.getProperty('href');
       if (href.indexOf(image) > -1) {
         link.fireEvent('mouseover');
+      }else {
+        link.fireEvent('mouseleave');
       }
     });
   }
