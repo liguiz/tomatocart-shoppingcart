@@ -8,7 +8,7 @@
 # it under the terms of the GNU General Public License v2 (1991)
 # as published by the Free Software Foundation.
 
-heading_title = Products Report
+heading_title = Product Reports
 
 products_purchased_heading_title = Best Purchased Products
 products_viewed_heading_title = Best Viewed Products

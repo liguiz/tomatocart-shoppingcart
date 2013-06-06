@@ -8,7 +8,7 @@
 # it under the terms of the GNU General Public License v2 (1991)
 # as published by the Free Software Foundation.
 
-access_reports_web_title = Web Analytics Report
+access_reports_web_title = Web Analytics Reports
 
 access_visits_summary_title = Visits Summary
 access_traffic_source_summary_title = Traffic Source Summary

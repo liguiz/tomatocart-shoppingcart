@@ -8,7 +8,7 @@
 # it under the terms of the GNU General Public License v2 (1991)
 # as published by the Free Software Foundation.
 
-access_reports_customers_title = Orders Report
+access_reports_customers_title = Order Reports
 
 access_best_orders_title = Best Orders
 access_orders_total_title = Orders Total
