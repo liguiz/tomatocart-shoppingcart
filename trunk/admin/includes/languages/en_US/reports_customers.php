@@ -8,7 +8,7 @@
 # it under the terms of the GNU General Public License v2 (1991)
 # as published by the Free Software Foundation.
 
-heading_title = Orders Reports
+heading_title = Order Reports
 
 best_orders_heading_title = Best Orders
 orders_total_heading_title = Orders Total

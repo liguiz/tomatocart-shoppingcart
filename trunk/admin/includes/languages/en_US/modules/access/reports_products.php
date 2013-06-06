@@ -8,7 +8,7 @@
 # it under the terms of the GNU General Public License v2 (1991)
 # as published by the Free Software Foundation.
 
-access_reports_products_title = Products Report
+access_reports_products_title = Product Reports
 
 access_products_purchased_title = Products Purchased
 access_products_viewed_title = Products Viewed
