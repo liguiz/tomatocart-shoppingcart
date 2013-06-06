@@ -19,8 +19,15 @@ class toC_Credit_Slip_PDF {
         $_credit_slip = null;
   
     function toC_Credit_Slip_PDF() {
+      global $osC_Customer;
+        
       $this->_credit_slip = new toC_Credit_Slip($_GET['credit_slip_id']);
       $customer_info = $this->_credit_slip->getCustomerInfo();
+          
+      $logged_in_customers_id = $osC_Customer->getID();
+      if ($logged_in_customers_id != $customer_info['id']) {
+          die ('You are not allowed to print this credit slip');
+      }
       
       $this->_pdf = new TOCPDF('P', 'mm', 'A4', true, 'UTF-8');
       $this->_pdf->SetCreator('TomatoCart');

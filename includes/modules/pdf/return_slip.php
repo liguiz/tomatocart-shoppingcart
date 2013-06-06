@@ -19,8 +19,15 @@
         $_order_return = null;
   
     function toC_Return_Slip_PDF() {
+      global $osC_Customer;
+      
       $this->_order_return = new toC_Order_Return($_GET['orders_returns_id']);
       $customer_info = $this->_order_return->getCustomerInfo();
+      
+      $logged_in_customers_id = $osC_Customer->getID();
+      if ($logged_in_customers_id != $customer_info['id']) {
+          die ('You are not allowed to print this return slip');
+      }
       
       $this->_pdf = new TOCPDF('P', 'mm', 'A4', true, 'UTF-8');
       $this->_pdf->SetCreator('TomatoCart');

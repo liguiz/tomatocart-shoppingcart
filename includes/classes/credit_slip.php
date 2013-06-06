@@ -48,7 +48,8 @@
 
       $this->_date_purchased = $Qorder->value('date_purchased');
 
-      $this->_customer_info = array('name' => $Qorder->valueProtected('billing_name'),
+      $this->_customer_info = array('id' => $Qorder->valueInt('customers_id'),
+                             'name' => $Qorder->valueProtected('billing_name'),
                              'company' => $Qorder->valueProtected('billing_company'),
                              'street_address' => $Qorder->valueProtected('billing_street_address'),
                              'suburb' => $Qorder->valueProtected('billing_suburb'),
