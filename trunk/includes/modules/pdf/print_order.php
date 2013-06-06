@@ -17,10 +17,18 @@
         $_order = null;
     
     function toC_Print_order_PDF() {
+      global $osC_Customer;
+      
       $this->_order = new osC_Order($_REQUEST['orders_id']);
       
       $customer_info = $this->_order->getBilling();
       $customer_info['email_address'] = $this->_order->getCustomer['email_address'];
+      
+      $customers_id = $this->_order->getCustomer('id');
+      $logged_in_customers_id = $osC_Customer->getID();
+      if ($customers_id != $osC_Customer->getID()) {
+          die ('You are not allowed to print this order');
+      }
       
       $this->_pdf = new TOCPDF('P', 'mm', 'A4', true, 'UTF-8');
       $this->_pdf->SetCreator('TomatoCart');
