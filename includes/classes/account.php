@@ -14,12 +14,13 @@
   class osC_Account {
 
     function &getEntry() {
-      global $osC_Database, $osC_Customer;
+      global $osC_Database, $osC_Customer, $osC_Language;
 
-      $Qaccount = $osC_Database->query('select tc.customers_credits, tc.customers_gender, tc.customers_firstname, tc.customers_lastname, date_format(tc.customers_dob, "%Y") as customers_dob_year, date_format(tc.customers_dob, "%m") as customers_dob_month, date_format(tc.customers_dob, "%d") as customers_dob_date, tc.customers_email_address, tcgd.customers_groups_name from :table_customers tc left join :table_customers_groups_description tcgd on tc.customers_groups_id = tcgd.customers_groups_id where tc.customers_id = :customers_id');
+      $Qaccount = $osC_Database->query('select tc.customers_credits, tc.customers_gender, tc.customers_firstname, tc.customers_lastname, date_format(tc.customers_dob, "%Y") as customers_dob_year, date_format(tc.customers_dob, "%m") as customers_dob_month, date_format(tc.customers_dob, "%d") as customers_dob_date, tc.customers_email_address, tcgd.customers_groups_name from :table_customers tc left join :table_customers_groups_description tcgd on tc.customers_groups_id = tcgd.customers_groups_id where tc.customers_id = :customers_id and tcgd.language_id = :language_id');
       $Qaccount->bindTable(':table_customers', TABLE_CUSTOMERS);
       $Qaccount->bindTable(':table_customers_groups_description', TABLE_CUSTOMERS_GROUPS_DESCRIPTION);
       $Qaccount->bindInt(':customers_id', $osC_Customer->getID());
+      $Qaccount->bindInt(':language_id', $osC_Language->getID());
       $Qaccount->execute();
 
       return $Qaccount;
