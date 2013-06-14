@@ -386,7 +386,7 @@ var Milkbox = new Class({
 		
 		$$('a').each(function(a){
 			//test 'milkbox' and link extension, and collect all milkbox links
-			if(a.rel && a.rel.test(/^milkbox/i) && a.href.split('?')[0].test(/\.(gif|jpg|png)$/i)){
+			if(a.rel && a.rel.test(/^milkbox/i) && a.href.split('?')[0].test(/\.(gif|jpeg|jpg|png)$/i)){
 				if(a.rel.length>7 && !families.contains(a.rel)){ families.push(a.rel); };
 				milkbox_a.push(a);
 			}
