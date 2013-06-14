@@ -61,7 +61,16 @@
     
       //Logo
       $logo = toC_Logo_Upload::getOriginalLogo();
-      $logo = ($logo === false) ? (DIR_FS_CATALOG . DIR_WS_IMAGES . 'store_logo.jpg') : $logo;
+      
+      //verify whether the default logo is existed when the template logo isn't uploded yet
+      if ($logo === false) {
+          if (file_exists(DIR_FS_CATALOG . DIR_WS_IMAGES . 'store_logo.jpg')) {
+              $logo = DIR_FS_CATALOG . DIR_WS_IMAGES . 'store_logo.jpg';
+          }else if (file_exists(DIR_FS_CATALOG . DIR_WS_IMAGES . 'store_logo.png')){
+              $logo = DIR_FS_CATALOG . DIR_WS_IMAGES . 'store_logo.png';
+          }
+      }
+      
       $this->Image($logo, TOC_PDF_LOGO_UPPER_LEFT_CORNER_X, TOC_PDF_LOGO_UPPER_LEFT_CORNER_Y, TOC_PDF_LOGO_WIDTH, TOC_PDF_LOGO_HEIGHT);
       
       //Line
