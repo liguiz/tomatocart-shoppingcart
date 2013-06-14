@@ -25,7 +25,7 @@
     }
 
     function initialize() {
-      global $osC_Database, $osC_Language;
+      global $osC_Database, $osC_Language, $osC_Template, $osC_Services;
 
       $Qmanufacturers = $osC_Database->query('select m.manufacturers_id as id, m.manufacturers_name as text, m.manufacturers_image as image from :table_manufacturers m, :table_manufacturers_info mi where m.manufacturers_id = mi.manufacturers_id and mi.languages_id = :languages_id order by manufacturers_name');
       $Qmanufacturers->bindTable(':table_manufacturers', TABLE_MANUFACTURERS);
@@ -35,15 +35,66 @@
       $Qmanufacturers->execute();
 
       if (BOX_MANUFACTURERS_LIST_TYPE == 'ComboBox') {
-        $manufacturers_array = array(array('id' => '', 'text' => $osC_Language->get('pull_down_default')));
+        //verify whether the seo friendly url is enabled
+        if (isset($osC_Services) && $osC_Services->isStarted('sefu')) {
+          $this->_content .= '<select class="boxSelect">';
+          $this->_content .= '<option value="">' . $osC_Language->get('pull_down_default') . '</option>';
+          
+          while ($Qmanufacturers->next()) {
+             //verify whether it is the current selected manufacturer
+             $selected = false;
+             if (isset($_GET['manufacturers'])) {
+               if ($_GET['manufacturers'] == $Qmanufacturers->valueInt('id')) {
+                 $selected = true;
+               }elseif (strpos($_SERVER['REQUEST_URI'], '_') != false) {
+                 $url = trim($_SERVER['REQUEST_URI'], '/');
+                 $parts = explode('_', $url);
+                 
+                 $manufactures_id = $parts[0];
+                 
+                 if ($manufactures_id == $Qmanufacturers->valueInt('id')) {
+                   $selected = true;
+                 }
+               }
+             }
+             
+             if ($selected == true) {
+               $this->_content .= '<option value="' . osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $Qmanufacturers->valueInt('id')) . '" selected="selected">' . $Qmanufacturers->value('text') . '</option>';
+             }else {
+               $this->_content .= '<option value="' . osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $Qmanufacturers->valueInt('id')) . '">' . $Qmanufacturers->value('text') . '</option>';
+             }
+          }
+          
+          $this->_content .= '</select>';
+          
+          //add the javascript block so that make the seo friendly url work normally
+          $osC_Template->addJavascriptBlock('<script type="text/javascript">
+                                              window.addEvent("domready", function() {
+                                                $$("select.boxSelect").each(function(boxSelect) {
+                                                  boxSelect.addEvent("change", function() {
+                                                     var link = boxSelect.get("value");
+                                                      
+                                                      window.location = link;
+                                                      
+                                                      return false;
+                                                  });
+                                                });
+                                              });
+                                            </script>');
+          
+          //add the css declaration
+          $osC_Template->addStyleDeclaration('select.boxSelect {width: 193px;}');
+        }else {
+           $manufacturers_array = array(array('id' => '', 'text' => $osC_Language->get('pull_down_default')));
   
-        while ($Qmanufacturers->next()) {
-          $manufacturers_array[] = $Qmanufacturers->toArray();
+            while ($Qmanufacturers->next()) {
+              $manufacturers_array[] = $Qmanufacturers->toArray();
+            }
+      
+            $this->_content = '<form name="manufacturers" action="' . osc_href_link(FILENAME_DEFAULT, null, 'NONSSL', false) . '" method="get">' .
+                              osc_draw_pull_down_menu('manufacturers', $manufacturers_array, null, 'onchange="this.form.submit();" size="' . BOX_MANUFACTURERS_LIST_SIZE . '" style="width: 99%"') . osc_draw_hidden_session_id_field() .
+                              '</form>';
         }
-  
-        $this->_content = '<form name="manufacturers" action="' . osc_href_link(FILENAME_DEFAULT, null, 'NONSSL', false) . '" method="get">' .
-                          osc_draw_pull_down_menu('manufacturers', $manufacturers_array, null, 'onchange="this.form.submit();" size="' . BOX_MANUFACTURERS_LIST_SIZE . '" style="width: 99%"') . osc_draw_hidden_session_id_field() .
-                          '</form>';
       } else {
         $this->_content = '<ul>';
         
