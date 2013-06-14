@@ -154,7 +154,7 @@ ul.autocompleter-choices li.autocompleter-selected span.autocompleter-queried{co
 #popupCartContent .content {padding: 5px 10px;}
 #popupCartContent .content table tr {border-bottom: 1px dashed #CDCDCD;}
 #popupCartContent .subtotal {float: right;margin: 8px 0;font-weight: bold;}
-#popupCartItems {margin-right:5px;}
+#popupCartItems {display: inline-block; margin-right:5px;}
 .cart a {text-decoration: none;}
 
 /*MenuMatic*/
