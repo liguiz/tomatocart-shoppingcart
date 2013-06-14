@@ -22,8 +22,7 @@ var TocVariants = new Class({
       txtOutOfStock: 'Out Of Stock',
       txtNotAvailable: 'Not Available',
       txtTaxText: 'incl. tax'
-    },
-    colorOutOfStock: '#FF0000'
+    }
   },
   
   sendRequest: function(data, fnSuccess) {
@@ -56,7 +55,7 @@ var TocVariants = new Class({
   checkCompareProducts: function() {
   	var linkCp = $$(this.options.linkCompareProductsCls);
   	
-    if ($chk(linkCp)) {
+    if (linkCp.length > 0) {
       this.linkCp = linkCp[0];
       this.linkCpHref = this.linkCp.getProperty('href');
       
@@ -70,7 +69,7 @@ var TocVariants = new Class({
   checkWishlist: function() {
     var linkWp = $$(this.options.linkWishlistCls);
     
-    if ($chk(linkWp)) {
+    if (linkWp.length > 0) {
       this.linkWp = linkWp[0];
       this.linkWpHref = this.linkWp.getProperty('href');
       
@@ -96,14 +95,14 @@ var TocVariants = new Class({
   	var productsIdString = this.getProductsIdString();
   	
   	//if it is in the product info page and the product have any variants, add the variants into the compare products link
-  	if ($chk(this.linkCp)) {
+  	if (this.linkCp) {
     	var href = this.linkCpHref + '&cid=' + productsIdString.replace(/#/, '_');
     	
     	this.linkCp.setProperty('href', href);
 	  }
 	  
 	  //handler the wishlist
-    if ($chk(this.linkWp)) {
+    if (this.linkWp) {
       var href = this.linkWpHref + '&wid=' + productsIdString.replace(/#/, '_');
       
       this.linkWp.setProperty('href', href);
@@ -112,38 +111,38 @@ var TocVariants = new Class({
     var product = this.options.variants[productsIdString];
     
     if (product == undefined || (product['status'] == 0)) {
-    	$('productInfoPrice').set('html', '<font color="red">--</font>');
       $('productInfoAvailable').innerHTML = '<font color="red">' + this.options.lang.txtNotAvailable + '</font>';
-
-      $('shoppingCart').fade('out');
     } else {
-    	// get the formatted price of the variants product by ajax requst
-    	this.sendRequest({action: 'get_variants_formatted_price', products_id_string: productsIdString}, function(response) {
-        var result = JSON.decode(response);
-        
-        if (result.success == true) {
-          $('productInfoPrice').set('html', result.formatted_price + ' ' + this.options.lang.txtTaxText);
-        }else {
-          alert(result.feedback);
-        }
-    	}.bind(this));
-      
-      $('productInfoSku').set('text', product['sku']);
-      if (this.options.displayQty == true) {
-        $('productInfoQty').set('text', product['quantity'] + ' ' + this.options.unitClass);
-      }
-      
       if (product['quantity'] > 0) {
+        if (this.options.hasSpecial == 0) {
+        	// get the formatted price of the variants product by ajax requst
+        	this.sendRequest({action: 'get_variants_formatted_price', products_id_string: productsIdString}, function(response) {
+            var result = JSON.decode(response);
+            
+            if (result.success == true) {
+              $('productInfoPrice').set('text', result.formatted_price + ' ' + this.options.lang.txtTaxText);
+            }else {
+              alert(result.feedback);
+            }
+        	}.bind(this));
+        }
+        
+        $('productInfoSku').set('text', product['sku']);
+        if (this.options.displayQty == true) {
+          $('productInfoQty').set('text', product['quantity'] + ' ' + this.options.unitClass);
+        }
         $('productInfoAvailable').set('text', this.options.lang.txtInStock);
-      }else {
-        $('productInfoAvailable').set('html', '<strong style="color:' + this.options.colorOutOfStock + ';">' + this.options.lang.txtOutOfStock + '</strong>');
+        
+        $('shoppingCart').fade('in');
+        $('shoppingAction').fade('in');
+        
+        this.changeImage(product['image']);
+      } else {
+        $('productInfoAvailable').set('text', this.options.lang.txtOutOfStock);
+        if (this.options.displayQty == true) {
+          $('productInfoQty').set('text', product['quantity'] + ' ' + this.options.unitClass);
+        }
       }
-      
-      
-      $('shoppingCart').fade('in');
-      $('shoppingAction').fade('in');
-      
-      this.changeImage(product['image']);
     }
   },
   
@@ -152,6 +151,8 @@ var TocVariants = new Class({
       var href = link.getProperty('href');
       if (href.indexOf(image) > -1) {
         link.fireEvent('mouseover');
+      }else {
+        link.fireEvent('mouseleave');
       }
     });
   }
