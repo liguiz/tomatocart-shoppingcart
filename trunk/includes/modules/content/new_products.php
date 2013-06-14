@@ -61,7 +61,7 @@
           
           $this->_content .= '<div style="margin-top: 10px; float:left; width: 33%; text-align: center">' .
                              '<span style="display:block; height: 32px; text-align: center">' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qnewproducts->value('products_id')), $Qnewproducts->value('products_name')) . '</span>' . 
-                             osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qnewproducts->value('products_id')), $osC_Image->show($Qnewproducts->value('image'), $Qnewproducts->value('products_name')), 'id="productImage' . $Qnewproducts->value('products_id') . '"') .
+                             osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qnewproducts->value('products_id')), $osC_Image->show($Qnewproducts->value('image'), $Qnewproducts->value('products_name')), 'id="img_ac_newproductsmodule_' . $Qnewproducts->value('products_id') . '"') .
                              '<span style="display:block; padding: 3px; text-align: center">' . $product->getPriceFormated(true) . '</span>' . 
                              osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qnewproducts->valueInt('products_id') . '&action=cart_add'), osc_draw_image_button('button_add_to_cart.png', $osC_Language->get('button_add_to_cart'), 'class="ajaxAddToCart" id="ac_newproductsmodule_' . $Qnewproducts->value('products_id') . '"')) . '</div>';
 
