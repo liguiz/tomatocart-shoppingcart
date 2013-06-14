@@ -146,6 +146,30 @@ Ext.extend(Toc.modules_shipping.ShippingModuleConfigDialog, Ext.Window, {
             
             this.moduleForm.add(multiS);
             this.moduleForm.add(multiSvalue);
+          } else if (field.type == 'usps_checkbox') {
+            var selected = field.value.split(',');
+            Ext.each(field.values, function(value, i){
+              var hideLabel = (i != 0) ? true : false;
+              
+              var checked = false;
+             
+              for (var j = 0; j < selected.length; j++) {
+                if (selected[j] == value.id) {
+                  checked = true;
+                }
+              }  
+              
+              var checkBox = new Ext.form.Checkbox({
+                fieldLabel: '<b>' + field.title + '</b><br />' + field.description,
+                name: field.name,
+                boxLabel: value.text,
+                inputValue: value.id,
+                hideLabel: hideLabel,
+                checked : checked
+              });
+              
+              this.moduleForm.add(checkBox);
+            }, this);
           }
         },this);
         
