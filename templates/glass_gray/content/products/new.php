@@ -33,7 +33,7 @@
         <td width="<?php echo $osC_Image->getWidth('thumbnails') + 10; ?>" valign="top" align="left">
     
     <?php
-        echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->value('products_id')), $osC_Image->show($Qproducts->value('image'), $Qproducts->value('products_name')), 'id="productImage' . $Qproducts->value('products_id') . '"');
+        echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->value('products_id')), $osC_Image->show($Qproducts->value('image'), $Qproducts->value('products_name')), 'id="img_ac_productsnew_' . $Qproducts->value('products_id') . '"');
     ?>
     
         </td>
