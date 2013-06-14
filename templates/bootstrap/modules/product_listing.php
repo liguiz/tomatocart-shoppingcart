@@ -67,7 +67,7 @@
             		?>
             		</div>
 				</div>
-				<div class="span5" align="center">
+				<div class="span5 center">
 					<?php 
     					if (count($filters) > 0) {
     					    echo osc_draw_pull_down_menu('filter', $filters, (isset($_GET['filter']) ? $_GET['filter'] : null), 'onchange="this.form.submit()"');
