@@ -682,21 +682,25 @@
       return sprintf($text, $this->batch_from, $this->batch_to, $this->batch_size);
     }
 
-    function getBatchPageLinks($batch_keyword = 'page', $parameters = '', $with_pull_down_menu = false) {
-      $string = '<div class="pagination">';
-      
+    function getBatchPageLinks($batch_keyword = 'page', $parameters = '', $with_pull_down_menu = true) {
+       if ($with_pull_down_menu === false) {
+           $string = '<div class="pagination">';
+       }
+        
       $string .= $this->getBatchPreviousPageLink($batch_keyword, $parameters);
 
       if ( $with_pull_down_menu === true ) {
         $string .= $this->getBatchPagesPullDownMenu($batch_keyword, $parameters);
-      }else {
-        $string .= $this->getBatchPagesList($batch_keyword, $parameters);
+      }else {        
+        $string .= $this->getBatchPagesList($batch_keyword, $parameters);       
       }
-
+          
       $string .= $this->getBatchNextPageLink($batch_keyword, $parameters);
       
-      $string .= '</div>';
-
+      if ($with_pull_down_menu === false) {
+          $string .= '</div>';
+      }
+          
       return $string;
     }
     
