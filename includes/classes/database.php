@@ -682,14 +682,55 @@
       return sprintf($text, $this->batch_from, $this->batch_to, $this->batch_size);
     }
 
-    function getBatchPageLinks($batch_keyword = 'page', $parameters = '', $with_pull_down_menu = true) {
-      $string = $this->getBatchPreviousPageLink($batch_keyword, $parameters);
+    function getBatchPageLinks($batch_keyword = 'page', $parameters = '', $with_pull_down_menu = false) {
+      $string = '<div class="pagination">';
+      
+      $string .= $this->getBatchPreviousPageLink($batch_keyword, $parameters);
 
       if ( $with_pull_down_menu === true ) {
         $string .= $this->getBatchPagesPullDownMenu($batch_keyword, $parameters);
+      }else {
+        $string .= $this->getBatchPagesList($batch_keyword, $parameters);
       }
 
       $string .= $this->getBatchNextPageLink($batch_keyword, $parameters);
+      
+      $string .= '</div>';
+
+      return $string;
+    }
+    
+    /**
+     * Output the pagination with list style
+     * 
+     * @access public
+     * @param $batch_keyword [string] - the default url parameter for pagination
+     * @param $parameters [string] - the parameters for each page link
+     * @return string
+     */
+    function getBatchPagesList($batch_keyword = 'page', $parameters = '') {
+      global $osC_Language;
+      
+      //calculte the total pages
+      $total_pages = ceil($this->batch_size / $this->batch_rows);
+      
+      //output the pagination when total pages is greater than 1
+      if ($total_pages > 1) {
+        $string .= '<ul>';
+
+        for ( $i = 1; $i <= $total_pages; $i++ ) {
+          if ($i == $_GET[$batch_keyword]) {
+            $string .= '<li><span>' . $i . '</span></li>';
+          }else {
+            $string .= '<li>' . osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $parameters ? $parameters . '&' . $batch_keyword . '='  . $i : $batch_keyword . '='  . $i), $i) . '</li>';
+          }
+          
+        }
+        
+        $string .= '</ul>';
+      }else {
+        $string = sprintf($osC_Language->get('result_set_current_page'), 1, 1);
+      }
 
       return $string;
     }

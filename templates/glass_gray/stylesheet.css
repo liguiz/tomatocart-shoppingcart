@@ -143,7 +143,7 @@ A {
 }
 
 A:hover {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
 *:focus {
@@ -376,7 +376,7 @@ height: 0;
 }
 
 #headerBar #bookmark {
-	background-image: none;
+    background-image: none;
   padding-left: 0;
 }
 
@@ -1062,3 +1062,38 @@ span.error {
 .accessories .image {float: left; width: 100px}
 .accessories .desc {float: right; width: 400px}
 .accessories .desc h6 a{color: #616060}
+
+/* Pagination */
+.pagination {
+  margin: 10px 0;
+}
+.pagination ul {
+  display: inline-block;
+  margin-bottom: 0;
+  margin-left: 0;
+}
+.pagination ul > li {
+  display: inline;
+}
+.pagination ul > li > a{
+  border: 1px solid #EEEEEE;
+  color: #333333;
+  display: inline-block;
+  padding: 4px 10px;
+  text-decoration: none;
+  margin: 0 3px;
+}
+
+.pagination ul > li > span {
+  background: #FFFFFF;
+  border: 1px solid #3288C2;
+  color: #3288C2;
+  display: inline-block;
+  font-weight: normal;
+  padding: 4px 10px;
+  text-decoration: none;
+}
+
+.pagination ul > li > a:hover, .pagination ul > li > a:focus {
+  background-color: #F5F5F5;
+}
