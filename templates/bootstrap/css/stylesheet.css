@@ -154,6 +154,8 @@ ul.autocompleter-choices li.autocompleter-selected span.autocompleter-queried{co
 #popupCartContent .content {padding: 5px 10px;}
 #popupCartContent .content table tr {border-bottom: 1px dashed #CDCDCD;}
 #popupCartContent .subtotal {float: right;margin: 8px 0;font-weight: bold;}
+#popupCartItems {margin-right:5px;}
+.cart a {text-decoration: none;}
 
 /*MenuMatic*/
 .smOW{display:none; position: absolute; min-width: 180px;overflow:hidden;}
@@ -300,6 +302,7 @@ ul.autocompleter-choices li.autocompleter-selected span.autocompleter-queried{co
     border: medium none;
     padding: 8px 15px;
 }
+
 /**box-categories**/
 #boxCategories {
     border: none;
@@ -358,6 +361,11 @@ ul.autocompleter-choices li.autocompleter-selected span.autocompleter-queried{co
 #box-shop-by-price .boxContents {
     padding: 0px;
 }
+
+/** box-manufacturers**/
+#boxManufacturers .boxContents {text-align:center;}
+#boxManufacturers .boxContents li {margin:5px;border-bottom:none;}
+
 /*******************************************
  *            Module Box
 *******************************************/
@@ -688,6 +696,9 @@ ul.grid .productImage, ul.list .productImage {
     border-bottom: 1px solid #CDCDCD;
     background: none repeat scroll 0 0 #FCFCFC;
 }
+
+#productImages .mini {margin-right:5px;}
+
 /*******************************************
  *         Checkout
 *******************************************/
