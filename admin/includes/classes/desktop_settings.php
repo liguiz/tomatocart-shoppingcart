@@ -131,7 +131,7 @@
       $settings['shortcut'] = '["articles_categories-win","articles-win","faqs-win","slide_images-win","products-win","customers-win","orders-win", "invoices-win", "coupons-win","gift_certificates-win","dashboard-win"]';
       $settings['wizard_complete'] = false;
       
-      $settings['dashboards'] = 'overview:0,new_orders:1,new_customers:2,new_reviews:0,orders_statistics:1,last_visits:2';
+      $settings['dashboards'] = 'overview:0,new_orders:1,new_customers:2,new_reviews:0,orders_statistics:1';
       
       $settings['gadgets'] = '["clock","new_customers","new_orders"]';
       $settings['sidebartransparency'] = '5';
