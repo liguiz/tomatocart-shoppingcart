@@ -317,11 +317,5 @@
     echo SERVICES_GOOGLE_ANALYTICS_CODE;
   }
 ?>
-
-<?php
-  if ($osC_Services->isStarted('piwik')) {
-    echo $toC_Piwik->renderJs();
-  }
-?>
 </body>
 </html>
