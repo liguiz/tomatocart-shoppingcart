@@ -11,7 +11,7 @@
   as published by the Free Software Foundation.
 */
   $files = array('/sitemapsIndex.xml', '/sitemapsCategories.xml', '/sitemapsProducts.xml', 
-                 '/sitemapsArticles.xml', '/includes/configure.php', '/ext/piwik/config/config.ini.php');
+                 '/sitemapsArticles.xml', '/includes/configure.php');
   
   $directories = array('/admin/images', '/admin/backups', '/cache', 
                        '/cache/admin', '/cache/admin/emails', '/cache/admin/emails/attachments',
@@ -22,8 +22,6 @@
                        '/images/products/large', '/images/products/mini', '/images/products/originals',
                        '/images/products/product_info', '/images/products/thumbnails', '/images/categories',
                        '/images/manufacturers', '/includes/work', '/includes/logs', '/templates',
-                       '/ext/piwik/', '/ext/piwik/config', '/ext/piwik/tmp',
-                       '/ext/piwik/tmp/cache', '/ext/piwik/tmp/templates_c',
                        '/admin/includes/languages', '/includes/languages', '/install/includes/languages', '/install/templates/main_page/languages');
   
   $root_dir = osc_realpath(dirname(__FILE__) . '/../../../');
