@@ -78,7 +78,7 @@
       $interval = MODULE_BOX_PRODUCTS_SCROLLER_INTERVAL;
 
       $num_of_images = floor($height / ($osC_Image->getHeight('thumbnails') + 40));
-      $image_height = floor($height / $num_of_images);
+      $image_height = floor($height / $num_of_images + 40);
 
       $css = '#productsScrollerWrapper {position:relative;width:' . $width . 'px;height:' . $height . 'px;overflow:hidden;}' . "\n" .
              '#productsScroller {position:absolute;text-align:center;width:' . $width . 'px;}' . "\n" .

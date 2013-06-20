@@ -40,7 +40,7 @@
                 ?>
                 <h6><?php echo $Qpoll->value('polls_title'); ?></h6>
                 <?php 
-                        $Qanswers = $osC_Database->query('select pa.polls_id, pa.polls_answers_id, pa.votes_count, pa.sort_order, pad.answers_title from :table_polls_answers pa, :table_polls_answers_description pad where pa.polls_id = :polls_id and pa.polls_answers_id = pad.polls_answers_id and pad.languages_id = :languages_id order by pa.sort_order desc');
+                        $Qanswers = $osC_Database->query('select pa.polls_id, pa.polls_answers_id, pa.votes_count, pa.sort_order, pad.answers_title from :table_polls_answers pa, :table_polls_answers_description pad where pa.polls_id = :polls_id and pa.polls_answers_id = pad.polls_answers_id and pad.languages_id = :languages_id order by pa.sort_order asc');
                         $Qanswers->bindTable(':table_polls_answers', TABLE_POLLS_ANSWERS);
                         $Qanswers->bindTable(':table_polls_answers_description', TABLE_POLLS_ANSWERS_DESCRIPTION);
                         $Qanswers->bindInt(':polls_id', $Qpoll->valueInt('polls_id'));
