@@ -141,7 +141,7 @@ require_once 'helper.php';
                 echo $breadcrumb->trail(' &raquo; ');
             ?>
         
-            <div class="pull-right">
+            <div class="pull-right flags">
               <?php
                 foreach ($osC_Language->getAll() as $value) {
                   echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('language', 'currency')) . '&language=' . $value['code'], 'AUTO'), $osC_Language->showImage($value['code']));
@@ -360,12 +360,6 @@ if (typeof jQuery != 'undefined') {
 <?php 
     if ($osC_Services->isStarted('google_analytics')) {
         echo SERVICES_GOOGLE_ANALYTICS_CODE;
-    }
-?>
-
-<?php
-    if ($osC_Services->isStarted('piwik')) {
-        echo $toC_Piwik->renderJs();
     }
 ?>
 </body>
