@@ -80,8 +80,6 @@
   define('TABLE_ORDERS_TOTAL', DB_TABLE_PREFIX . 'orders_total');
   define('TABLE_ORDERS_TRANSACTIONS_HISTORY', DB_TABLE_PREFIX . 'orders_transactions_history');
   define('TABLE_ORDERS_TRANSACTIONS_STATUS', DB_TABLE_PREFIX . 'orders_transactions_status');
-  define('TABLE_PIWIK_SITE', DB_TABLE_PREFIX . 'piwik_site');
-  define('TABLE_PIWIK_USER', DB_TABLE_PREFIX . 'piwik_user');
   define('TABLE_PRODUCTS', DB_TABLE_PREFIX . 'products');
   define('TABLE_PRODUCTS_ACCESSORIES', DB_TABLE_PREFIX . 'products_accessories');
   define('TABLE_PRODUCTS_ATTACHMENTS', DB_TABLE_PREFIX . 'products_attachments');
