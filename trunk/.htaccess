@@ -34,7 +34,11 @@
 #  php_value magic_quotes_gpc 0
 #</IfModule>
 
+# Active the rewrite engine to support the search friendly URL
 RewriteEngine on
+
+# By default, mod_rewrite maps a URL to a filesystem root path, if you put TomatoCart in 
+# a subfolder, please put subfolder here
 RewriteBase /
 
 RewriteRule ^([0-9]+)--(.*)$ info.php?articles_categories&articles_categories_id=$1&%{QUERY_STRING} [L]
