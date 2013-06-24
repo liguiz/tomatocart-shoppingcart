@@ -166,6 +166,7 @@ ul.autocompleter-choices li.autocompleter-selected span.autocompleter-queried{co
 
 /*breadcrumb*/
 .breadcrumb {margin-bottom: 0px;}
+.flags a{display: inline-block; margin-left: 5px;}
 
 /*Message Stack*/
 .messageStack {background-color: #D9EDF7;color: #3A87AD;border: 1px solid #BCE8F1;border-radius: 4px 4px 4px 4px;margin-bottom: 20px;padding: 8px 35px 8px 14px;text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);}
