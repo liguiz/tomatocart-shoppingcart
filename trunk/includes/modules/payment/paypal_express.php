@@ -139,12 +139,21 @@ class osC_Payment_paypal_express extends osC_Payment {
 
             osc_redirect(osc_href_link(FILENAME_CHECKOUT, '', 'SSL'));
         }else {
+            //get the response string
+            $response = '';
+            if (count($response_array) > 0) {
+                foreach($response_array as $key => $value) {
+                    $response .= $key . '=' . $value . '&';
+                }
+            }
+            $response = trim($response, '&');
+
             $orders_id = osC_Order::insert();
 
             osC_Order::process($orders_id, $this->order_status);
 
-            $pp_result = 'Payer Status: ' . osc_output_string_protected($ppe_payerstatus) . "\n" .
-                            'Address Status: ' . osc_output_string_protected($ppe_addressstatus) . "\n\n" .
+            $pp_result = 'Payer Status: ' . osc_output_string_protected($_SESSION['ppe_payerstatus']) . "\n" .
+                            'Address Status: ' . osc_output_string_protected($_SESSION['ppe_addressstatus']) . "\n\n" .
                             'Payment Status: ' . osc_output_string_protected($response_array['PAYMENTSTATUS']) . "\n" .
                             'Payment Type: ' . osc_output_string_protected($response_array['PAYMENTTYPE']) . "\n" .
                             'Pending Reason: ' . osc_output_string_protected($response_array['PENDINGREASON']) . "\n" .
@@ -152,13 +161,69 @@ class osC_Payment_paypal_express extends osC_Payment {
 
             $Qstatus = $osC_Database->query('insert into :table_orders_status_history (orders_id, orders_status_id, date_added, customer_notified, comments) values (:orders_id, :orders_status_id, now(), :customer_notified, :comments)');
             $Qstatus->bindTable(':table_orders_status_history', TABLE_ORDERS_STATUS_HISTORY);
-            $Qstatus->bindInt(':orders_id', $insert_id);
+            $Qstatus->bindInt(':orders_id', $orders_id);
             $Qstatus->bindInt(':orders_status_id', MODULE_PAYMENT_PAYPAL_EXPRESS_TRANSACTIONS_ORDER_STATUS_ID);
             $Qstatus->bindInt(':customer_notified', '0');
             $Qstatus->bindValue(':comments', $pp_result);
             $Qstatus->execute();
 
             $Qstatus->freeResult();
+
+            //process the transaction history
+            $Qtransaction_status = $osC_Database->query('select count(*) as total from :table_orders_transactions_status where status_name = :status_name');
+            $Qtransaction_status->bindTable(':table_orders_transactions_status', TABLE_ORDERS_TRANSACTIONS_STATUS);
+            $Qtransaction_status->bindValue(':status_name', $response_array['PAYMENTSTATUS']);
+            $Qtransaction_status->execute();
+
+            $transaction_status = $Qtransaction_status->toArray();
+
+            $Qtransaction_status->freeResult();
+
+
+            //verify whether there is already the specific transactions status
+            if ($transaction_status['total'] == 0) {
+                //get the max status id
+                $Qtransaction_status_max = $osC_Database->query('select max(id) as max_id from :table_orders_transactions_status');
+                $Qtransaction_status_max->bindTable(':table_orders_transactions_status', TABLE_ORDERS_TRANSACTIONS_STATUS);
+                $Qtransaction_status_max->execute();
+
+                $transaction_status_max = $Qtransaction_status_max->toArray();
+
+                $Qtransaction_status_max->freeResult();
+
+                //insert the specific transaction status for this module
+                foreach($osC_Language->getAll() as $l) {
+                    $Qinsert_transaction_status = $osC_Database->query('insert into :table_orders_transactions_status values (:id, :language_id, :status_name)');
+                    $Qinsert_transaction_status->bindTable(':table_orders_transactions_status', TABLE_ORDERS_TRANSACTIONS_STATUS);
+                    $Qinsert_transaction_status->bindInt(':id', $transaction_status_max['max_id'] + 1);
+                    $Qinsert_transaction_status->bindInt(':language_id', $l['id']);
+                    $Qinsert_transaction_status->bindValue(':status_name', $response_array['PAYMENTSTATUS']);
+                    $Qinsert_transaction_status->execute();
+                }
+            }
+
+
+            //get the transaction status id
+            $Qtransaction_satus_id =  $osC_Database->query('select id from :table_orders_transactions_status where language_id = :language_id and status_name = :status_name limit 1');
+            $Qtransaction_satus_id->bindTable(':table_orders_transactions_status', TABLE_ORDERS_TRANSACTIONS_STATUS);
+            $Qtransaction_satus_id->bindInt(':language_id', $osC_Language->getID());
+            $Qtransaction_satus_id->bindValue(':status_name', $response_array['PAYMENTSTATUS']);
+            $Qtransaction_satus_id->execute();
+
+            $transaction_satus_id = $Qtransaction_satus_id->toArray();
+
+            $Qtransaction_satus_id->freeResult();
+
+            //insert the order transactions history
+            $Qtransaction = $osC_Database->query('insert into :table_orders_transactions_history (orders_id, transaction_code, transaction_return_value, transaction_return_status, date_added) values (:orders_id, :transaction_code, :transaction_return_value, :transaction_return_status, now())');
+            $Qtransaction->bindTable(':table_orders_transactions_history', TABLE_ORDERS_TRANSACTIONS_HISTORY);
+            $Qtransaction->bindInt(':orders_id', $orders_id);
+            $Qtransaction->bindInt(':transaction_code', $transaction_satus_id['id']);
+            $Qtransaction->bindValue(':transaction_return_value', $response);
+            $Qtransaction->bindInt(':transaction_return_status', 1);
+            $Qtransaction->execute();
+
+            $Qtransaction->freeResult();
         }
 
         unset($_SESSION['ppe_token']);
@@ -564,23 +629,23 @@ class osC_Payment_paypal_express extends osC_Payment {
             $params['L_SHIPPINGOPTIONISDEFAULT' . $cheapest_counter] = 'true';
         }
         //End: handle shipping
-        
+
         //order totals - process the counpon discount or gift certificate discount
-        foreach ($osC_ShoppingCart->getOrderTotals() as $total) {                             
-            if ( ($total['code'] == 'coupon') || ($total['code'] == 'gift_certificate') ) {                                               
+        foreach ($osC_ShoppingCart->getOrderTotals() as $total) {
+            if ( ($total['code'] == 'coupon') || ($total['code'] == 'gift_certificate') ) {
                 if ($total['code'] == 'coupon') {
                     $params['L_NAME' . $line_item_no] = 'Discount Coupon';
                 }else if ($total['code'] == 'gift_certificate') {
                     $params['L_NAME' . $line_item_no] = 'Discount Gift Certificate';
-                }                               
-                                   
+                }
+                 
                 $params['L_AMT' . $line_item_no] = -$osC_Currencies->formatRaw(abs($total['value']));
                 $params['L_QTY' . $line_item_no] = 1;
                 $params['ITEMAMT'] -= $osC_Currencies->formatRaw(abs($total['value']));
                 $params['AMT'] -= $osC_Currencies->formatRaw(abs($total['value']));
-                
+
                 $line_item_no++;
-            }        
+            }
         }
 
         $params['SHIPPINGAMT'] = $osC_Currencies->formatRaw($cheapest_rate, '', 1);
@@ -594,7 +659,7 @@ class osC_Payment_paypal_express extends osC_Payment {
         foreach ($params as $key => $value) {
             $post_string .= $key . '=' . urlencode(utf8_encode(trim($value))) . '&';
         }
-        $post_string = substr($post_string, 0, -1);        
+        $post_string = substr($post_string, 0, -1);
 
         $response = $this->sendTransactionToGateway($this->api_url, $post_string);
 
