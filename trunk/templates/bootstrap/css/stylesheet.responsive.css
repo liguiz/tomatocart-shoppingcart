@@ -101,6 +101,33 @@ body {
     .products-listing-action .pagination  select  {
         display: inline;
     }
+    /*grid view*/
+    ul.grid li {
+        float: none;
+        width: 100%;
+        height: auto;
+    }
+    ul.grid li div.left {
+        display: block;
+        margin: 10px 10px 0 10px;
+        position: relative;
+        width: 100%;
+        float: none;
+    }
+    ul.grid li div.left img {
+        display: block;
+        float: left;
+    }
+    ul.grid li div.right {
+        padding: 0 10px 0 0;
+        display: block;
+        width: 100%;
+    }
+    ul.grid li div.right span.price {
+        display: block;
+        float: none;
+    }
+    /*list view*/
 	ul.list li {
 	    padding: 0;
 	}
