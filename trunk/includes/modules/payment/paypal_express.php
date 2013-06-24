@@ -143,11 +143,10 @@ class osC_Payment_paypal_express extends osC_Payment {
             $response = '';
             if (count($response_array) > 0) {
                 foreach($response_array as $key => $value) {
-                    $response .= $key . '=' . $value . '&';
+                    $response .= $key . '=' . $value . "\n";
                 }
             }
-            $response = trim($response, '&');
-
+       
             $orders_id = osC_Order::insert();
 
             osC_Order::process($orders_id, $this->order_status);
