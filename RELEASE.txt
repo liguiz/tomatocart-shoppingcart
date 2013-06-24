@@ -1,3 +1,29 @@
+VERSION v1.1.8.3
+-- BUG FIX
+#95, #90 remove piwik
+         The piwik is removed and the web report is also removed. Probably we will include the google analytics API
+#86 Shipping modules do not work - UPS & USPS - cant calculate shipping
+#82 Default currency for specified language doesn't work Feature
+#79 Languages not changing in invoices/orders prints Enhancement
+    Will not fix, this is not bug. 
+#78 Specials - Add batch sub category not working Bug 1.1.8.1 Solved
+#77 Syntax (semi colons) errors Bug 1.1.8.1
+#75 Users can 'steal' other users their print orders Bug Security 1.1.8.1
+#74 Language My Account Information - Customer Group information doesn't change on multiple languages Bug 1.1.8.1
+#70 Images added to product jpeg is not visable in lightbox popup Bug 1.1.8.1
+#65 Friendly URL error search box Bug 1.1.8.1
+#59 Default Currency problem Bug 1.1.8.1
+#55 PDF invoice error when logo is jpg instead of png Bug 1.1.8.1
+#26 backend - module ideal should be removed Bug 1.1.8.1
+    The ideal module is removed
+#25 backend Addshoppers not working Feature
+    The addshoppers is removed
+#24 backend - Transaction History Bug 1.1.8.1
+#22 Datepicker Jquery Bug 1.1.8.1
+
+VERSION v1.1.8.2
+--
+
 VERSION V1.1.8.1
 --BUG FIX FOR SECURITY
 1. Add the captcha code into the create account section to prevent the Bots registering as users
