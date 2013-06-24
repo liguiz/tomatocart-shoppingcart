@@ -86,7 +86,7 @@ Toc.currencies.CurrenciesGrid = function(config) {
     { 
       text: '<?php echo $osC_Language->get('button_update_currency_exchange_rates'); ?>',
       iconCls: 'icon-update-exchange-rates',
-      handler: this.showCurrenciesUpdateRatesDialog,
+      handler: this.updateCurrencyRates,
       scope: this
     }
   ];
@@ -152,15 +152,30 @@ Ext.extend(Toc.currencies.CurrenciesGrid, Ext.grid.GridPanel, {
     dlg.show(record.get("currencies_id"));
   },
   
-  showCurrenciesUpdateRatesDialog: function() {
-    var dlg = this.owner.createCurrenciesUpdateRatesDialog();
+  updateCurrencyRates: function() {
+    var waitMsgBox = Ext.MessageBox.wait(TocLanguage.formSubmitWaitMsg);
     
-    dlg.on('updateSuccess', function() {
-      this.onRefresh();
-    }, this);
-    
-    dlg.show();
-  },  
+    Ext.Ajax.request({
+      url: Toc.CONF.CONN_URL,
+      params: {
+        module: 'currencies',
+        action: 'update_currency_rates'
+      },
+      callback: function(options, success, response){
+        var result = Ext.decode(response.responseText);
+        
+        if (result.success == true) {
+          Ext.destroy(waitMsgBox);
+          Ext.MessageBox.alert(TocLanguage.msgSuccessTitle, result.feedback);
+          
+          this.getStore().reload();
+        } else {
+          Ext.MessageBox.alert(TocLanguage.msgErrTitle, result.feedback);
+        }
+      },
+      scope: this
+    });   
+  },
   
   onDelete: function(record) {
     var currenciesId = record.get('currencies_id');
