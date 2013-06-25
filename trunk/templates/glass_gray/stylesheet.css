@@ -1097,3 +1097,8 @@ span.error {
 .pagination ul > li > a:hover, .pagination ul > li > a:focus {
   background-color: #F5F5F5;
 }
+
+.listingPageLinks .pagination {float:right;}
+.listingPageLinks .totalPages {float:left;}
+.listingPageLinks .totalPages {line-height:24px;height:24px}
+.listingPageLinks .totalPages {margin: 10px 0;}
