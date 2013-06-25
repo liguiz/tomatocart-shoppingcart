@@ -32,10 +32,10 @@
   if ( ($Qlisting->numberOfRows() > 0) && ( (PREV_NEXT_BAR_LOCATION == '1') || (PREV_NEXT_BAR_LOCATION == '3') ) ) {
 ?>
 
-<div class="listingPageLinks">
-  <span style="float: right;"><?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y'))); ?></span>
+<div class="listingPageLinks clearfix">
+  <?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y')), false); ?>
 
-  <?php echo $Qlisting->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?>
+  <div class="totalPages"><?php echo $Qlisting->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?></div>
 </div>
 
 <?php
@@ -199,10 +199,10 @@
   if ( ($Qlisting->numberOfRows() > 0) && ((PREV_NEXT_BAR_LOCATION == '2') || (PREV_NEXT_BAR_LOCATION == '3')) ) {
 ?>
 
-<div class="listingPageLinks">
-  <span style="float: right;"><?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y')), false); ?></span>
+<div class="listingPageLinks clearfix">
+  <?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y')), false); ?>
 
-  <?php echo $Qlisting->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?>
+  <div class="totalPages"><?php echo $Qlisting->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?></div>
 </div>
 
 <?php
