@@ -38,11 +38,19 @@
   }
   
   if (isset($Qgroups) && ($Qgroups->numberOfRows() > 0)) {
-    if ( isset($current_category_id) && !empty($current_category_id) ) {
-      echo '<form name="filter" action="' . osc_href_link(FILENAME_DEFAULT) . '" method="get">' . osc_draw_hidden_field('cPath', isset($_GET['cPath'])? $_GET['cPath'] :'') . osc_draw_hidden_session_id_field();
-    }else if ( isset($_GET['manufacturers']) && !empty($_GET['manufacturers']) ) {
-      echo '<form name="filter" action="' . osc_href_link(FILENAME_DEFAULT) . '" method="get">' . osc_draw_hidden_field('manufacturers', $_GET['manufacturers']) . osc_draw_hidden_session_id_field();
-    }    
+    //products listing page for specific manufactuer
+    if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
+      $action = osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $_GET['manufacturers']);
+      
+    //product listing page for specific category
+    }else {
+      $action = osc_href_link(FILENAME_DEFAULT, 'cPath=' . $cPath);
+    }
+      
+    echo '<form name="filter" action="' . $action . '" method="get">';
+    
+    echo osc_draw_hidden_session_id_field();
+    
     echo '    <div class="moduleBox">' . "\n" . 
          '        <h6>'.$osC_Language->get('products_attributes_filter').'</h6>' . "\n" . 
          '        <div id="productAttributes" class="content col3 clearfix">' . "\n";

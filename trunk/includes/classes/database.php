@@ -723,7 +723,7 @@
         $string .= '<ul>';
 
         for ( $i = 1; $i <= $total_pages; $i++ ) {
-          if ($i == $_GET[$batch_keyword]) {
+          if ($i == $_GET[$batch_keyword] || ($i == 1 && empty($_GET[$batch_keyword]))) {
             $string .= '<li><span>' . $i . '</span></li>';
           }else {
             $string .= '<li>' . osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $parameters ? $parameters . '&' . $batch_keyword . '='  . $i : $batch_keyword . '='  . $i), $i) . '</li>';
@@ -800,15 +800,26 @@
         $back_string = $osC_Language->get('result_set_previous_page');
         $back_grey_string = $osC_Language->get('result_set_previous_page');
       }
-
-      if ( $this->batch_number > 1 ) {
-        $string = osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $get_parameter . $batch_keyword . '=' . ($this->batch_number - 1)), $back_string);
-      } else {
-        $string = $back_grey_string;
+      
+      $number_of_pages = ceil($this->batch_size / $this->batch_rows);
+      
+      $string = '';
+      if ($number_of_pages > 1) {
+          $string .= '<span class="previous">';
       }
 
+      if ( $this->batch_number > 1 ) {
+        $string .= osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $get_parameter . $batch_keyword . '=' . ($this->batch_number - 1)), $back_string) . '</span>';
+      } else {
+        $string .= $back_grey_string;
+      }
+      
       $string .= '&nbsp;';
-
+      
+      if ($number_of_pages > 1) {
+          $string .= '</span>';
+      }
+            
       return $string;
     }
 
@@ -839,14 +850,23 @@
         $forward_grey_string = $osC_Language->get('result_set_next_page');
       }
 
-      $string = '&nbsp;';
+      $string = '';
+      if ($number_of_pages > 1) {
+          $string .= '<span class="next">';
+      }
+      
+      $string .= '&nbsp;';
 
       if ( ( $this->batch_number < $number_of_pages ) && ( $number_of_pages != 1 ) ) {
         $string .= osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $get_parameter . $batch_keyword . '=' . ($this->batch_number + 1)), $forward_string);
       } else {
         $string .= $forward_grey_string;
       }
-
+      
+      if ($number_of_pages > 1) {
+          $string .= '</span>';
+      }
+      
       return $string;
     }
 

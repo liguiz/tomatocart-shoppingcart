@@ -164,10 +164,10 @@ function output_javascripts() {
 function get_products_listing_sort() {
     global $osC_Language;
     
-    return array(array('id' => 'name|asc', 'text' => $osC_Language->get('product') . ' (ASC)'), 
-                 array('id' => 'name|desc', 'text' => $osC_Language->get('product') . ' (DESC)'), 
-                 array('id' => 'price|asc', 'text' => $osC_Language->get('listing_price_heading') . ' (ASC)'), 
-                 array('id' => 'price|desc', 'text' => $osC_Language->get('listing_price_heading') . ' (DESC)'));
+    return array(array('id' => 'name', 'text' => $osC_Language->get('product') . ' (ASC)'), 
+                 array('id' => 'name|d', 'text' => $osC_Language->get('product') . ' (DESC)'), 
+                 array('id' => 'price', 'text' => $osC_Language->get('listing_price_heading') . ' (ASC)'), 
+                 array('id' => 'price|d', 'text' => $osC_Language->get('listing_price_heading') . ' (DESC)'));
 }
 
 

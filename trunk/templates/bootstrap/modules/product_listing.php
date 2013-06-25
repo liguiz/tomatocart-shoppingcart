@@ -17,10 +17,18 @@
     $sort_array = get_products_listing_sort();
     $view_type = get_products_listing_view_type();
 
-    if ($Qlisting->numberOfRows() > 0) {
+    if ($Qlisting->numberOfRows() > 0) {        
+        //products listing page for specific manufactuer
+        if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
+            $action = osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $_GET['manufacturers']);
+        
+            //product listing page for specific category
+        }else {
+            $action = osc_href_link(FILENAME_DEFAULT, 'cPath=' . $cPath);
+        }
 ?>
 	<div class="products-listing-action">
-		<form id="products-filter" class="form-inline" action="<?php echo osc_href_link($_SERVER['SCRIPT_NAME']); ?>" method="get">
+		<form id="products-filter" class="form-inline" action="<?php echo $action;  ?>" method="get">
 			<?php 
 			    //drow hidden session id
 			    echo osc_draw_hidden_session_id_field();
@@ -39,15 +47,8 @@
                     if (isset($_GET[$key]) && !empty($_GET[$key])) {
                         echo osc_draw_hidden_field($key, $_GET[$key]);
                     }
-                }
-                
-                if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
-                    echo osc_draw_hidden_field('manufacturers', $_GET['manufacturers']);
-                    $options = array(array('id' => '', 'text' => $osC_Language->get('filter_all_categories')));
-                } else {
-                    echo osc_draw_hidden_field('cPath', $cPath);
-                    $options = array(array('id' => '', 'text' => $osC_Language->get('filter_all_manufacturers')));
-                }
+                }                              
+                           
 			?>
 			<div class="row-fluid">
 				<div class="span2">
@@ -90,9 +91,7 @@
         		<?php echo $Qlisting->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?>
         	</div>
         	<div class="span6">
-                <div class="pagination clearfix">
-                	<?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y'))); ?>
-                </div>        	
+                <?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y')), false); ?>
         	</div>
         </div>
         <?php 
@@ -236,9 +235,7 @@
         		<?php echo $Qlisting->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?>
         	</div>
         	<div class="span6">
-                <div class="pagination clearfix">
-                	<?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y'))); ?>
-                </div>        	
+                <?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y')), false); ?>                   	
         	</div>
         </div>
         <?php 

@@ -829,6 +829,19 @@ ul.grid .productImage, ul.list .productImage {
     color: #000;
 }
 
+.pagination ul > li > a {
+	 color: #3288C2;
+	 background: #FFFFFF;
+}
+.pagination ul > li > span {
+  background: #F5F5F5;
+  color: #999999;
+}
+.pagination .previous, .pagination .next {
+	position:relative;
+	top:-10px;
+}
+
 #faqs .question {
     font-weight: bold;
     cursor: pointer;
