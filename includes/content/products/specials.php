@@ -35,7 +35,7 @@
       $frm_filters = get_filters_form(osc_href_link(FILENAME_PRODUCTS), null, true, $this->_module);
       
       //get the current view type of the product listing
-      $view_type = get_products_listing_view_type();
+      $view_type = get_listing_view_type();
 
       if ($osC_Services->isStarted('breadcrumb')) {
         $breadcrumb->add($osC_Language->get('breadcrumb_specials'), osc_href_link(FILENAME_PRODUCTS, $this->_module));

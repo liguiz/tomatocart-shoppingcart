@@ -72,7 +72,7 @@
       $filters = null;
       if (defined('PRODUCT_LIST_FILTER') && (PRODUCT_LIST_FILTER > 0)) {
         //get the product filters and filter form action
-        $filters = get_categories_filters($_GET['manufacturers']);
+        $filters = build_categories_filters($_GET['manufacturers']);
         $action = osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $_GET['manufacturers']);
       }
       
@@ -80,7 +80,7 @@
       $frm_filters = get_filters_form($action, $filters);
       
       //get the current view type of the product listing
-      $view_type = get_products_listing_view_type();
+      $view_type = get_listing_view_type();
 
       //filter the products
       include('includes/classes/products.php');

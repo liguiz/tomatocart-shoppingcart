@@ -150,7 +150,7 @@
       $filters = null;
       if (defined('PRODUCT_LIST_FILTER') && (PRODUCT_LIST_FILTER > 0)) {
         //get the product filters and filter form action
-        $filters = get_manufactuers_filters(array($current_category_id));
+        $filters = build_manufactuers_filters(array($current_category_id));
         $action = osc_href_link(FILENAME_DEFAULT, 'cPath=' . $cPath);
       }
       
@@ -158,7 +158,7 @@
       $frm_filters = get_filters_form($action, $filters);
       
       //get the current view type of the product listing
-      $view_type = get_products_listing_view_type();
+      $view_type = get_listing_view_type();
       
       //filter the products
       include('includes/classes/products.php');
@@ -178,6 +178,30 @@
         } else {
           $osC_Products->setSortBy($_GET['sort']);
         }
+      }
+      
+      //deal with product filters params
+      $filters = array();
+      $query_params = explode('&', $_SERVER['QUERY_STRING']);
+      
+      if (count($query_params) > 0) {
+        foreach($query_params as $param) {
+      
+          if (preg_match('/^f_[0-9]+=[0-9]+$/', $param)) {
+            $param_parts = explode('=', $param);
+      
+            $param_value = $param_parts[1];
+      
+            if ((int)$param_value > 0) {
+              array_push($filters, $param_value);
+            }
+          }
+        }
+      }
+      
+      //set the product filters
+      if (count($filters) > 0) {
+        $osC_Products->setFilters($filters);
       }
       
       //get the product listing resource
