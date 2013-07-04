@@ -63,8 +63,26 @@
 /* Private methods */
 
     function _process() {
-      global $osC_Manufacturer, $osC_Products;
+      global $osC_Manufacturer, $osC_Products, $frm_filters, $view_type, $Qlisting;
+      
+      //load the helper for product listing page
+      include('includes/functions/product_listing.php');
+      
+      //optional product list filter
+      $filters = null;
+      if (defined('PRODUCT_LIST_FILTER') && (PRODUCT_LIST_FILTER > 0)) {
+        //get the product filters and filter form action
+        $filters = get_categories_filters($_GET['manufacturers']);
+        $action = osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $_GET['manufacturers']);
+      }
+      
+      //get the filters from for the product listing page
+      $frm_filters = get_filters_form($action, $filters);
+      
+      //get the current view type of the product listing
+      $view_type = get_products_listing_view_type();
 
+      //filter the products
       include('includes/classes/products.php');
       $osC_Products = new osC_Products();
       $osC_Products->setManufacturer($osC_Manufacturer->getID());
@@ -84,6 +102,9 @@
           $osC_Products->setSortBy($_GET['sort']);
         }
       }
+      
+      //get the product listing resource
+      $Qlisting = $osC_Products->execute();
     }
   }
 ?>

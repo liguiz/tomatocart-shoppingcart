@@ -49,7 +49,16 @@
 /* Private methods */
 
     function _process() {
-      global $osC_Language, $messageStack, $osC_Search, $Qlisting;
+      global $osC_Language, $messageStack, $osC_Search, $frm_filters, $view_type, $Qlisting;
+      
+      //load the helper for product listing page
+      include('includes/functions/product_listing.php');
+      
+      //get the filters form
+      $frm_filters = get_filters_form(osc_href_link(FILENAME_SEARCH));
+      
+      //get the current view type of the product listing
+      $view_type = get_products_listing_view_type();
 
       if (isset($_GET['datefrom_days']) && is_numeric($_GET['datefrom_days']) && isset($_GET['datefrom_months']) && is_numeric($_GET['datefrom_months']) && isset($_GET['datefrom_years']) && is_numeric($_GET['datefrom_years'])) {
         if (@checkdate($_GET['datefrom_months'], $_GET['datefrom_days'], $_GET['datefrom_years'])) {

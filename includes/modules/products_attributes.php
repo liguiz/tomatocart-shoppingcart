@@ -34,8 +34,8 @@
   }
   
   if (isset($Qgroups) && ($Qgroups->numberOfRows() > 0)) {
-    echo '<div class="moduleBox"><h6>'.$osC_Language->get('products_attributes_filter').'</h6>' . "\n";
-    echo '  <div id="productAttributes" class="content">' . "\n";
+    echo '<div class="productAttributesWrapper"><h6>'.$osC_Language->get('products_attributes_filter').'</h6>' . "\n";
+    echo '  <div id="productAttributes" class="content clearfix">' . "\n";
     
    //products listing page for specific manufactuer
     if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
@@ -65,6 +65,14 @@
     
     if (isset($_GET['sort'])) {
       echo osc_draw_hidden_field('sort', $_GET['sort']);
+    }
+    
+    //link the search fileds
+    $keys = array('keywords', 'pfrom', 'pto', 'datefrom_days', 'datefrom_months', 'datefrom_years', 'dateto_days', 'dateto_months', 'dateto_years');
+    foreach ($keys as $key) {
+      if (isset($_GET[$key]) && !empty($_GET[$key])) {
+        echo osc_draw_hidden_field($key, $_GET[$key]);
+      }
     }
     
     while ($Qgroups->next()) {
@@ -110,14 +118,13 @@
           $default = $_GET['products_attributes'][$products_attributes_values_id];
         }
 
-        echo '<span style="float: left; width: 49%">' . osc_draw_label($Qentries->value('name') . ' :', 'products_attributes[' . $products_attributes_values_id . ']') . '&nbsp;' . osc_draw_pull_down_menu('products_attributes[' . $products_attributes_values_id . ']', $data, $default, 'onchange="this.form.submit()"').'</span>';
+        echo '<div class="comboAttritue">' . osc_draw_label($Qentries->value('name') . ' :', 'products_attributes[' . $products_attributes_values_id . ']') . '&nbsp;' . osc_draw_pull_down_menu('products_attributes[' . $products_attributes_values_id . ']', $data, $default, 'onchange="this.form.submit()"').'</div>';
     
       }
     }
 
     $Qgroups->freeResult();
 
-    echo '    <div style="clear: both"></div>';
     echo '    </form>' . "\n";
     echo '  </div>
           </div>';

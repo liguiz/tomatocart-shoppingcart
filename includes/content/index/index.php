@@ -141,8 +141,26 @@
 /* Private methods */
 
     function _process() {
-      global $current_category_id, $osC_Products;
-
+      global $current_category_id, $osC_Products, $cPath, $frm_filters, $view_type, $Qlisting;
+      
+      //load the helper for current catalog
+      include('includes/functions/product_listing.php');
+      
+      //optional product list filter
+      $filters = null;
+      if (defined('PRODUCT_LIST_FILTER') && (PRODUCT_LIST_FILTER > 0)) {
+        //get the product filters and filter form action
+        $filters = get_manufactuers_filters(array($current_category_id));
+        $action = osc_href_link(FILENAME_DEFAULT, 'cPath=' . $cPath);
+      }
+      
+      //get the filters from for the product listing page
+      $frm_filters = get_filters_form($action, $filters);
+      
+      //get the current view type of the product listing
+      $view_type = get_products_listing_view_type();
+      
+      //filter the products
       include('includes/classes/products.php');
       $osC_Products = new osC_Products($current_category_id);
 
@@ -161,6 +179,9 @@
           $osC_Products->setSortBy($_GET['sort']);
         }
       }
+      
+      //get the product listing resource
+      $Qlisting = $osC_Products->execute();
     }
   }
 ?>
