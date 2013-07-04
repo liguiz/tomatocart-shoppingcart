@@ -16,12 +16,12 @@
 */
 
 /**
- * Get manufacturers filters used in the product listing page
+ * Build manufacturers filters used in the product listing page
  *
  * @param $categories_ids [array] - the categories ids
  * @return mixed
  */
-function get_manufactuers_filters($categories_ids) {
+function build_manufactuers_filters($categories_ids) {
   global $osC_Database, $osC_Language;
 
   $Qfilterlist = $osC_Database->query('select distinct m.manufacturers_id as id, m.manufacturers_name as name from :table_products p inner join :table_manufacturers m on p.manufacturers_id  = m.manufacturers_id where p.products_id in (select products_id from :table_products_to_categories where categories_id in (:categories_ids)) and p.products_status = 1 order by m.manufacturers_name');
@@ -45,12 +45,12 @@ function get_manufactuers_filters($categories_ids) {
 }
 
 /**
- * Get Categories filters for the product listing page
+ * Build Categories filters for the product listing page
  *
  * @param $manufacturers_id [int] - the manufacturers id
  * @return mixed
  */
-function get_categories_filters($manufacturers_id) {
+function build_categories_filters($manufacturers_id) {
   global $osC_Database, $osC_Language;
 
   $Qfilterlist = $osC_Database->query('select distinct c.categories_id as id, cd.categories_name as name from :table_categories c inner join :table_categories_description cd on (c.categories_id = cd.categories_id and cd.language_id = :language_id) where c.categories_id in (select p2c.categories_id from :table_products p inner join :table_products_to_categories p2c on p.products_id = p2c.products_id where p.manufacturers_id = :manufacturers_id) order by cd.categories_name');
@@ -82,7 +82,7 @@ function get_categories_filters($manufacturers_id) {
  * @access public
  * @return array
  */
-function get_products_listing_view_type() {
+function get_listing_view_type() {
   //check view type
   $view_type = 'list';
   $view_types = array('list', 'grid2', 'grid3');
@@ -119,7 +119,7 @@ function get_products_listing_view_type() {
  * @return mixed
  */
 function get_filters_form($action = null, $filters = array(), $sort = true, $module = null) {
-  global $osC_Language;
+  global $osC_Language, $cPath, $osC_Services;
   
   if (count($filters) < 1 && $sort !== true) {
     return null;
@@ -133,11 +133,19 @@ function get_filters_form($action = null, $filters = array(), $sort = true, $mod
   
   $filters_form = '<form name="filter" action="' . $action . '" method="get">';
   
+  //pass the extra paraments as friendly url is disabled
+  if (!$osC_Services->isStarted('sefu')) {
+    if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
+      $filters_form .= osc_draw_hidden_field('manufacturers', $_GET['manufacturers']);
+    } else if (isset($_GET['cPath']) && !empty($_GET['cPath'])) {
+      $filters_form .= osc_draw_hidden_field('cPath', $cPath);
+    }
+  }
+  
   //output the categories or manufacturers filters dropdown menu
   if (count($filters) > 0) {
     $filters_form .= osc_draw_pull_down_menu('filter', $filters, (isset($_GET['filter']) ? $_GET['filter'] : null), 'onchange="this.form.submit()"');
   }
- 
   
   //link products attributes filter and the category/manufacturer filter
   if (defined('PRODUCT_LINK_FILTER') && (PRODUCT_LINK_FILTER == '1')) {
