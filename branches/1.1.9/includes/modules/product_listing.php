@@ -10,201 +10,382 @@
   it under the terms of the GNU General Public License v2 (1991)
   as published by the Free Software Foundation.
 */
-
-// create column list
-  $define_list = array('PRODUCT_LIST_SKU' => PRODUCT_LIST_SKU, 
-                       'PRODUCT_LIST_NAME' => PRODUCT_LIST_NAME,
-                       'PRODUCT_LIST_MANUFACTURER' => PRODUCT_LIST_MANUFACTURER,
-                       'PRODUCT_LIST_PRICE' => PRODUCT_LIST_PRICE,
-                       'PRODUCT_LIST_QUANTITY' => PRODUCT_LIST_QUANTITY,
-                       'PRODUCT_LIST_WEIGHT' => PRODUCT_LIST_WEIGHT,
-                       'PRODUCT_LIST_IMAGE' => PRODUCT_LIST_IMAGE,
-                       'PRODUCT_LIST_BUY_NOW' => PRODUCT_LIST_BUY_NOW);
-
-  asort($define_list);
-
-  $column_list = array();
-  reset($define_list);
-  while (list($key, $value) = each($define_list)) {
-    if ($value > 0) $column_list[] = $key;
-  }
-
-  if ( ($Qlisting->numberOfRows() > 0) && ( (PREV_NEXT_BAR_LOCATION == '1') || (PREV_NEXT_BAR_LOCATION == '3') ) ) {
 ?>
 
-<div class="listingPageLinks clearfix">
-  <?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y')), false); ?>
-
-  <div class="totalPages"><?php echo $Qlisting->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?></div>
-</div>
-
-<?php
-  }
-?>
-
-<div>
-
-<?php
+<?php 
+  //put the products into an array
+  $products = array();
   if ($Qlisting->numberOfRows() > 0) {
-?>
-
-  <table border="0" width="100%" cellspacing="0" cellpadding="2" class="productListing">
-    <tr>
-
-<?php
-    for ($col=0, $n=sizeof($column_list); $col<$n; $col++) {
-      $lc_key = false;
-      $lc_align = 'center';
-
-      switch ($column_list[$col]) {
-        case 'PRODUCT_LIST_SKU':
-          $lc_text = $osC_Language->get('listing_sku_heading');
-          $lc_key = 'sku';
-          break;
-        case 'PRODUCT_LIST_NAME':
-          $lc_text = $osC_Language->get('listing_products_heading');
-          $lc_key = 'name';
-          break;
-        case 'PRODUCT_LIST_MANUFACTURER':
-          $lc_text = $osC_Language->get('listing_manufacturer_heading');
-          $lc_key = 'manufacturer';
-          break;
-        case 'PRODUCT_LIST_PRICE':
-          $lc_text = $osC_Language->get('listing_price_heading');
-          $lc_key = 'price';
-          $lc_align = 'right';
-          break;
-        case 'PRODUCT_LIST_QUANTITY':
-          $lc_text = $osC_Language->get('listing_quantity_heading');
-          $lc_key = 'quantity';
-          $lc_align = 'right';
-          break;
-        case 'PRODUCT_LIST_WEIGHT':
-          $lc_text = $osC_Language->get('listing_weight_heading');
-          $lc_key = 'weight';
-          $lc_align = 'right';
-          break;
-        case 'PRODUCT_LIST_IMAGE':
-          $lc_text = $osC_Language->get('listing_image_heading');
-          $lc_align = 'center';
-          break;
-        case 'PRODUCT_LIST_BUY_NOW':
-          $lc_text = $osC_Language->get('listing_buy_now_heading');
-          $lc_align = 'center';
-          break;
-      }
-
-      if ($lc_key !== false) {
-        $lc_text = osc_create_sort_heading($lc_key, $lc_text);
-      }
-
-      echo '      <td align="' . $lc_align . '" class="productListing-heading">&nbsp;' . $lc_text . '&nbsp;</td>' . "\n";
+    while($Qlisting->next()) {
+      $products[] = $Qlisting->toArray();
     }
+  }
+  
+  //fix the bug: sort the products by price for the variants products
+  if ($osC_Products->_sort_by == 'final_price') {
+    usort($products, 'compare_variants_price');
+  }
+
+  //verify whether the products are existed
+  if (count($products) > 0) {
 ?>
 
-    </tr>
-
-<?php
-    $rows = 0;
-
-    while ($Qlisting->next()) {
-      $rows++;
-
-      echo '    <tr class="' . ((($rows/2) == floor($rows/2)) ? 'productListing-even' : 'productListing-odd') . '">' . "\n";
-
-      for ($col=0, $n=sizeof($column_list); $col<$n; $col++) {
-        $lc_align = '';
-
-        switch ($column_list[$col]) {
-          case 'PRODUCT_LIST_SKU':
-            $lc_align = '';
-            $lc_text = '&nbsp;' . $Qlisting->value('products_sku') . '&nbsp;';
-            break;
-          case 'PRODUCT_LIST_NAME':
-            $lc_align = '';
-            if (isset($_GET['manufacturers'])) {
-              $lc_text = osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qlisting->value('products_id') . '&manufacturers=' . $_GET['manufacturers']), $Qlisting->value('products_name')) . (($Qlisting->value('products_short_description') === NULL) || ($Qlisting->value('products_short_description') === '') ? '' : '<p>' . $Qlisting->value('products_short_description') . '</p>');
-            } else {
-              $lc_text = '&nbsp;' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qlisting->value('products_id') . ($cPath ? '&cPath=' . $cPath : '')), $Qlisting->value('products_name')) . (($Qlisting->value('products_short_description') === NULL) || ($Qlisting->value('products_short_description') === '') ? '' : '<p>' . $Qlisting->value('products_short_description') . '</p>') . '&nbsp;';
-            }
-            break;
-          case 'PRODUCT_LIST_MANUFACTURER':
-            $lc_align = '';
-            $lc_text = '&nbsp;' . osc_link_object(osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $Qlisting->valueInt('manufacturers_id')), $Qlisting->value('manufacturers_name')) . '&nbsp;';
-            break;
-          case 'PRODUCT_LIST_PRICE':
-            $lc_align = 'right';
-            $osC_Product = new osC_Product($Qlisting->value('products_id'));
-            $lc_text = $osC_Product->getPriceFormated(true);
-            break;
-          case 'PRODUCT_LIST_QUANTITY':
-            $lc_align = 'right';
-            $lc_text = '&nbsp;' . $Qlisting->valueInt('products_quantity') . '&nbsp;';
-            break;
-          case 'PRODUCT_LIST_WEIGHT':
-            $lc_align = 'right';
-            $lc_text = '&nbsp;' . $osC_Weight->display($Qlisting->value('products_weight'), $Qlisting->value('products_weight_class')) . '&nbsp;';
-            break;
-          case 'PRODUCT_LIST_IMAGE':
-            $lc_align = 'center';
-            if (isset($_GET['manufacturers'])) {
-              if ($Qlisting->value('products_type') == PRODUCT_TYPE_SIMPLE) {
-                $lc_text = osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qlisting->value('products_id') . '&manufacturers=' . $_GET['manufacturers']), $osC_Image->show($Qlisting->value('image'), $Qlisting->value('products_name')), 'id="img_productlisting_'. $Qlisting->value('products_id') . '"');
-              }else {
-                $lc_text = osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qlisting->value('products_id') . '&manufacturers=' . $_GET['manufacturers']), $osC_Image->show($Qlisting->value('image'), $Qlisting->value('products_name')));
-              }  
-            } else {
-              if ($Qlisting->value('products_type') == PRODUCT_TYPE_SIMPLE) {
-                $lc_text = osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qlisting->value('products_id') . ($cPath ? '&cPath=' . $cPath : '')), $osC_Image->show($Qlisting->value('image'), $Qlisting->value('products_name')), 'id="img_productlisting_'. $Qlisting->value('products_id') . '"');
-              }else {
-                $lc_text = osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qlisting->value('products_id') . ($cPath ? '&cPath=' . $cPath : '')), $osC_Image->show($Qlisting->value('image'), $Qlisting->value('products_name')));
-              }                
-            }
-            break;
-          case 'PRODUCT_LIST_BUY_NOW':
-            $lc_align = 'center';
-            if ($Qlisting->value('products_type') == PRODUCT_TYPE_SIMPLE) {
-              $lc_text = osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add'), osc_draw_image_button('button_buy_now.gif', $osC_Language->get('button_buy_now'), 'class="ajaxAddToCart" id="ac_productlisting_'. $Qlisting->value('products_id') . '"')) . '&nbsp;<br />';
+    <?php 
+    //whether the product attributes filter is enabled
+    if (defined('PRODUCT_ATTRIBUTES_FILTER') && (PRODUCT_ATTRIBUTES_FILTER == '1')) {
+      require('includes/modules/products_attributes.php');
+    }
+    ?>
+    
+    <!-- Tools Bar -->
+    <div class="toolsWrapper clearfix">
+      <!-- tools -->
+      <div class="tools clearfix">
+         <!-- filters -->
+        <?php if ($frm_filters !== null) { ?>
+          <div class="filters"><?php echo $frm_filters; ?></div>
+        <?php } ?>
+       
+        <!-- tab navs -->
+        <div class="tabNavs">
+          <?php if ($view_type == 'list') { ?>
+            <button class="listView list-actived">List</button>
+            <a href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=grid2'); ?>" class="gridTwo">Grid 2</a>
+            <a href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=grid3'); ?>" class="gridThree">Grid 3</a>
+          <?php }else if ($view_type == 'grid2') { ?>
+            <a href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=list'); ?>" class="listView">list</a>
+            <button class="gridTwo gridTwo-actived">List</button>
+            <a href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=grid3'); ?>" class="gridThree">Grid 3</a>
+          <?php }else if ($view_type == 'grid3') { ?>
+            <a href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=list'); ?>" class="listView">list</a>
+            <a href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=grid2'); ?>" class="gridTwo">Grid 2</a>
+            <button class="gridThree gridThree-actived">List</button>
+          <?php }?>  
+        </div>
+        <!-- End: tab navs -->
+      </div>
+      <!-- End: tools -->
+      
+      <!-- pagination -->
+      <?php if ( ($Qlisting->numberOfRows() > 0) && ( (PREV_NEXT_BAR_LOCATION == '1') || (PREV_NEXT_BAR_LOCATION == '3') ) ) { ?>
+      <div class="seperator"></div>
+      
+      <div class="listingPageLinks clearfix">
+        <?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y')), false); ?>
+      
+        <div class="totalPages"><?php echo $Qlisting->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?></div>
+      </div>
+      <?php } ?>
+      <!-- End: pagination -->
+    </div>
+    <!-- End: Tools Bar -->
+     
+    <div class="clearfix productListingWrapper">
+      <!-- List Style -->
+      <?php if ($view_type == 'list') { ?>
+      <div class="productList">
+        <?php
+          $rows = 0;
+          foreach($products as $product) {
+            $rows++;
+            
+            if ($rows / 2 == floor($rows / 2)) {
+              $row_class = 'even';
             }else {
-              $lc_text = osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add'), osc_draw_image_button('button_buy_now.gif', $osC_Language->get('button_buy_now'))) . '&nbsp;<br />';
+              $row_class = 'odd';
             }
+          ?>
+          <div class="productListingRow clearfix <?php echo $row_class; ?>">
+            <!-- Spacer -->
+            <div class="spacer clearfix">
+              <!-- Column 1 -->
+              <div class="col1">
+                <div class="productImageContainer">
+                  <?php
+                    if ($product['products_type'] == PRODUCT_TYPE_SIMPLE) {
+                      echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $product['products_id'] . ($cPath ? '&cPath=' . $cPath : '')), $osC_Image->show($product['image'], $product['products_name']), 'id="img_ac_productlisting_' . $product['products_id'] . '"');
+                    }else {
+                      echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $product['products_id'] . ($cPath ? '&cPath=' . $cPath : '')), $osC_Image->show($product['image'], $product['products_name']));
+                    }    
+                  ?>
+                </div>
+              </div>
+              <!-- End: Column 1 -->
+              
+              <!-- Column 2 -->
+              <div class="col2">
+                <div class="productName">
+                  <h2><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $product['products_id'] . ($cPath ? '&cPath=' . $cPath : '')), $product['products_name']); ?></h2>
+                </div>
+                <p class="productShortDescription"><?php echo $product['products_short_description']; ?></p>
+              </div>
+              <!-- End: Column 2 -->
+              
+              <!-- Column 3 -->
+              <div class="col3">
+                <div class="productPrice">
+                  <?php
+                    $osC_Product = new osC_Product($product['products_id']);
+                    echo $osC_Product->getPriceFormated(true);
+                  ?>
+                </div>
+                
+                <!-- Cart Areas -->
+                <div class="addtocartArea">
+                  <div class="cartActions">
+                    <div class="addAction">
+                    <?php
+                        if ($product['products_type'] == PRODUCT_TYPE_SIMPLE) {
+                          echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $product['products_id'] . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add'), osc_draw_image_button('button_buy_now.gif', $osC_Language->get('button_buy_now'), 'class="ajaxAddToCart" id="ac_productlisting_' . $product['products_id'] . '"'));
+                        }else {
+                          echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $product['products_id'] . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add'), osc_draw_image_button('button_buy_now.gif', $osC_Language->get('button_buy_now')));
+                        }
+                    ?>
+                    </div>
+                    
+                    <div class="otherActions">
+                      <?php
+                        if ($osC_Template->isInstalled('compare_products', 'boxes')) {
+                          echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), 'cid=' . $product['products_id'] . '&' . osc_get_all_get_params(array('action')) . '&action=compare_products_add'), $osC_Language->get('add_to_compare'));
+                        }  
+                  
+                        echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $product['products_id'] . '&' . osc_get_all_get_params(array('action')) . '&action=wishlist_add'), $osC_Language->get('add_to_wishlist')); 
+                      ?>
+                    </div>
+                  </div>
+                </div>
+                <!-- End: Cart Areas -->
+              </div>
+              <!-- End: Column 3 -->  
+            </div>
+            <!-- End: Spacer -->
+          </div>
+          <?php      
+              }
+          ?>
+        </div>
+        <!-- End: List Style -->
+        
+        <!-- Two Column - Grid Style -->
+        <?php } else if ($view_type == 'grid2') { ?>
+        <div class="productGridTwo">
+          <?php
+            //get the two products for each row
+            $row_grid_two = 0;
+            while(count(array_slice($products, $row_grid_two * 2, 2)) > 0) {
+              $row_products = array_slice($products, $row_grid_two * 2, 2);
+              
+          ?>
+          
+          <!-- Product Grid Row -->
+          <div class="productGridTwoRow clearfix">
+          <?php      
+          foreach($row_products as $key => $row_product) {
+          ?>
+            <!-- Grid Item -->
+            <div class="productGridTwoItem<?php echo $key == 0 ? ' odd' : ' even'; echo $key % 2 == 0 ? ' firstItem' : ''; ?>">
+              <!-- Spacer -->
+              <div class="spacer">
+                <!-- column 1 -->
+                <div class="col1">
+                  <div class="productImageContainer">
+                    <?php
+                      if ($row_product['products_type'] == PRODUCT_TYPE_SIMPLE) {
+                        echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $row_product['products_id'] . ($cPath ? '&cPath=' . $cPath : '')), $osC_Image->show($row_product['image'], $row_product['products_name']), 'id="img_ac_productlisting_' . $row_product['products_id'] . '"');
+                      }else {
+                        echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $row_product['products_id'] . ($cPath ? '&cPath=' . $cPath : '')), $osC_Image->show($row_product['image'], $row_product['products_name']));
+                      }    
+                    ?>
+                  </div>
+                </div>
+                <!-- End: column 1 -->
+                
+                <!-- column 2 -->
+                <div class="col2">
+                  <div class="productName">
+                    <h2><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $row_product['products_id'] . ($cPath ? '&cPath=' . $cPath : '')), $row_product['products_name']); ?></h2>
+                  </div>
+                  
+                  <div class="productPrice">
+                    <?php
+                      $osC_Product = new osC_Product($row_product['products_id']);
+                      echo $osC_Product->getPriceFormated(true);
+                    ?>
+                  </div>
+                  
+                  <!-- Cart Areas -->
+                  <div class="addtocartArea">
+                    <div class="cartActions">
+                      <div class="addAction">
+                      <?php
+                          if ($row_product['products_type'] == PRODUCT_TYPE_SIMPLE) {
+                            echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $row_product['products_id'] . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add'), osc_draw_image_button('button_buy_now.gif', $osC_Language->get('button_buy_now'), 'class="ajaxAddToCart" id="ac_productlisting_' . $row_product['products_id'] . '"'));
+                          }else {
+                            echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $row_product['products_id'] . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add'), osc_draw_image_button('button_buy_now.gif', $osC_Language->get('button_buy_now')));
+                          }
+                      ?>
+                      </div>
+                      
+                      <div class="otherActions">
+                        <?php
+                          if ($osC_Template->isInstalled('compare_products', 'boxes')) {
+                            echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), 'cid=' . $row_product['products_id'] . '&' . osc_get_all_get_params(array('action')) . '&action=compare_products_add'), $osC_Language->get('add_to_compare'));
+                          }  
+                    
+                          echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $row_product['products_id'] . '&' . osc_get_all_get_params(array('action')) . '&action=wishlist_add'), $osC_Language->get('add_to_wishlist')); 
+                        ?>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- End: Cart Areas -->
+                </div>
+                <!-- End: column 2 -->
+              </div>
+              <!-- End: Spacer -->
+            </div>
+            <!-- End: Grid Item -->
+           <?php   
+           }
+           ?>
+           </div>
+            <!-- End: Product Grid Row -->
             
-            if ($osC_Template->isInstalled('compare_products', 'boxes')) {
-              $lc_text .= osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), 'cid=' . $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=compare_products_add'), $osC_Language->get('add_to_compare')) . '&nbsp;<br />';
-            }  
-            
-            $lc_text .= osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=wishlist_add'), $osC_Language->get('add_to_wishlist')); 
+           <?php
+              $row_grid_two++;
+            }
+          ?>
+        </div>
+        <!-- End: Two Column - Grid Style -->
+        
+        <!-- Three Column - Grid Style -->  
+        <?php } else if ($view_type == 'grid3') { ?>
+        <div class="productGridThree">
+          <?php
+            //get the two products for each row
+            $row_grid_three = 0;
+            while(count(array_slice($products, $row_grid_three * 3, 3)) > 0) {
+              $row_col3_products = array_slice($products, $row_grid_three * 3, 3);
+              
+          ?>
+          
+          <!-- Product Grid Row -->
+          <div class="productGridThreeRow clearfix">
+          
+          <?php      
+              foreach($row_col3_products as $col3_key => $row_col3_product) {
+           ?>
+                  <!-- Grid Item -->
+                  <div class="productGridThreeItem<?php echo ($col3_key + 1) / 2 == 1 ? ' even' : ' odd'; echo $col3_key % 3 == 0 ? ' firstItem' : ''; ?>">
+                    <!-- Spacer -->
+                    <div class="spacer">
+                      <div class="productImageContainer">
+                        <?php
+                          if ($row_col3_product['products_type'] == PRODUCT_TYPE_SIMPLE) {
+                            echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $row_col3_product['products_id'] . ($cPath ? '&cPath=' . $cPath : '')), $osC_Image->show($row_col3_product['image'], $row_col3_product['products_name']), 'id="img_ac_productlisting_' . $row_col3_product['products_id'] . '"');
+                          }else {
+                            echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $row_col3_product['products_id'] . ($cPath ? '&cPath=' . $cPath : '')), $osC_Image->show($row_col3_product['image'], $row_col3_product['products_name']));
+                          }    
+                        ?>
+                      </div>
+                      
+                      <div class="productName">
+                        <h2><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $row_col3_product['products_id'] . ($cPath ? '&cPath=' . $cPath : '')), $row_col3_product['products_name']); ?></h2>
+                      </div>
+                      
+                      <div class="productPrice">
+                        <?php
+                          $osC_Product = new osC_Product($row_col3_product['products_id']);
+                          echo $osC_Product->getPriceFormated(true);
+                        ?>
+                      </div>
+                      
+                      <!-- Cart Areas -->
+                      <div class="addtocartArea">
+                        <div class="cartActions">
+                          <div class="addAction">
+                          <?php
+                              if ($row_col3_product['products_type'] == PRODUCT_TYPE_SIMPLE) {
+                                echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $row_col3_product['products_id'] . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add'), osc_draw_image_button('button_buy_now.gif', $osC_Language->get('button_buy_now'), 'class="ajaxAddToCart" id="ac_productlisting_' . $row_col3_product['products_id'] . '"'));
+                              }else {
+                                echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $row_col3_product['products_id'] . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add'), osc_draw_image_button('button_buy_now.gif', $osC_Language->get('button_buy_now')));
+                              }
+                          ?>
+                          </div>
+                          
+                          <div class="otherActions">
+                            <?php
+                              if ($osC_Template->isInstalled('compare_products', 'boxes')) {
+                                echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), 'cid=' . $row_col3_product['products_id'] . '&' . osc_get_all_get_params(array('action')) . '&action=compare_products_add'), $osC_Language->get('add_to_compare'));
+                              }  
                         
-            break;
-        }
-
-        echo '      <td ' . ((empty($lc_align) === false) ? 'align="' . $lc_align . '" ' : '') . ' valign="top" class="productListing-data">' . $lc_text . '</td>' . "\n";
-      }
-
-      echo '    </tr>' . "\n";
-    }
-?>
-
-  </table>
-
+                              echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $row_col3_product['products_id'] . '&' . osc_get_all_get_params(array('action')) . '&action=wishlist_add'), $osC_Language->get('add_to_wishlist')); 
+                            ?>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- End: Cart Areas -->
+                    </div>
+                    <!-- End: Spacer -->
+                  </div>
+                  <!-- End: Grid Item -->
+           <?php   
+              }
+           ?>
+           </div>
+            <!-- End: Product Grid Row -->
+           <?php
+              $row_grid_three++;
+            }
+          ?>
+        </div>
+      <?php } ?>
+      <!-- End: Three Column - Grid Style -->
+    </div>
+    
+    <!-- Tools Bar -->
+    <div class="toolsWrapper clearfix">
+      <!-- tools -->
+      <div class="tools clearfix">
+        <!-- filters -->
+        <?php if ($frm_filters !== null): ?>
+          <div class="filters"><?php echo $frm_filters; ?></div>
+        <?php endif; ?>
+        
+        <!-- tab navs -->
+        <div class="tabNavs">
+          <?php if ($view_type == 'list') { ?>
+            <button class="listView list-actived">List</button>
+            <a href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=grid2'); ?>" class="gridTwo">Grid 2</a>
+            <a href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=grid3'); ?>" class="gridThree">Grid 3</a>
+          <?php }else if ($view_type == 'grid2') { ?>
+            <a href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=list'); ?>" class="listView">list</a>
+            <button class="gridTwo gridTwo-actived">List</button>
+            <a href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=grid3'); ?>" class="gridThree">Grid 3</a>
+          <?php }else if ($view_type == 'grid3') { ?>
+            <a href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=list'); ?>" class="listView">list</a>
+            <a href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=grid2'); ?>" class="gridTwo">Grid 2</a>
+            <button class="gridThree gridThree-actived">List</button>
+          <?php }?>  
+        </div>
+        <!-- End: tab navs -->
+      </div>
+      <!-- End: tools -->
+      
+       <!-- pagination -->
+      <?php if ( ($Qlisting->numberOfRows() > 0) && ( (PREV_NEXT_BAR_LOCATION == '1') || (PREV_NEXT_BAR_LOCATION == '3') ) ): ?>
+      <div class="seperator"></div>
+      
+      <div class="listingPageLinks clearfix">
+        <?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y')), false); ?>
+      
+        <div class="totalPages"><?php echo $Qlisting->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?></div>
+      </div>
+      <?php endif; ?>
+      <!-- End: pagination -->
+    </div>
+    <!-- End: Tools Bar -->
 <?php
   } else {
-    echo $osC_Language->get('no_products_in_category');
-  }
-?>
-
-</div>
-
-<?php
-  if ( ($Qlisting->numberOfRows() > 0) && ((PREV_NEXT_BAR_LOCATION == '2') || (PREV_NEXT_BAR_LOCATION == '3')) ) {
-?>
-
-<div class="listingPageLinks clearfix">
-  <?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y')), false); ?>
-
-  <div class="totalPages"><?php echo $Qlisting->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?></div>
-</div>
-
-<?php
+    echo '<p>' . $osC_Language->get('no_products_in_category') . '</p>';
   }
 ?>

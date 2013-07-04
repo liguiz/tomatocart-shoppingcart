@@ -876,19 +876,28 @@
       return sizeof($this->_data['images']);
     }
 
-    function &getListingNew() {
+    function &getListingNew($sort_by = null, $direction = 'asc') {
       global $osC_Database, $osC_Language;
 
-      $Qproducts = $osC_Database->query('select p.products_id, p.products_price, p.products_tax_class_id, p.products_date_added, pd.products_name, pd.products_keyword, m.manufacturers_name, i.image from :table_products p left join :table_manufacturers m on (p.manufacturers_id = m.manufacturers_id) left join :table_products_images i on (p.products_id = i.products_id and i.default_flag = :default_flag), :table_products_description pd where p.products_status = 1 and p.products_id = pd.products_id and pd.language_id = :language_id order by p.products_date_added desc, pd.products_name');
+      $Qproducts = $osC_Database->query('select p.products_id, p.products_price, p.products_tax_class_id, p.products_date_added, pd.products_name, pd.products_keyword, pd.products_short_description, m.manufacturers_name, i.image from :table_products p left join :table_manufacturers m on (p.manufacturers_id = m.manufacturers_id) left join :table_products_images i on (p.products_id = i.products_id and i.default_flag = :default_flag), :table_products_description pd where p.products_status = 1 and p.products_id = pd.products_id and pd.language_id = :language_id');
       $Qproducts->bindTable(':table_products', TABLE_PRODUCTS);
       $Qproducts->bindTable(':table_manufacturers', TABLE_MANUFACTURERS);
       $Qproducts->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
       $Qproducts->bindTable(':table_products_description', TABLE_PRODUCTS_DESCRIPTION);
       $Qproducts->bindInt(':default_flag', 1);
       $Qproducts->bindInt(':language_id', $osC_Language->getID());
+      
+      if ($sort_by !== null) {
+        $Qproducts->appendQuery(' order by :order_by :order_by_direction, p.products_date_added desc');
+        $Qproducts->bindRaw(':order_by', $sort_by);
+        $Qproducts->bindRaw(':order_by_direction', $direction);
+      }else {
+        $Qproducts->appendQuery(' order by p.products_date_added desc, pd.products_name');
+      }
+      
       $Qproducts->setBatchLimit((isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1), MAX_DISPLAY_PRODUCTS_NEW);
       $Qproducts->execute();
-
+      
       return $Qproducts;
     }
     
