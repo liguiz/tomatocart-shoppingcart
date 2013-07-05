@@ -194,3 +194,54 @@ function get_products_listing_view_type() {
     
     return $view_type;
 }
+
+/**
+ * Generate the filters params for the product listing page
+ *
+ * @access public
+ *
+ * @return mixed
+ */
+function get_filters_params() {
+  global $cPath, $osC_Services, $osC_Template;
+
+  $params = '';
+  
+  //pass the manufacturers or cPath param as seo is disabled
+  if (!$osC_Services->isStarted('sefu') || $osC_Template->getGroup() == 'search') {
+    if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
+      $params .= osc_draw_hidden_field('manufacturers', $_GET['manufacturers']);
+    } else if (isset($_GET['cPath']) && !empty($_GET['cPath'])) {
+      $params .= osc_draw_hidden_field('cPath', $cPath);
+    }
+  }
+  
+  //pass the cpath or manufacturer filter for the search result page
+  if ($osC_Template->getGroup() == 'search') {
+    if (isset($_GET['filter']) && !empty($_GET['filter'])) {
+      $params .= osc_draw_hidden_field('filter', $_GET['filter']);
+    }
+  }
+ 
+  
+  $params .= osc_draw_hidden_session_id_field();
+  
+  //whether the products attributes filter and the category/manufacturer filter is linked
+  if (defined('PRODUCT_LINK_FILTER') && (PRODUCT_LINK_FILTER == '1')) {
+    if (isset($_GET['products_attributes']) && is_array($_GET['products_attributes'])) {
+      foreach($_GET['products_attributes'] as $att_value_id => $att_value) {
+        $params .= osc_draw_hidden_field('products_attributes[' . $att_value_id . ']', $att_value);
+      }
+    }
+  }
+  
+  //pass search params
+  $keys = array('keywords', 'pfrom', 'pto', 'datefrom_days', 'datefrom_months', 'datefrom_years', 'dateto_days', 'dateto_months', 'dateto_years');
+  foreach ($keys as $key) {
+    if (isset($_GET[$key])) {
+      $params .= osc_draw_hidden_field($key, $_GET[$key]);
+    }
+  }
+  
+  return $params;
+}

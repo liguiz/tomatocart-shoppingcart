@@ -107,10 +107,20 @@
 
       if (isset($_GET['cPath']) && is_numeric($_GET['cPath']) && ($_GET['cPath'] > 0)) {
         $osC_Search->setCategory($_GET['cPath'], (isset($_GET['recursive']) && ($_GET['recursive'] == '1') ? true : false));
+        
+        //filter the products with category, manufactuer and shop by price
+        if (isset($_GET['filter']) && is_numeric($_GET['filter']) && ($_GET['filter'] > 0)) {
+          $osC_Search->setManufacturer($_GET['filter']);
+        }
       }
 
       if (isset($_GET['manufacturers']) && is_numeric($_GET['manufacturers']) && ($_GET['manufacturers'] > 0)) {
         $osC_Search->setManufacturer($_GET['manufacturers']);
+        
+        //filter the products with category, manufactuer and shop by price
+        if (isset($_GET['filter']) && is_numeric($_GET['filter']) && ($_GET['filter'] > 0)) {
+          $osC_Search->setCategory($_GET['filter']);
+        }
       }
 
       if (isset($_GET['sort']) && !empty($_GET['sort'])) {

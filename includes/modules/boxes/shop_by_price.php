@@ -51,14 +51,18 @@
             $filters = array();
             if (isset($_GET['cPath']) && !empty($_GET['cPath'])) {
               $filters[] = 'cPath=' . $_GET['cPath'];
+              
+              if (isset($_GET['filter']) && !empty($_GET['filter'])) {
+                $filters[] = 'filter=' . $_GET['filter'];
+              }
             }
             
             if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
               $filters[] = 'manufacturers=' . $_GET['manufacturers'];
-            }
-            
-            if (isset($_GET['keywords']) && !empty($_GET['keywords'])) {
-              $filters[] = 'keywords=' . $_GET['keywords'];
+              
+              if (isset($_GET['filter']) && !empty($_GET['filter'])) {
+                $filters[] = 'filter=' . $_GET['filter'];
+              }
             }
             
             if ($n == 0) {
@@ -68,7 +72,7 @@
                 $price_section = '<b>' . $price_section . '</b>';
               }
               
-              $params = 'keywords=&x=0&y=0&pfrom=' . 0 . '&pto=' . $prices[$n] . '&' . implode('&', $filters);
+              $params = 'keywords=' . $_GET['keywords'] . '&x=0&y=0&pfrom=' . 0 . '&pto=' . $prices[$n] . '&' . implode('&', $filters);
             } else if ($n == sizeof($prices)) {
               $price_section = $osC_Currencies->displayRawPrice($prices[$n-1]) . ' + ';
   
@@ -76,8 +80,7 @@
                 $price_section = '<b>' . $price_section . '</b>';
               }
               
-              $params = 'keywords=&x=0&y=0&pfrom=' . $prices[$n-1] . '&pto=' . '&' . implode('&', $filters);
-              
+              $params = 'keywords=' . $_GET['keywords'] . '&x=0&y=0&pfrom=' . $prices[$n-1] . '&pto=' . '&' . implode('&', $filters);
             } else {
               $price_section = $osC_Currencies->displayRawPrice($prices[$n-1]) . ' ~ ' . $osC_Currencies->displayRawPrice($prices[$n]);
   
@@ -85,7 +88,7 @@
                 $price_section = '<b>' . $price_section . '</b>';
               }
               
-              $params = 'keywords=&x=0&y=0&pfrom=' . $prices[$n-1] . '&pto=' . $prices[$n] . '&' . implode('&', $filters);
+              $params = 'keywords=' . $_GET['keywords'] . '&x=0&y=0&pfrom=' . $prices[$n-1] . '&pto=' . $prices[$n] . '&' . implode('&', $filters);
             }
             
             if ( (defined('BOX_SHOP_BY_PRICE_RECURSIVE')) && ((int)BOX_SHOP_BY_PRICE_RECURSIVE == 1) ) {
