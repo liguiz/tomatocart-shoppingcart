@@ -37,7 +37,6 @@
       //products listing page for specific manufactuer
       if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
         $action = osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $_GET['manufacturers']);
-        
       //product listing page for specific category
       }else {
         $action = osc_href_link(FILENAME_DEFAULT, 'cPath=' . $cPath);
@@ -45,8 +44,18 @@
 
       echo '<form name="filter" action="' . $action . '" method="get">' . $osC_Language->get('filter_show') . '&nbsp;';
       if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
+        //pass the manufacturers param as seo is disabled
+        if (!$osC_Services->isStarted('sefu')) {
+          echo osc_draw_hidden_field('manufacturers', $_GET['manufacturers']);
+        }
+        
         $options = array(array('id' => '', 'text' => $osC_Language->get('filter_all_categories')));
-      } else {
+      } else if (isset($_GET['cPath']) && !empty($_GET['cPath'])) {
+        //pass the cPath param as seo is disabled
+        if (!$osC_Services->isStarted('sefu')) {
+          echo osc_draw_hidden_field('cPath', $_GET['cPath']);
+        }
+        
         $options = array(array('id' => '', 'text' => $osC_Language->get('filter_all_manufacturers')));
       }
       
