@@ -14,8 +14,6 @@
  * @since        Version 1.1.8
  * @filesource
 */
-//load products helper
-require_once('templates/' . $osC_Template->getCode() . '/models/products.php');
 ?>
 
 <h1><?php echo $osC_Template->getPageTitle(); ?></h1>

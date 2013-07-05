@@ -49,6 +49,15 @@
       
     echo '<form name="filter" action="' . $action . '" method="get">';
     
+    //pass the manufacturers or cPath param as seo is disabled
+    if (!$osC_Services->isStarted('sefu')) {
+      if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
+        echo osc_draw_hidden_field('manufacturers', $_GET['manufacturers']);
+      } else if (isset($_GET['cPath']) && !empty($_GET['cPath'])) {
+        echo osc_draw_hidden_field('cPath', $cPath);
+      }
+    }
+    
     echo osc_draw_hidden_session_id_field();
     
     echo '    <div class="moduleBox">' . "\n" . 

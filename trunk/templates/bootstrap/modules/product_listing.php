@@ -14,59 +14,44 @@
  * @since        Version 1.1.8
  * @filesource
 */
-    $sort_array = get_products_listing_sort();
-    $view_type = get_products_listing_view_type();
+$sort_array = get_products_listing_sort();
+$view_type = get_products_listing_view_type();
 
-    if ($Qlisting->numberOfRows() > 0) {        
-        //products listing page for specific manufactuer
-        if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
-            $action = osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $_GET['manufacturers']);
-        
-            //product listing page for specific category
-        }else {
-            $action = osc_href_link(FILENAME_DEFAULT, 'cPath=' . $cPath);
-        }
+if ($Qlisting->numberOfRows() > 0) {        
+  //products listing page for specific manufactuer
+  if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers']) && $osC_Template->getGroup() !== 'search') {
+    $action = osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $_GET['manufacturers']);
+    //product listing page for specific category
+  }else if (isset($_GET['cPath']) && !empty($_GET['cPath']) && $osC_Template->getGroup() !== 'search'){
+    $action = osc_href_link(FILENAME_DEFAULT, 'cPath=' . $cPath);
+    
+  //search result page  
+  }else if ($osC_Template->getGroup() == 'search') {
+    $action = osc_href_link(FILENAME_SEARCH);
+  }else {
+    $action = osc_href_link(FILENAME_PRODUCTS);
+  }
 ?>
 	<div class="products-listing-action">
 		<form id="products-filter" class="form-inline" action="<?php echo $action;  ?>" method="get">
-			<?php 
-			    //drow hidden session id
-			    echo osc_draw_hidden_session_id_field();
-			    
-                //whether the products attributes filter and the category/manufacturer filter is linked
-                if (defined('PRODUCT_LINK_FILTER') && (PRODUCT_LINK_FILTER == '1')) {
-                    if (isset($_GET['products_attributes']) && is_array($_GET['products_attributes'])) {
-                        foreach($_GET['products_attributes'] as $att_value_id => $att_value) {
-                            echo osc_draw_hidden_field('products_attributes[' . $att_value_id . ']', $att_value);
-                        }
-                    }
-                }
-                
-                $keys = array('keywords', 'pfrom', 'pto', 'datefrom_days', 'datefrom_months', 'datefrom_years', 'dateto_days', 'dateto_months', 'dateto_years');
-                foreach ($keys as $key) {
-                    if (isset($_GET[$key]) && !empty($_GET[$key])) {
-                        echo osc_draw_hidden_field($key, $_GET[$key]);
-                    }
-                }                              
-                           
-			?>
+			<?php echo get_filters_params(); ?>
 			<div class="row-fluid">
 				<div class="span2">
-            		<div class="btn-group">
-            		<?php 
-            		    if ($view_type == 'list') {
-            		?>
-                		<a class="btn btn-small active"><i class="icon-th-list"></i></a> / 
-                		<a class="btn btn-small" href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=grid'); ?>"><i class="icon-th"></i></a>
-            		<?php 
-            		    } else {
-            		?>
-                		<a class="btn btn-small" href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=list'); ?>"><i class="icon-th-list"></i></a> / 
-                		<a class="btn btn-small active"><i class="icon-th"></i></a>
-            		<?php 
-            		    }
-            		?>
-            		</div>
+      		<div class="btn-group">
+      		<?php 
+      		    if ($view_type == 'list') {
+      		?>
+          		<a class="btn btn-small active"><i class="icon-th-list"></i></a> / 
+          		<a class="btn btn-small" href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=grid'); ?>"><i class="icon-th"></i></a>
+      		<?php 
+      		    } else {
+      		?>
+          		<a class="btn btn-small" href="<?php echo osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('view')) . '&view=list'); ?>"><i class="icon-th-list"></i></a> / 
+          		<a class="btn btn-small active"><i class="icon-th"></i></a>
+      		<?php 
+      		    }
+      		?>
+      		</div>
 				</div>
 				<div class="span5 center">
 					<?php 
@@ -75,11 +60,19 @@
     					}
 					?>
 				</div>
+				
+				<?php 
+				  //it is unecessary to sorts the new products
+				  if ($osC_Template->getGroup() !== 'products') {
+		    ?>
 				<div class="span5">
 					<div class="pull-right">
-                        <?php echo osc_draw_pull_down_menu('sort', $sort_array, $sort, 'onchange="this.form.submit()"'); ?>
+            <?php echo osc_draw_pull_down_menu('sort', $sort_array, $sort, 'onchange="this.form.submit()"'); ?>
 					</div>
 				</div>
+				<?php 
+				  }
+				?>
 			</div>
         </form>
         <?php 
@@ -166,34 +159,7 @@
     
 	<div class="products-listing-action">
 		<form id="products-filter" class="form-inline" action="<?php echo osc_href_link($_SERVER['SCRIPT_NAME']); ?>" method="get">
-			<?php 
-			    //drow hidden session id
-			    echo osc_draw_hidden_session_id_field();
-			    
-                //whether the products attributes filter and the category/manufacturer filter is linked
-                if (defined('PRODUCT_LINK_FILTER') && (PRODUCT_LINK_FILTER == '1')) {
-                    if (isset($_GET['products_attributes']) && is_array($_GET['products_attributes'])) {
-                        foreach($_GET['products_attributes'] as $att_value_id => $att_value) {
-                            echo osc_draw_hidden_field('products_attributes[' . $att_value_id . ']', $att_value);
-                        }
-                    }
-                }
-                
-                $keys = array('keywords', 'pfrom', 'pto', 'datefrom_days', 'datefrom_months', 'datefrom_years', 'dateto_days', 'dateto_months', 'dateto_years');
-                foreach ($keys as $key) {
-                    if (isset($_GET[$key]) && !empty($_GET[$key])) {
-                        echo osc_draw_hidden_field($key, $_GET[$key]);
-                    }
-                }
-                
-                if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
-                    echo osc_draw_hidden_field('manufacturers', $_GET['manufacturers']);
-                    $options = array(array('id' => '', 'text' => $osC_Language->get('filter_all_categories')));
-                } else {
-                    echo osc_draw_hidden_field('cPath', $cPath);
-                    $options = array(array('id' => '', 'text' => $osC_Language->get('filter_all_manufacturers')));
-                }
-			?>
+			<?php echo get_filters_params(); ?>
 			<div class="row-fluid">
 				<div class="span2">
             		<div class="btn-group">
@@ -219,11 +185,18 @@
     					}
 					?>
 				</div>
+				<?php 
+				  //it is unecessary to sorts the new products
+				  if ($osC_Template->getGroup() !== 'products') {
+		    ?>
 				<div class="span5">
 					<div class="pull-right">
-                        <?php echo osc_draw_pull_down_menu('sort', $sort_array, $sort, 'onchange="this.form.submit()"'); ?>
+            <?php echo osc_draw_pull_down_menu('sort', $sort_array, $sort, 'onchange="this.form.submit()"'); ?>
 					</div>
 				</div>
+				<?php 
+				  }
+				?>
 			</div>
         </form>
         <?php 
