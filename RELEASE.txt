@@ -1,3 +1,8 @@
+VERSION V1.1.8.3.1
+-- BUG FIX
+#102 Ajax add to cart not work in products listing page of glass gray 
+#103 Ajax add to cart not work in specials page of glass gray template
+
 VERSION v1.1.8.3
 -- BUG FIX
 #95, #90 remove piwik
