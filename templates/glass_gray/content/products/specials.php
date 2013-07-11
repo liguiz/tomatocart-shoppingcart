@@ -29,9 +29,9 @@
       
             echo '<div style="margin-top: 10px; float:left; width: 33%; text-align: center">' .
                    '<span style="display:block; height: 32px; text-align: center">' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qspecials->value('products_id')), $Qspecials->value('products_name')) . '</span>' . 
-                   osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qspecials->value('products_id')), $osC_Image->show($Qspecials->value('image'), $Qspecials->value('products_name'))) . 
+                   osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qspecials->value('products_id')), $osC_Image->show($Qspecials->value('image'), $Qspecials->value('products_name')), 'id="img_ac_specials_'. $Qspecials->value('products_id') . '"') . 
                    '<span style="display:block; padding: 3px; text-align: center"><s>' . $osC_Currencies->displayPrice($Qspecials->value('products_price'), $Qspecials->valueInt('products_tax_class_id')) . '</s> <span class="productSpecialPrice">' . $osC_Currencies->displayPrice($Qspecials->value('specials_new_products_price'), $Qspecials->valueInt('products_tax_class_id')) . '</span>' .
-                   osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qspecials->value('products_id') . '&action=cart_add'), osc_draw_image_button('button_add_to_cart.png', $osC_Language->get('button_add_to_cart'))) .
+                   osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qspecials->value('products_id') . '&action=cart_add'), osc_draw_image_button('button_add_to_cart.png', $osC_Language->get('button_add_to_cart'), 'class="ajaxAddToCart" id="ac_specials_' . $Qspecials->value('products_id') . '"')) .
                  '</div>';
       
           $i++;
