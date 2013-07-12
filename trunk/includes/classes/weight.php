@@ -66,9 +66,9 @@
       global $osC_Language;
 
       if ($unit_from == $unit_to) {
-        return number_format($value, (int)$this->precision, $osC_Language->getNumericDecimalSeparator(), $osC_Language->getNumericThousandsSeparator());
+        return $value;
       } else {
-        return number_format($value * $this->weight_classes[(int)$unit_from][(int)$unit_to], (int)$this->precision, $osC_Language->getNumericDecimalSeparator(), $osC_Language->getNumericThousandsSeparator());
+        return $value * $this->weight_classes[(int)$unit_from][(int)$unit_to];
       }
     }
 

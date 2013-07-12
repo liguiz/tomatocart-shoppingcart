@@ -49,11 +49,6 @@
 
       $shipping_weight = $osC_Weight->convert($osC_ShoppingCart->getWeight(), SHIPPING_WEIGHT_UNIT, MODULE_SHIPPING_ZONES_WEIGHT_UNIT);
       
-      if (!is_int($shipping_weight) && (strpos($shipping_weight, ',') !== false)) {
-        $shipping_weight = str_replace(',', '', $shipping_weight);
-        $shipping_weight = (int)$shipping_weight;
-      }
-
       for ($i=1; $i<=$this->num_zones; $i++) {
         $countries_table = constant('MODULE_SHIPPING_ZONES_COUNTRIES_' . $i);
         $country_zones = split("[,]", $countries_table);
@@ -74,7 +69,7 @@
         for ($i=0; $i<$size; $i+=2) {
           if ($shipping_weight <= $zones_table[$i]) {
             $shipping = $zones_table[$i+1];
-            $shipping_method = $osC_Language->get('shipping_zones_method') . ' ' . $dest_country . ' : ' . $osC_Weight->display($osC_ShoppingCart->getWeight(), MODULE_SHIPPING_ZONES_WEIGHT_UNIT);
+            $shipping_method = $osC_Language->get('shipping_zones_method') . ' ' . $dest_country . ' : ' . $osC_Weight->display($osC_ShoppingCart->getWeight(), SHIPPING_WEIGHT_UNIT);
             break;
           }
         }
