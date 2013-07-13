@@ -26,7 +26,7 @@
 /* Class constructor */
 
     function osC_Checkout_Checkout() {
-      global $osC_ShoppingCart, $osC_Customer, $osC_NavigationHistory, $messageStack;
+      global $osC_ShoppingCart, $osC_Customer, $osC_NavigationHistory, $messageStack, $osC_Language;
       
       if ($osC_Customer->isLoggedOn() === false) {
         $osC_NavigationHistory->setSnapshot();
@@ -43,6 +43,17 @@
             if ($osC_ShoppingCart->isInStock($product['id']) === false) {
               osc_redirect(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'));
             }
+          }
+        //add the out of stock message for the checkout one page  
+        }else {
+          foreach($osC_ShoppingCart->getProducts() as $product) {
+            if ($osC_ShoppingCart->isInStock($product['id']) === false) {
+              $messageStack->add('checkout', STOCK_MARK_PRODUCT_OUT_OF_STOCK . $product['name']);
+            }
+          }
+          
+          if ($osC_ShoppingCart->hasStock() === false) {
+            $messageStack->add('checkout', sprintf($osC_Language->get('products_out_of_stock_checkout_possible'), STOCK_MARK_PRODUCT_OUT_OF_STOCK));
           }
         }
       }
