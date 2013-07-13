@@ -62,7 +62,7 @@ Ext.extend(Toc.configuration.ConfigurationGrid, Ext.grid.PropertyGrid, {
             name: field.title,
             value: field.value
           }));
-
+          
           if(field.type == 'combobox') {
             var gridEditor = null;
             var store = null;
@@ -111,6 +111,14 @@ Ext.extend(Toc.configuration.ConfigurationGrid, Ext.grid.PropertyGrid, {
                 name: field.name
               })            
             );
+          } else if(field.type == 'password') {
+            customEditors[field.title] = new Ext.grid.GridEditor(
+              new Ext.form.TextField({
+                inputType: 'password',
+                fieldLabel: field.title,
+                name: field.name
+              })            
+            );
           }
         }, this);
 
@@ -127,6 +135,10 @@ Ext.extend(Toc.configuration.ConfigurationGrid, Ext.grid.PropertyGrid, {
         
         if(field.type == 'combobox'){
           o.record.set('value', o.grid.customEditors[field.title].field.getRawValue());
+        }
+        
+        if(field.type == 'password') {
+          o.record.set('value', o.value.replace(/[\s\S]/g, '*'));
         }
         
         Ext.Ajax.request({
