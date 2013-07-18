@@ -40,7 +40,8 @@ Toc.product_variants.ProductVariantsEntriesGrid = function (config) {
       id: 'products_variants_values_id'
     }, [
       'products_variants_values_id',
-      'products_variants_values_name'
+      'products_variants_values_name',
+      'sort_order'
     ]),
     autoLoad: true
   });
@@ -58,6 +59,7 @@ Toc.product_variants.ProductVariantsEntriesGrid = function (config) {
   config.cm = new Ext.grid.ColumnModel([
     config.sm,
     {id: 'name', header: '<?php echo $osC_Language->get("table_heading_entries");?>', dataIndex: 'products_variants_values_name'},
+    {header: '<?php echo $osC_Language->get("table_heading_order");?>', dataIndex: 'sort_order', align: 'center'},
     config.rowActions
   ]);
   config.autoExpandColumn = 'name';

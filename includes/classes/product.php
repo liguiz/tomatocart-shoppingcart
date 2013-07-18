@@ -272,22 +272,82 @@
     function getVariantsComboboxArray() {
       if ($this->hasVariants()) {
         $combobox_array = array();
+        
+        //sort the variants groups based on its its sort order or name (ASC direction)
+        $variants_groups = $this->_data['variants_groups'];
+        usort($variants_groups, array('self', '_sortVariantsGroups'));
 
-        foreach ($this->_data['variants_groups'] as $groups_id => $groups_name) {
+        foreach ($variants_groups as $group) {
           $values = array();
-          foreach($this->_data['variants_groups_values'][$groups_id] as $values_id) {
-            $values[] = array('id' => $values_id, 'text' => $this->_data['variants_values'][$values_id]);
+          
+          //sort the variants entries based on its sort order or name (ASC direction)
+          $variants_entries = $this->_data['variants_groups_values'][$group['groups_id']];
+          usort($variants_entries, array('self', '_sortVariantsEntries'));
+          
+          foreach($variants_entries as $variants_enty) {
+            $values[] = array('id' => $variants_enty['variants_values_id'], 'text' => $variants_enty['variants_values_name']);
           }
           
-          $combobox_array[$groups_name] = osc_draw_pull_down_menu(
-            'variants[' . $groups_id . ']', 
+       
+          $combobox_array[$group['groups_name']] = osc_draw_pull_down_menu(
+            'variants[' . $group['groups_id'] . ']', 
             $values, 
-            (!osc_empty($this->_current_variants)) ? $this->_current_variants[$groups_id] : $this->_data['default_variant']['groups_id'][$groups_id]);
+            (!osc_empty($this->_current_variants)) ? $this->_current_variants[ $group['groups_id']] : $this->_data['default_variant']['groups_id'][$group['groups_id']]);
         }
         return $combobox_array;
       }
       
       return false;
+    }
+    
+    /**
+     * sort the variants groups based on its its sort order or name (ASC direction)
+     *
+     * @access private
+     * @param array $group_a a
+     * @param array $group_b
+     *
+     * return int
+     *
+     */
+    function _sortVariantsGroups($group_a, $group_b) {
+     if ($group_a['sort_order'] < $group_b['sort_order']) {
+        return -1;
+      }
+      
+      if ($group_a['sort_order'] > $group_b['sort_order']) {
+        return 1;
+      }
+      
+      //sort order is equel. Compare their names
+      if ($group_a['sort_order'] == $group_b['sort_order']) {
+        return strnatcmp($group_a['groups_name'], $group_b['groups_name']);
+      }
+    }
+    
+    /**
+     * Sort the variants entries for each variants group based on its sort order or name (ASC direction)
+     * 
+     * @access private
+     * @param array $entry a 
+     * @param array $entry_b
+     * 
+     * return int
+     * 
+     */
+    function _sortVariantsEntries($entry_a, $entry_b) {
+      if ($entry_a['sort_order'] < $entry_b['sort_order']) {
+        return -1;
+      }
+      
+      if ($entry_a['sort_order'] > $entry_b['sort_order']) {
+        return 1;
+      }
+      
+      //sort order is equel. Compare their names
+      if ($entry_a['sort_order'] == $entry_b['sort_order']) {
+        return strnatcmp($entry_a['variants_values_name'], $entry_b['variants_values_name']);
+      }
     }
     
     function getDefaultVariant() {
@@ -309,32 +369,34 @@
       $Qvariants->execute();
 
       $groups = array();
-      $values = array();
       $groups_values = array();
       while ($Qvariants->next()) {
-        $Qvalues = $osC_Database->query('select pve.products_variants_groups_id as groups_id, pve.products_variants_values_id as variants_values_id, pvg.products_variants_groups_name as groups_name, pvv.products_variants_values_name as variants_values_name from :table_products_variants_entries pve, :table_products_variants_groups pvg, :table_products_variants_values pvv where pve.products_variants_groups_id = pvg.products_variants_groups_id and pve.products_variants_values_id = pvv.products_variants_values_id and pvg.language_id = pvv.language_id and pvg.language_id = :language_id and pve.products_variants_id = :products_variants_id order by pve.products_variants_groups_id');
+        $Qvalues = $osC_Database->query('select pve.products_variants_groups_id as groups_id, pve.products_variants_values_id as variants_values_id, pvg.products_variants_groups_name as groups_name, pvg.sort_order as groups_sort_order, pvv.products_variants_values_name as variants_values_name, pvv.sort_order as sort_order from :table_products_variants_entries pve, :table_products_variants_groups pvg, :table_products_variants_values pvv where pve.products_variants_groups_id = pvg.products_variants_groups_id and pve.products_variants_values_id = pvv.products_variants_values_id and pvg.language_id = pvv.language_id and pvg.language_id = :language_id and pve.products_variants_id = :products_variants_id order by pve.products_variants_groups_id');
         $Qvalues->bindTable(':table_products_variants_entries', TABLE_PRODUCTS_VARIANTS_ENTRIES);
         $Qvalues->bindTable(':table_products_variants_groups', TABLE_PRODUCTS_VARIANTS_GROUPS);
         $Qvalues->bindTable(':table_products_variants_values', TABLE_PRODUCTS_VARIANTS_VALUES);
         $Qvalues->bindInt(':language_id', $osC_Language->getID());
         $Qvalues->bindInt(':products_variants_id', $Qvariants->valueInt('products_variants_id'));
         $Qvalues->execute();
-
+        
         $variants = array();
         $groups_name = array();
         while ($Qvalues->next()) {
           $variants[$Qvalues->value('groups_id')] = $Qvalues->value('variants_values_id');
           $groups_name[$Qvalues->value('groups_name')] = $Qvalues->value('variants_values_name');
           
-          $groups[$Qvalues->value('groups_id')] = $Qvalues->value('groups_name');
-          $values[$Qvalues->value('variants_values_id')] = $Qvalues->value('variants_values_name');
+          $groups[] = array('groups_id' => $Qvalues->valueInt('groups_id'), 
+                            'groups_name' => $Qvalues->value('groups_name'), 
+                            'sort_order' => $Qvalues->valueInt('groups_sort_order'));
           
           if (!is_array($groups_values[$Qvalues->value('groups_id')])) {
             $groups_values[$Qvalues->value('groups_id')] = array();
           }
           
           if (!in_array($Qvalues->value('variants_values_id'), $groups_values[$Qvalues->value('groups_id')])) {
-            $groups_values[$Qvalues->value('groups_id')][] = $Qvalues->value('variants_values_id');
+            $groups_values[$Qvalues->value('groups_id')][$Qvalues->value('variants_values_id')] = array('variants_values_id' => $Qvalues->valueInt('variants_values_id'), 
+                                                                                                        'sort_order' => $Qvalues->valueInt('sort_order'), 
+                                                                                                        'variants_values_name' => $Qvalues->value('variants_values_name'));
           }
         }
         $Qvalues->freeResult();
@@ -371,7 +433,6 @@
 
       $this->_data['variants'] = $products_variants;
       $this->_data['variants_groups'] = $groups;
-      $this->_data['variants_values'] = $values;
       $this->_data['variants_groups_values'] = $groups_values;
     }
     

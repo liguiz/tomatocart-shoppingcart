@@ -106,6 +106,8 @@ Ext.extend(Toc.product_variants.ProductVariantsGroupsDialog, Ext.Window, {
       }     
     ?>
     
+    this.frmProductVariantGroup.add(new Ext.form.NumberField({fieldLabel: '&nbsp;<?php echo $osC_Language->get('field_order'); ?>', name: 'sort_order', value: 0}));
+    
     return this.frmProductVariantGroup;
   },
   

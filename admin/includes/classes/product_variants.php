@@ -71,15 +71,16 @@
 
       foreach ( $osC_Language->getAll() as $l ) {
         if ( is_numeric($id) ) {
-          $Qgroup = $osC_Database->query('update :table_products_variants_groups set products_variants_groups_name = :products_variants_groups_name where products_variants_groups_id = :products_variants_groups_id and language_id = :language_id');
+          $Qgroup = $osC_Database->query('update :table_products_variants_groups set products_variants_groups_name = :products_variants_groups_name, sort_order = :sort_order where products_variants_groups_id = :products_variants_groups_id and language_id = :language_id');
         } else {
-          $Qgroup = $osC_Database->query('insert into :table_products_variants_groups (products_variants_groups_id, language_id, products_variants_groups_name) values (:products_variants_groups_id, :language_id, :products_variants_groups_name)');
+          $Qgroup = $osC_Database->query('insert into :table_products_variants_groups (products_variants_groups_id, language_id, products_variants_groups_name, sort_order) values (:products_variants_groups_id, :language_id, :products_variants_groups_name, :sort_order)');
         }
 
         $Qgroup->bindTable(':table_products_variants_groups', TABLE_PRODUCTS_VARIANTS_GROUPS);
         $Qgroup->bindInt(':products_variants_groups_id', $group_id);
         $Qgroup->bindValue(':products_variants_groups_name', $data['name'][$l['id']]);
         $Qgroup->bindInt(':language_id', $l['id']);
+        $Qgroup->bindInt(':sort_order', $data['sort_order']);
         $Qgroup->setLogging($_SESSION['module'], $group_id);
         $Qgroup->execute();
 
@@ -91,6 +92,8 @@
 
       if ( $error === false ) {
         $osC_Database->commitTransaction();
+        
+        osC_Cache::clear('product');
 
         return true;
       }
@@ -207,15 +210,16 @@
 
       foreach ( $osC_Language->getAll() as $l ) {
         if ( is_numeric($id) ) {
-          $Qentry = $osC_Database->query('update :table_products_variants_values set products_variants_values_name = :products_variants_values_name where products_variants_values_id = :products_variants_values_id and language_id = :language_id');
+          $Qentry = $osC_Database->query('update :table_products_variants_values set products_variants_values_name = :products_variants_values_name, sort_order = :sort_order where products_variants_values_id = :products_variants_values_id and language_id = :language_id');
         } else {
-          $Qentry = $osC_Database->query('insert into :table_products_variants_values (products_variants_values_id, language_id, products_variants_values_name) values (:products_variants_values_id, :language_id, :products_variants_values_name)');
+          $Qentry = $osC_Database->query('insert into :table_products_variants_values (products_variants_values_id, language_id, products_variants_values_name, sort_order) values (:products_variants_values_id, :language_id, :products_variants_values_name, :sort_order)');
         }
 
         $Qentry->bindTable(':table_products_variants_values', TABLE_PRODUCTS_VARIANTS_VALUES);
         $Qentry->bindInt(':products_variants_values_id', $entry_id);
         $Qentry->bindValue(':products_variants_values_name', $data['name'][$l['id']]);
         $Qentry->bindInt(':language_id', $l['id']);
+        $Qentry->bindInt(':sort_order', $data['sort_order']);
         $Qentry->setLogging($_SESSION['module'], $entry_id);
         $Qentry->execute();
 
@@ -242,6 +246,8 @@
 
       if ( $error === false ) {
         $osC_Database->commitTransaction();
+        
+        osC_Cache::clear('product');
 
         return true;
       }

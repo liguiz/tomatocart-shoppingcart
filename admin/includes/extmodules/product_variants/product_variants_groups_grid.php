@@ -33,7 +33,8 @@ Toc.product_variants.ProductVariantsGroupsGrid = function (config) {
     }, [
       'products_variants_groups_id', 
       'products_variants_groups_name', 
-      'total_entries'
+      'total_entries',
+      'sort_order'
     ]),
     autoLoad: true
   });
@@ -49,6 +50,7 @@ Toc.product_variants.ProductVariantsGroupsGrid = function (config) {
   
   config.cm = new Ext.grid.ColumnModel([
     {id: 'product_variants_groups', header: '<?php echo $osC_Language->get("table_heading_variant_groups"); ?>', dataIndex: 'products_variants_groups_name'},
+    {header: '<?php echo $osC_Language->get("table_heading_order"); ?>', dataIndex: 'sort_order', align: 'center'},
     {header: '<?php echo $osC_Language->get("table_heading_total_entries"); ?>', dataIndex: 'total_entries', align: 'center'}, 
     config.rowActions
   ]);
