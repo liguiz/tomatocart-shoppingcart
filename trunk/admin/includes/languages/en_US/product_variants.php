@@ -18,11 +18,13 @@ action_heading_batch_delete_group_entries = Batch Delete Group Entries
 table_heading_variant_groups = Variant Groups
 table_heading_total_entries = Total Entries
 table_heading_action = Action
+table_heading_order = Sort Order
 
 table_heading_entries = Entries
 
 field_group_name = Name:
 field_group_entry_name = Name:
+field_order = Sort Order:
 
 total_entries = %s Entries
 

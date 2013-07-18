@@ -1208,6 +1208,7 @@ CREATE TABLE toc_products_variants_groups (
   products_variants_groups_id int(11)  NOT NULL default '0',
   language_id int(11) NOT NULL default '1',
   products_variants_groups_name varchar(32) NOT NULL default '',
+  sort_order int(5) NOT NULL default 0,
   PRIMARY KEY  (products_variants_groups_id,language_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -1217,6 +1218,7 @@ CREATE TABLE toc_products_variants_values (
   products_variants_values_id int(11) NOT NULL default '0',
   language_id int(11) NOT NULL default '1',
   products_variants_values_name varchar(64) NOT NULL default '',
+  sort_order int(5) NOT NULL default 0,
   PRIMARY KEY  (products_variants_values_id,language_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

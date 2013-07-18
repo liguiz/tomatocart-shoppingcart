@@ -20,7 +20,7 @@
             $start = empty($_REQUEST['start']) ? 0 : $_REQUEST['start']; 
       $limit = empty($_REQUEST['limit']) ? MAX_DISPLAY_SEARCH_RESULTS : $_REQUEST['limit']; 
     
-      $Qgroup = $osC_Database->query('select products_variants_groups_id, products_variants_groups_name from :table_products_variants_groups where language_id = :language_id order by products_variants_groups_name');
+      $Qgroup = $osC_Database->query('select products_variants_groups_id, products_variants_groups_name, sort_order from :table_products_variants_groups where language_id = :language_id order by sort_order, products_variants_groups_name');
       $Qgroup->bindTable(':table_products_variants_groups', TABLE_PRODUCTS_VARIANTS_GROUPS);
       $Qgroup->bindInt(':language_id', $osC_Language->getID());
       $Qgroup->setExtBatchLimit($start, $limit);
@@ -35,7 +35,8 @@
         
         $records[] = array( 'products_variants_groups_id' => $Qgroup->value('products_variants_groups_id'),
                             'products_variants_groups_name' => $Qgroup->value('products_variants_groups_name'),
-                            'total_entries' => $Qentries->value('total_entries'));
+                            'total_entries' => $Qentries->value('total_entries'), 
+                            'sort_order' => $Qgroup->valueInt('sort_order'));
       }
       
         $response = array(EXT_JSON_READER_TOTAL => $Qgroup->getBatchSize(),
@@ -56,6 +57,10 @@
       
       while ($Qgroup->next()) {
         $data['products_variants_groups_name[' . $Qgroup->ValueInt('language_id') . ']'] = $Qgroup->Value('products_variants_groups_name');
+        
+        if (!isset($data['sort_order'])) {
+          $data['sort_order'] = $Qgroup->valueInt('sort_order');
+        }
       }
       
       $response = array('success' => true, 'data' => $data); 
@@ -66,9 +71,9 @@
     function saveProductVariant() {
       global $toC_Json, $osC_Language;
       
-      $data = array('name' => $_REQUEST['products_variants_groups_name']);
+      $data = array('name' => $_POST['products_variants_groups_name'], 'sort_order' => $_POST['sort_order']);
       
-      if ( osC_ProductVariants_Admin::save((isset($_REQUEST['products_variants_groups_id']) && is_numeric($_REQUEST['products_variants_groups_id']) ? $_REQUEST['products_variants_groups_id'] : null), $data) ) {
+      if ( osC_ProductVariants_Admin::save((isset($_POST['products_variants_groups_id']) && is_numeric($_POST['products_variants_groups_id']) ? $_POST['products_variants_groups_id'] : null), $data) ) {
         $response = array('success' => true ,'feedback' => $osC_Language->get('ms_success_action_performed'));
       } else {
         $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));    
@@ -109,7 +114,7 @@
     function listProductVariantsEntries() {
       global $toC_Json, $osC_Database, $osC_Language;
           
-      $Qentries = $osC_Database->query('select pvv.products_variants_values_id, pvv.products_variants_values_name from :table_products_variants_values pvv, :table_products_variants_values_to_products_variants_groups pvv2pvg where pvv2pvg.products_variants_groups_id = :products_variants_groups_id and pvv2pvg.products_variants_values_id = pvv.products_variants_values_id and pvv.language_id = :language_id order by pvv.products_variants_values_name');
+      $Qentries = $osC_Database->query('select pvv.products_variants_values_id, pvv.products_variants_values_name, pvv.sort_order from :table_products_variants_values pvv, :table_products_variants_values_to_products_variants_groups pvv2pvg where pvv2pvg.products_variants_groups_id = :products_variants_groups_id and pvv2pvg.products_variants_values_id = pvv.products_variants_values_id and pvv.language_id = :language_id order by pvv.sort_order, pvv.products_variants_values_name');
       $Qentries->bindTable(':table_products_variants_values', TABLE_PRODUCTS_VARIANTS_VALUES);
       $Qentries->bindTable(':table_products_variants_values_to_products_variants_groups', TABLE_PRODUCTS_VARIANTS_VALUES_TO_PRODUCTS_VARIANTS_GROUPS);
       $Qentries->bindInt(':products_variants_groups_id', $_REQUEST['products_variants_groups_id']);
@@ -119,7 +124,8 @@
       $records = array();
       while ($Qentries->next()) {       
          $records[] = array('products_variants_values_id' => $Qentries->value('products_variants_values_id'),
-                            'products_variants_values_name' => $Qentries->value('products_variants_values_name'));
+                            'products_variants_values_name' => $Qentries->value('products_variants_values_name'), 
+                            'sort_order' => $Qentries->valueInt('sort_order'));
       }
       
       $response = array(EXT_JSON_READER_ROOT => $records); 
@@ -131,7 +137,8 @@
       global $toC_Json, $osC_Language;
       
       $data = array('name' => $_REQUEST['products_variants_values_name'],
-                    'products_variants_groups_id' => $_REQUEST['products_variants_groups_id']);
+                    'products_variants_groups_id' => $_REQUEST['products_variants_groups_id'], 
+                    'sort_order' => $_POST['sort_order']);
       
       if ( osC_ProductVariants_Admin::saveEntry((isset($_REQUEST['products_variants_values_id']) && is_numeric($_REQUEST['products_variants_values_id']) ? $_REQUEST['products_variants_values_id'] : null), $data) ) {
         $response = array('success' => true ,'feedback' => $osC_Language->get('ms_success_action_performed'));
@@ -223,13 +230,17 @@
       
       $data = osC_ProductVariants_Admin::getEntryData($_REQUEST['products_variants_values_id']);
       
-      $Qentry = $osC_Database->query('select * from :table_products_variants_values where products_variants_values_id = :products_variants_values_id ');
+      $Qentry = $osC_Database->query('select * from :table_products_variants_values where products_variants_values_id = :products_variants_values_id');
       $Qentry->bindTable(':table_products_variants_values', TABLE_PRODUCTS_VARIANTS_VALUES);
       $Qentry->bindInt(':products_variants_values_id', $_REQUEST['products_variants_values_id']);
       $Qentry->execute();
       
       while ($Qentry->next()) {
         $data['products_variants_values_name[' . $Qentry->ValueInt('language_id') . ']'] = $Qentry->Value('products_variants_values_name');
+        
+        if (!isset($data['sort_order'])) {
+          $data['sort_order'] = $Qentry->ValueInt('sort_order');
+        }
       }
 
       $response = array('success' => true, 'data' => $data); 
