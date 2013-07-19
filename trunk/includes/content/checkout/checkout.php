@@ -47,8 +47,15 @@
         //add the out of stock message for the checkout one page  
         }else {
           foreach($osC_ShoppingCart->getProducts() as $product) {
-            if ($osC_ShoppingCart->isInStock($product['id']) === false) {
-              $messageStack->add('checkout', STOCK_MARK_PRODUCT_OUT_OF_STOCK . $product['name']);
+            //it's gift certificate
+            if ($product['type'] == PRODUCT_TYPE_GIFT_CERTIFICATE) {
+              if ($product['quantity'] < 1) {
+                $messageStack->add('checkout', STOCK_MARK_PRODUCT_OUT_OF_STOCK . $product['name']);
+              }
+            }else {
+              if ($osC_ShoppingCart->isInStock($product['id']) === false) {
+                $messageStack->add('checkout', STOCK_MARK_PRODUCT_OUT_OF_STOCK . $product['name']);
+              }
             }
           }
           
