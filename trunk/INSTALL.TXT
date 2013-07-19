@@ -1,5 +1,5 @@
 
-TomatoCart 1.0 alpha 5
+TomatoCart 1.1.8.4
 
 Welcome to TomatoCart Installation! We hope you will enjoy it.
 

@@ -1,3 +1,18 @@
+VERSION V1.1.8.4
+-- BUG FIX
+#112 Price of out of stock variant doesn't change in frontend
+#111 Upcoming Products doesn't work
+#107 PHP 5.4 Strict Warning Issue
+#106 Missing wait.gif file in error log
+#84 Danish Language - Problems with ordering
+#81 Product Variants sort order
+#73 Paypal Express - coupon, gift certificate not discounted
+#62 Shipping weights not(correctly) calculated
+#58 Paypal Express Module Passing Incorrect Data 
+#53 out of stock - checkout possibility 
+#21 smtp password not encrypted
+
+
 VERSION V1.1.8.3.1
 -- BUG FIX
 #102 Ajax add to cart not work in products listing page of glass gray 
