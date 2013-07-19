@@ -207,7 +207,7 @@
       if (is_array($this->_modules)) {
         $js = 'function check_form() {' . "\n" .
               '  var error = 0;' . "\n" .
-              '  var error_message = "' . $osC_Language->get('js_error') . '";' . "\n" .
+              '  var error_message = "' . str_replace(array("\r", "\n"), "", $osC_Language->get('js_error')) . '";' . "\n" .
               '  var payment_value = null;' . "\n" .
               '  if (document.checkout_payment.payment_method.length) {' . "\n" .
               '    for (var i=0; i<document.checkout_payment.payment_method.length; i++) {' . "\n" .
@@ -228,7 +228,7 @@
         }
 
         $js .= "\n" . '  if (payment_value == null) {' . "\n" .
-               '    error_message = error_message + "' . $osC_Language->get('js_no_payment_module_selected') . '\n";' . "\n" .
+               '    error_message = error_message + "' . str_replace(array("\r", "\n"), "", $osC_Language->get('js_no_payment_module_selected')) . '\n";' . "\n" .
                '    error = 1;' . "\n" .
                '  }' . "\n\n" .
                '  if (error == 1) {' . "\n" .
