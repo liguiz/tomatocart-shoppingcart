@@ -134,7 +134,7 @@
  */
 
   function osc_image($image, $title = null, $width = 0, $height = 0, $parameters = null) {
-    if ( (empty($image) || ($image == DIR_WS_IMAGES)) && (IMAGE_REQUIRED == '-1') ) {
+    if (IMAGE_REQUIRED == '-1' || is_dir($image) || !file_exists($image) ) {
       return false;
     }
 
