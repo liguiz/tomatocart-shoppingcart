@@ -134,10 +134,22 @@
  */
 
   function osc_image($image, $title = null, $width = 0, $height = 0, $parameters = null) {
-    if (IMAGE_REQUIRED == '-1' || is_dir($image) || !file_exists($image) ) {
-      return false;
+    //return - image is not requirend or the image path is just a directory
+    if (IMAGE_REQUIRED == '-1' || is_dir($image)) {
+      return null;
     }
-
+    
+    //return - image with http/s requested is not existed
+    if (strpos($image, 'http://') !== false || strpos($image, 'https://') !== false) {
+      if (@getimagesize($image) === false) {
+        return null;
+      }
+      
+    //local image not existed
+    }else if (!file_exists($image)) {
+      return null;
+    }
+    
     if (!is_numeric($width)) {
       $width = 0;
     }
